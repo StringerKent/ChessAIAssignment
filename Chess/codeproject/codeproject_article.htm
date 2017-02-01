@@ -1,0 +1,169 @@
+﻿<!DOCTYPE HTML>
+<!--------------------------------------------------------------------------->
+<!--                           INTRODUCTION
+
+ The CodeProject article submission template (HTML version)
+
+Using this template will help us post your article sooner. To use, just
+follow the 3 easy steps below:
+
+     1. Fill in the article description details
+     2. Add links to your images and downloads
+     3. Include the main article text
+
+That's all there is to it! All formatting will be done by our submission
+scripts and style sheets.
+
+-->
+<!--------------------------------------------------------------------------->
+<!--                        IGNORE THIS SECTION                            -->
+<html>
+<head>
+    <title>CodeProject</title>
+    <Style>
+        BODY, P, TD {
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+            font-size: 10pt;
+        }
+
+        H2, H3, H4, H5 {
+            color: #ff9900;
+            font-weight: bold;
+        }
+
+        H2 {
+            font-size: 13pt;
+        }
+
+        H3 {
+            font-size: 12pt;
+        }
+
+        H4 {
+            font-size: 10pt;
+            color: black;
+        }
+
+        PRE {
+            BACKGROUND-COLOR: #FBEDBB;
+            FONT-FAMILY: "Courier New", Courier, mono;
+            WHITE-SPACE: pre;
+        }
+
+        CODE {
+            COLOR: #990000;
+            FONT-FAMILY: "Courier New", Courier, mono;
+        }
+    </Style>
+    <link type="text/css" rel="stylesheet"
+          href="https://codeproject.global.ssl.fastly.net/App_Themes/CodeProject/Css/Main.min.css">
+</head>
+<body bgcolor="#FFFFFF" color=#000000>
+    <!--------------------------------------------------------------------------->
+    <!-------------------------------     STEP 1      --------------------------->
+    <!--  Fill in the details (CodeProject will reformat this section for you) -->
+
+<pre>
+Title:       Chess engine
+Author:      Kristian Ekman
+Email:       kristian.ekman.swe@gmail.com
+Language:    c# 6.0
+Platform:    Windows
+Technology:  Windows Forms
+Level:       Advanced
+Description: Chess engine and simple chess user interface.
+Section      General Programming
+SubSection   Artificial Intelligence and Machine Learning
+License:     <a href="https://opensource.org/licenses/MS-RL">Microsoft Reciprocal License</a>
+</pre>
+
+    <!-------------------------------     STEP 2      --------------------------->
+    <!--  Include download and sample image information.                       -->
+
+    <ul class=download>
+        <li><a href="Article_demo.zip">Download demo project - XXX Kb </a></li>
+        <li><a href="Article_src.zip">Download source - XXX Kb</a></li>
+    </ul>
+
+    <p>
+        <img src="chessui.png" alt="Sample Image - maximum width is 600 pixels"
+             style="width:400px; height:200px">
+    </p>
+
+    <!-------------------------------     STEP 3      --------------------------->
+    <!--  Add the article text. Please use simple formatting (<h2>, <p> etc)   -->
+
+    <h2>Introduction</h2>
+
+    <p>
+        This is a fully functional yet simple chess program that aims to easier to understand than most open source chess engine implementations.<br />
+        It is a standard object oriented solution and I think advanced and intermediate c#-developers should have no problem to follow the code logic.
+    </p>
+
+    <h2>Background</h2>
+
+    <p>
+        I have tried before (about ten years ago) to implement a chess engine. This time I decided to use the TDD test first approach.<br />
+        I like TDD and I think using TDD was the main reason the engine worked this time. It is very important that the rules of chess are 100% correct implemented.<br />
+        I also think that TDD contributes to good code structure and a maintainable system design. It only took me about four weeks to finish the first version.
+    </p>
+    <p>Anyone interested or new to chess programming might learn something by studying the source code.</p>
+
+    <h2>The code</h2>
+
+    <p>
+        The solution consists of two main projects. The engine (chess.dll) and the user interface.<br />
+        Chess.dll has everything about the game, the board, the rules and the engine.<br />
+        It also contains all tests. I see no reason in having unit-tests in a separate project in this implementation. This way one can easily see what unit-tests belongs to which class.<br />
+        There are currently 77 tests. Most of the are very fast. Code coverage is about 100%
+    </p>
+    <p>The Chess UI is a simple Windows forms application with only a few features like load, save and setting the time for computer to think.</p>
+
+    <h2>Features</h2>
+    <p>There is a lot of free and good literature on the web about explaining the different algorithms and techniques in a chess engine. The goal of this article is not to explain them again. But links to good pages I have used are listed below.</p>
+    <ul>
+        <li>The chess board is represented by a single square[64] array. (Bit-boards are probably a lot faster but more complicated.)</li>
+        <li>Score of the position is based on material and a positional score for each piece. In the opening, a few basic opening principles are giving extra points. Special calculations are also performed in the end game.</li>
+        <li>Draw by repetition, insufficient material and stale mate are also evaluated.</li>
+        <li><a href="http://will.thimbleby.net/algorithms/doku.php?id=minimax_search_with_alpha-beta_pruning">Alpha-beta pruning</a>, which drastically decreases the number of positions that needs to be analyzed. At depth zero a depth two quite search is also performed to prevent the risk of horizon effect.</li>
+        <li><a href="https://chessprogramming.wikispaces.com/Zobrist+Hashing">Zobrist hashing</a>. A very cool and powerful algorithm invented by some very smart guy long time ago. A few million positions are cashed in a dictionary so every position only has to be calculated once.</li>
+        <li>Parallel threads to increase performance of engine.
+        <li><i>Opening book is not yet implemented</i></li>
+    </ul>
+
+    <h2>Performance</h2>
+    <p></p>
+    <p>
+        The engine analyses about 10k positions every second on my dual core 2.7Ghz laptop. Which is mostly enough to see about five or six moves ahead in the middle game.<br />
+        Most average skilled chess players (like me) should have quite some difficulty beating the engine given the same time to think.
+    </p>
+
+    <!--
+    <pre>//
+    // Any source code blocks look like this
+    //
+    var i = 0;
+    ...</pre>
+
+    <p>Remember to set the Language of your code snippet using the Language dropdown. </p>
+
+    <p>Use the &quot;var&quot; button to wrap Variable or class names in &amp;lt;code&amp;gt;
+    tags like <code>this</code>. </p>
+    -->
+
+    <h2>Points of Interest</h2>
+    <p>It is important to run performance profiling. The faster the analysis becomes more positions are analyzed every second and even some small improvements can have large effect on over all performance.</p>
+    <p>
+        The alpha beta algorithm is probably the most challenging part of a chess engine. There are many pseudo code examples on the Internet, but the only one that I managed to get to work is the one from <a href="http://will.thimbleby.net/algorithms/doku.php?id=start">Algorithm Wiki</a>
+    </p>
+<p>
+    An other excellent site for information is the <a href="https://chessprogramming.wikispaces.com/">Chess Programming Wiki</a>
+</p>
+
+    <h2>History</h2>
+    <p>Jan 31 2017 - Version 1.0 </p>
+    
+    <p>Happy code reading and good luck on your own chess programming learning!</p>
+    <!-------------------------------    That's it!   --------------------------->
+</body>
+</html>

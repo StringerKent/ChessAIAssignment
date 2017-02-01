@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chess", "Chess\Chess.csproj", "{2FCCC72C-8C7E-41BA-B232-FB34B78640B0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{15E92D85-BE8B-40A2-A9C8-4EE5F1ED3323}"
+	ProjectSection(SolutionItems) = preProject
+		Current Performance.txt = Current Performance.txt
+		license.txt = license.txt
+		todo.txt = todo.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessConsole", "ChessConsole\ChessConsole.csproj", "{621493A3-7264-4D00-A85A-838B998E843C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessUi", "ChessUi\ChessUi.csproj", "{B27D9539-05EC-4FA4-9010-33E0DC7943C0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2FCCC72C-8C7E-41BA-B232-FB34B78640B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FCCC72C-8C7E-41BA-B232-FB34B78640B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FCCC72C-8C7E-41BA-B232-FB34B78640B0}.Debug|x64.ActiveCfg = Debug|x64
+		{2FCCC72C-8C7E-41BA-B232-FB34B78640B0}.Debug|x64.Build.0 = Debug|x64
+		{2FCCC72C-8C7E-41BA-B232-FB34B78640B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FCCC72C-8C7E-41BA-B232-FB34B78640B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FCCC72C-8C7E-41BA-B232-FB34B78640B0}.Release|x64.ActiveCfg = Release|x64
+		{2FCCC72C-8C7E-41BA-B232-FB34B78640B0}.Release|x64.Build.0 = Release|x64
+		{621493A3-7264-4D00-A85A-838B998E843C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{621493A3-7264-4D00-A85A-838B998E843C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{621493A3-7264-4D00-A85A-838B998E843C}.Debug|x64.ActiveCfg = Debug|x64
+		{621493A3-7264-4D00-A85A-838B998E843C}.Debug|x64.Build.0 = Debug|x64
+		{621493A3-7264-4D00-A85A-838B998E843C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{621493A3-7264-4D00-A85A-838B998E843C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{621493A3-7264-4D00-A85A-838B998E843C}.Release|x64.ActiveCfg = Release|x64
+		{621493A3-7264-4D00-A85A-838B998E843C}.Release|x64.Build.0 = Release|x64
+		{B27D9539-05EC-4FA4-9010-33E0DC7943C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B27D9539-05EC-4FA4-9010-33E0DC7943C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B27D9539-05EC-4FA4-9010-33E0DC7943C0}.Debug|x64.ActiveCfg = Debug|x64
+		{B27D9539-05EC-4FA4-9010-33E0DC7943C0}.Debug|x64.Build.0 = Debug|x64
+		{B27D9539-05EC-4FA4-9010-33E0DC7943C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B27D9539-05EC-4FA4-9010-33E0DC7943C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B27D9539-05EC-4FA4-9010-33E0DC7943C0}.Release|x64.ActiveCfg = Release|x64
+		{B27D9539-05EC-4FA4-9010-33E0DC7943C0}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

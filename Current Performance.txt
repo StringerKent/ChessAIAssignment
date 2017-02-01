@@ -1,0 +1,27 @@
+TestBestMoveStart, Debug
+========================
+
+e4 (-10)
+Best line: Nc6 d4 d5 Nc3 
+Nodes: 62452
+Leafs: 44292
+Quite search nodes: 14521
+BetaCuts: 1826
+AlphaCuts: 13171
+
+Position DB:
+Entries: 217055
+Matches: 194885
+Collisions: 0
+
+
+Debug Trace:
+Start Depth 1
+End depth 1 (0,03)
+Start Depth 2
+End depth 2 (0,11)
+Start Depth 3
+End depth 3 (0,29)
+Start Depth 4
+End depth 4 (2,43)
+Start Depth 5

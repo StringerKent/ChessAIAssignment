@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Chess;
+using ChessUi.Properties;
 using Color = System.Drawing.Color;
 
-namespace ChessApplication
+namespace ChessUi
 {
     public class VisibleBoard
     {
@@ -20,21 +18,20 @@ namespace ChessApplication
             Engine = engine;
         }
 
-        public Game Game { get; }
-        public Engine Engine { get; }
+        private Game Game { get; }
+        private Engine Engine { get; }
 
         public Dictionary<Square, RectangleF> Squares { get; set; } = new Dictionary<Square, RectangleF>();
 
-        public float Left { get; set; }
-        public float Top { get; set; }
-        public float SquareSide { get; set; }
-        public float Side { get; set; }
+        private float Left { get; set; }
+        private float Top { get; set; }
+        private float SquareSide { get; set; }
+        private float Side { get; set; }
         public Square MouseDownSquare { get; set; }
         public Square MouseUpSquare { get; set; }
-        public int MouseX { get; set; }
-        public int MouseY { get; set; }
-        public string LastMessage { get; set; }
-        public List<Square> HiLights { get; set; } = new List<Square>();
+        public int MouseX { private get; set; }
+        public int MouseY { private get; set; }
+        private List<Square> HiLights { get; set; } = new List<Square>();
 
         public static Color SelectedColor = Color.FromArgb(255, 204, 232, 255);
 
@@ -58,18 +55,8 @@ namespace ChessApplication
             DrawSquares(g);
             DrawLabels(g);
             DrawToPlay(g);
-            DrawLastMessage(g);
         }
-
-        private void DrawLastMessage(Graphics g) {
-            var text = LastMessage;
-            var size = SquareSide / 4;
-            size = size < 1 ? 1 : size;
-            var labelFont = new Font(FontFamily.GenericSansSerif, size);
-
-            g.DrawString(text, labelFont, Brushes.White, g.ClipBounds.Width / 2, 10);
-        }
-
+        
         private void DrawToPlay(Graphics g) {
             var doing = " to play";
             if (Engine.ThinkingFor != null)
@@ -100,7 +87,7 @@ namespace ChessApplication
 
             var labels = "abcdefgh".ToCharArray();
             for (int i = 0; i < 8; i++) {
-                var x = Flipped ? Left + (Side - ((int)i + 1) * SquareSide) + SquareSide / 4 : Left + i * SquareSide + SquareSide / 4;
+                var x = Flipped ? Left + (Side - (i + 1) * SquareSide) + SquareSide / 4 : Left + i * SquareSide + SquareSide / 4;
                 var y = Top + SquareSide * 8;
                 g.DrawString(labels[i].ToString(), labelFont, Brushes.White, x, y);
             }
@@ -132,6 +119,10 @@ namespace ChessApplication
                     if (chessSquare.Piece != null && MouseDownSquare != chessSquare) {
                         if (_offsetPiece == null || chessSquare.Piece != _offsetPiece.Item1)
                             g.DrawString(chessSquare.Piece.ImageChar.ToString(), pieceFont, Brushes.Black, x + SquareSide / 16, y + SquareSide / 4);
+                        //{
+                        //    var image = GetImage(chessSquare.Piece);
+                        //    g.DrawImage(image, rect);
+                        //}
                     }
 
                     //g.DrawString(chessSquare.ToString(), new Font(FontFamily.GenericSansSerif, 12), Brushes.Red, x + SquareSide / 16,
@@ -145,6 +136,42 @@ namespace ChessApplication
 
             }
 
+        }
+
+        private Image GetImage(Piece piece)
+        {
+            if (piece.Color == Chess.Color.Black)
+            {
+                if (piece is Pawn)
+                    return Resources.BlackPawn;
+                if (piece is Bishop)
+                    return Resources.BlackBishop;
+                if (piece is Knight)
+                    return Resources.BlackKnight;
+                if (piece is Rook)
+                    return Resources.BlackRook;
+                if (piece is Queen)
+                    return Resources.BlackQueen;
+                if (piece is King)
+                    return Resources.BlackKing;
+            }
+            else
+            {
+                if (piece is Pawn)
+                    return Resources.WhitePawn;
+                if (piece is Bishop)
+                    return Resources.WhiteBishop;
+                if (piece is Knight)
+                    return Resources.WhiteKnight;
+                if (piece is Rook)
+                    return Resources.WhiteRook;
+                if (piece is Queen)
+                    return Resources.WhiteQueen;
+                if (piece is King)
+                    return Resources.WhiteKing;
+            }
+
+            throw new ApplicationException("Unknown piece type");
         }
 
         internal bool Flipped { get; set; }
@@ -188,6 +215,6 @@ namespace ChessApplication
             _offsetPiece = new Tuple<Piece, PointF>(piece, new PointF(x + SquareSide / 16, y + SquareSide / 4));
         }
 
-        private Tuple<Piece, PointF> _offsetPiece = null;
+        private Tuple<Piece, PointF> _offsetPiece;
     }
 }

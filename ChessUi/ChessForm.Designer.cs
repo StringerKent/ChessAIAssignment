@@ -1,4 +1,4 @@
-﻿namespace ChessApplication
+﻿namespace ChessUi
 {
     partial class ChessForm
     {
@@ -52,7 +52,7 @@
             this.labelScoreAndLine = new System.Windows.Forms.Label();
             this.buttonFlip = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.panel1 = new ChessApplication.DoubledBufferedPanel();
+            this.panel1 = new DoubledBufferedPanel();
             this.progressBarBottom = new System.Windows.Forms.ProgressBar();
             this.progressBarTop = new System.Windows.Forms.ProgressBar();
             this.menuStrip1.SuspendLayout();

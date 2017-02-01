@@ -157,7 +157,7 @@ namespace Chess
         }
 
         public override string ToString() {
-            return $"Entries: {Dictionary.Count}\r\nMatches: {Matches}";
+            return $"Entries: {Dictionary.Count.KiloNumber()}\r\nMatches: {Matches.KiloNumber()}";
         }
 
         internal static PositionsDatabase Instance { get; private set; } = new PositionsDatabase();

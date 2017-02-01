@@ -381,25 +381,18 @@ namespace Chess
         public string DatabaseStats { get; set; }
         public int QuiteSearchNodes { get; set; }
         public bool MateFound { get; set; }
-
-        public Evaluation Copy() {
-            return new Evaluation {
-                CmdsString = CmdsString,
-                Value = Value,
-                Move = Move,
-                LeafVisits = LeafVisits,
-                Nodes = Nodes,
-                BestLine = BestLine,
-                AlphaCutoff = AlphaCutoff,
-                BetaCutoff = BetaCutoff,
-                DatabaseStats = DatabaseStats,
-                QuiteSearchNodes = QuiteSearchNodes,
-                MateFound = MateFound
-            };
-        }
+        
 
         public override string ToString() {
-            return $"{Move} ({Value})\r\nBest line: {BestLine}\r\nNodes: {Nodes}\r\nLeafs: {LeafVisits}\r\nQuite search nodes: {QuiteSearchNodes}\r\nBetaCuts: {BetaCutoff}\r\nAlphaCuts: {AlphaCutoff}\r\n\r\nPosition DB:\r\n{DatabaseStats}";
+            return $"{Move} ({Value})\r\nBest line: {BestLine}\r\nNodes: {Nodes.KiloNumber()}\r\nLeafs: {LeafVisits.KiloNumber()}\r\nQuite search nodes: {QuiteSearchNodes.KiloNumber()}\r\nBetaCuts: {BetaCutoff.KiloNumber()}\r\nAlphaCuts: {AlphaCutoff.KiloNumber()}\r\n\r\nPosition DB:\r\n{DatabaseStats}";
+        }
+    }
+
+    public static class NumberExtensions
+    {
+        public static string KiloNumber(this int number)
+        {
+            return number/1000 + "k";
         }
     }
 }

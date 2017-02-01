@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Chess;
-using Color = System.Drawing.Color;
-using static System.Windows.Forms.ListViewItem;
 
-namespace ChessApplication
+namespace ChessUi
 {
     public partial class ChessForm : Form
     {
@@ -193,7 +190,7 @@ namespace ChessApplication
                 if (ChessGame.TryPossibleMoveCommand(cmd)) {
                     var evaluatedMove = new Evaluation { Move = ChessGame.OtherPlayer.Moves.Last() };
                     MoveToList(evaluatedMove);
-                    SetScoreLabel(evaluatedMove);
+                    //SetScoreLabel(evaluatedMove);
                     panel1.Invalidate();
                     Application.DoEvents();
                     CheckForEnd();
@@ -210,7 +207,7 @@ namespace ChessApplication
         private void CheckForEnd() {
             if (ChessGame.Ended) {
                 if (ChessGame.Winner != null)
-                    MessageBox.Show(this, $"{ChessGame.Winner.Color} won!", "Chess game");
+                    MessageBox.Show(this, $"{ChessGame.Winner.Color} won!", "Chess Ai");
                 else
                     MessageBox.Show(this, "Draw");
             }
@@ -280,12 +277,7 @@ namespace ChessApplication
 
             if (ChessGame.CurrentPlayer.Color == Chess.Color.Black && checkedBlack ||
                 ChessGame.CurrentPlayer.Color == Chess.Color.White && checkWhite) {
-                //var moveResult = Engine.BestAlphaBetaMove(ChessGame, 3);
-                //var depth = ChessGame.CurrentPlayer.Color == Chess.Color.White
-                //    ? numericUpDownDepthWhite.Value
-                //    : numericUpDownDepthBlack.Value;
-
-
+                
                 var thinkFor = ChessGame.CurrentPlayer.Color == Chess.Color.White
                     ? TimeSpan.FromSeconds((int)numericUpDownThinkWhite.Value)
                     : TimeSpan.FromSeconds((int)numericUpDownThinkBlack.Value);
@@ -299,7 +291,7 @@ namespace ChessApplication
 
                 var moveResult = Engine.AsyncBestMoveDeepeningSearch(ChessGame.Copy(), thinkFor);
 
-                //make the progressbar start moving
+                //make the progress bar start moving
                 Thread.Sleep(10);
                 InitProgress();
                 panel1.Invalidate();
@@ -377,7 +369,7 @@ namespace ChessApplication
         }
 
         private void SetScoreLabel(Evaluation evaluatedMove) {
-            labelScoreAndLine.Text = $"Nodes: {evaluatedMove.Nodes}  Score: {evaluatedMove.Value}  Best line: {evaluatedMove.BestLine}";
+            labelScoreAndLine.Text = $"Best: {evaluatedMove.Move}   Nodes: {evaluatedMove.Nodes.KiloNumber()}   Score: {evaluatedMove.Value}   Best line: {evaluatedMove.BestLine}";
         }
 
         private void checkBoxAI_white_CheckedChanged(object sender, EventArgs e) {
@@ -431,14 +423,10 @@ namespace ChessApplication
     {
         public DoubledBufferedPanel() {
             base.DoubleBuffered = true;
-
-            //SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            //SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            //UpdateStyles();
         }
     }
 
-    public class MoveListSubItem : ListViewSubItem
+    public class MoveListSubItem : ListViewItem.ListViewSubItem
     {
         public MoveListSubItem(Evaluation evaluatedMove) {
             EvaluatedMove = evaluatedMove;

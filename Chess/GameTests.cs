@@ -702,7 +702,6 @@ namespace Chess
 
             game.UndoLastMove();
             game.UndoLastMove(); //undone all moves
-            //This test was written to prove a bug.
             pawn = game.WhitePlayer.Pieces.OfType<Pawn>().Single();
             Assert.AreSame(pawn.Square.Piece, pawn );
         }

@@ -2,38 +2,22 @@ http://www.chessbin.com/archive
 
 Backa, starta flera gånger ger draw.
 
-Cut offs i root-funktionen?
-
-Lägga till bad bishops igen och testa.
-
 50 move rule. Resetta vid bondedrag eller capture.
-
-Kolla prestanda.
-
-max-gräns på 127 move commands. Töm hela databasen och och börja om när det inträffar.
-
-Om alpha beta kunde utvärdera ett drag helt och hållet utan om man visste allt om alla möjliga drag spelaren har just då,
-så skulle man nog kunna tjäna massor av tid pga cut off.
-Problemet är kanske move ordering. Hur ska man kunna veta vilket som är bäst?
-
 
 Spela mot dator på chess.com.
 	Nivå 5: 1-0
 	Nivå:6: 0-0
 	Nivå 7: 0-1
-
-Namn på processen. config?
-
+	
 Läsa igenom all kod för att se om något kan göras mer pedagogiskt.
 
-Kod till github.
+Lägga till bad bishops igen och testa.
 
-Skriva om syftetet, att det ska vara pedagogiskt.
 Skriva om sökning med ökande djup, exempel på matt på tre drag. 18 vs 1 sekund.
+
 Skriva om packning och vad som sparas för varje drag. Recursions value.
 
 Tester för GetCaptures
-
 
 Testa hela cpu-cpu-matcher för att få fram fel.
 

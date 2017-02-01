@@ -144,6 +144,11 @@ namespace Chess
                 return false;
             PerformLegalMove(move);
             CommandCount++;
+            if (CommandCount > 127) //There was not room for a bigger number
+            {
+                CommandCount = 0;
+                PositionsDatabase.Instance.Reset();
+            }
             HashHistory.Push(Hash);
 
             if (Ended)

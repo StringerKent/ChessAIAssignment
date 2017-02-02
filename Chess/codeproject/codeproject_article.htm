@@ -81,7 +81,7 @@ License:     <a href="https://opensource.org/licenses/MS-RL">Microsoft Reciproca
     <!--  Include download and sample image information.                       -->
 
     <ul class=download>
-        <li><a href="Source.zip">Download source - 121 Kb</a></li>
+        <li><a href="source.zip">Download source - 121 Kb</a></li>
     </ul>
 
     <p>
@@ -123,14 +123,14 @@ License:     <a href="https://opensource.org/licenses/MS-RL">Microsoft Reciproca
     <p>The Chess UI is a simple Windows forms application with only a few features like load, save and setting the time for computer to think.</p>
 
     <p>
-        There is a lot of free and good literature on the web about explaining the different algorithms and techniques in a chess engine.<br />
+        There is a lot of free and good literature on the web explaining the different algorithms and techniques in a chess engine.<br />
         The goal of this article is not to explain them again. Instead it provides links to the sites that helped me.<br />
     </p>
 
     <h2>Features</h2>
     <ul>
         <li>Iterative <a href="http://will.thimbleby.net/algorithms/doku.php?id=minimax_search_with_alpha-beta_pruning">Alpha-Beta Pruning</a>, which drastically decreases the number of positions that needs to be analyzed.<br /> At depth zero a depth two <a href="https://chessprogramming.wikispaces.com/Quiescence+Search">Quiescence Search</a> is also performed to prevent the risk of horizon effect.</li>
-        <li><a href="https://chessprogramming.wikispaces.com/Zobrist+Hashing">Zobrist Hashing</a>. A very cool and powerful algorithm invented by some very smart guy long time ago. A few million positions are cashed in a dictionary so every position only has to be calculated once.</li>
+        <li><a href="https://chessprogramming.wikispaces.com/Zobrist+Hashing">Zobrist Hashing</a>. A very cool and powerful algorithm invented by someone smart long time ago. I keep a few million positions in a database so every position only has to be calculated once.</li>
         <li>Parallel threads to increase performance of engine if multiple cores are available.</li>
         <li>The chess board is represented by a single square[64] array. (Bit-boards are a lot faster but perhaps little bit more complicated.)</li>
         <li>Score of the position is based on material and a positional score for each piece. In the opening, a few basic opening principles gives extra points. Special calculations are also performed in the end game.</li>
@@ -160,10 +160,10 @@ License:     <a href="https://opensource.org/licenses/MS-RL">Microsoft Reciproca
     <ol>
         <li>Command Number (7 bits), used for cleaning old positions not needed.</li>
         <li>If the move was legal i.e. own king in check. (1 bit)</li>
-        <li>If own king is in check (1 bit)</li>
+        <li>Opponent king check (1 bit)</li>
         <li>The score of the board. (13 bits)</li>
-        <li>How many recursions it took to find the score. A deeper search replaces less deeper. (5 bits)</li>
-        <li>DrawByRepetion, UnsufficienMaterial, StaleMate and Mate. (One bit each)</li>
+        <li>How many recursions it took to find the score. A deeper search replaces scores that are found less deeper for the same position. (5 bits)</li>
+        <li>DrawByRepetion, UnsufficienMaterial, StaleMate and Mate. (4 bit, one bit each)</li>
     </ol>
 <pre>
     <code>

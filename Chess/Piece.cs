@@ -550,9 +550,9 @@ namespace Chess
 
         public override int PositionValue(Game game) {
             if (Color == Color.White) {
-                return (Square.File == File.D && Square.Rank == Rank._4) || (Square.File == File.E && Square.Rank == Rank._4) ? 10 : 0;
+                return (Square.File == File.D && Square.Rank == Rank._4) || (Square.File == File.E && Square.Rank == Rank._4) ? 11 : 0;
             } else {
-                return (Square.File == File.D && Square.Rank == Rank._5) || (Square.File == File.E && Square.Rank == Rank._5) ? 10 : 0;
+                return (Square.File == File.D && Square.Rank == Rank._5) || (Square.File == File.E && Square.Rank == Rank._5) ? 11 : 0;
             }
         }
 

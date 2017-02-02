@@ -14,7 +14,18 @@ namespace ChessConsole
     /// </summary>
     class Program
     {
-        static void Main(string[] args) {
+        static void Main(string[] args)
+        {
+            var a = (int)200;
+            Console.WriteLine($"{a}: {Convert.ToString(a, 2)}");
+            a <<= 1;
+            Console.WriteLine($"{a}: {Convert.ToString(a, 2)}");
+
+            Console.ReadLine();
+        }
+
+        private void TestPerformance()
+        {
             var testClass = new EngineTests();
             try {
                 testClass.Setup();
@@ -22,8 +33,6 @@ namespace ChessConsole
             } catch (Exception ex) {
                 Console.WriteLine(ex);
             }
-
-            Console.ReadLine();
         }
     }
 }

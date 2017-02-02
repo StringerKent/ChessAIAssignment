@@ -89,6 +89,7 @@
   <ItemGroup>
     <Content Include="codeproject\chessui.png" />
     <Content Include="codeproject\codeproject_article.htm" />
+    <Content Include="codeproject\Tests.png" />
     <Content Include="TestGames\mated.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

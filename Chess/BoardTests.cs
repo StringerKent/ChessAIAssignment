@@ -50,8 +50,8 @@ namespace Chess
             Assert.IsTrue(Game.TryPossibleMoveCommand(new MoveCommand(File.D, Rank._2, File.D, Rank._4)));
             Assert.IsTrue(Game.TryPossibleMoveCommand(new MoveCommand(File.D, Rank._7, File.D, Rank._5)));
 
-            Assert.AreEqual(10, Game.Board.Square(File.D, Rank._4).Piece.PositionValue(Game));
-            Assert.AreEqual(10, Game.Board.Square(File.D, Rank._5).Piece.PositionValue(Game));
+            Assert.AreEqual(11, Game.Board.Square(File.D, Rank._4).Piece.PositionValue(Game));
+            Assert.AreEqual(11, Game.Board.Square(File.D, Rank._5).Piece.PositionValue(Game));
         }
 
         [TestMethod]

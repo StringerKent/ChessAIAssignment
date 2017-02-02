@@ -225,7 +225,7 @@ namespace Chess
         internal void CleanUpOldPositions() {
             Debug.WriteLine("Before clean: " + Dictionary.Count);
             lock (_cleanLockObject) {
-                while (Dictionary.Count > 5000000) {
+                while (Dictionary.Count > 2500000) {
                     //Removing all commands older than i.
                     //If the dictionary is still to large it decreases the boundary age of commands that should be removed.
                     Dictionary = Dictionary.Where(x => ((x.Value >> 25) & 0x7F) > OldestCommands)

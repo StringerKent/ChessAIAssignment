@@ -14,7 +14,15 @@ namespace Chess
         {
             File = file;
             Rank = rank;
+            var squareIndex =  (int)file + (int)rank*8;
+            Bit = (ulong)1 << squareIndex;
         }
+
+        /// <summary>
+        /// Bitwise operations can be used for faster calculations using this number.
+        /// </summary>
+        public ulong Bit { get; set; }
+
         public Color Color { get; set; }
 
         public Piece Piece

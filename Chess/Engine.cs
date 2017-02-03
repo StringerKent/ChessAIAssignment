@@ -84,20 +84,7 @@ namespace Chess
                     //Keep the last best moves found
                     break;
                 }
-                //Does not replace the best move unless a better score is found on a deeper search.
-                var bestCommandAtDepth = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
-                if (maximizing)
-                {
-                    if (bestCommandAtDepth.Value > bestCommand.Value)
-                        bestCommand = bestCommandAtDepth;
-                }
-                else
-                {
-                    if (bestCommandAtDepth.Value < bestCommand.Value)
-                        bestCommand = bestCommandAtDepth;
-                }
-                bestCommand.BestLine = bestCommandAtDepth.BestLine;
-
+                bestCommand = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
                 if (bestCommand.MateFound)
                     break;
                 Debug.WriteLine($"End depth {depth} ({Stopwatch.Elapsed.TotalSeconds.ToString("F")})");

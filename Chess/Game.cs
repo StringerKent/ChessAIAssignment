@@ -290,12 +290,11 @@ namespace Chess
         }
 
         internal IList<Move> GetPossibleMoves() {
-
             var moves = new List<Move>();
             foreach (var piece in CurrentPlayer.Pieces)
                 piece.AddPossibleMoves(this, moves);
-            AddCastling(moves);
 
+            AddCastling(moves);
             return moves;
         }
 

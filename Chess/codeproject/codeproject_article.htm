@@ -64,7 +64,7 @@ scripts and style sheets.
     <!--  Fill in the details (CodeProject will reformat this section for you) -->
 
 <pre>
-Title:       Test Driven Chess Artificial Intelligence. 
+Title:       Test Driven Chess Artificial Intelligence
 Author:      Kristian Ekman
 Email:       kristian.ekman.swe@gmail.com
 Language:    C# 6.0
@@ -95,11 +95,11 @@ License:     <a href="https://opensource.org/licenses/MS-RL">Microsoft Reciproca
     <h2>Introduction</h2>
 
     <p>
-        This is a fully functional yet simple chess program that aims to help you to understand how a chess engine could be implemented.<br />
+        This is a fully functional yet simple chess program that aims to help you to understand how a chess engine works.<br />
         There are already open source chess engines on the Internet which focus on high performance.<br />
         This is a standard object oriented C# solution that is meant to be easier to understand.<br />
-        The focus has not been to make a fast and high rated chess engine. I have developed a working chess AI that plays descent good moves with code that you hopefully like to read and understand.<br />
-        The main goals has been to correctly implement Alpha Beta Pruning and Zobrist Hashing in a way that can be understood by C# developers.
+        The focus has not been to make a fast and high rated chess engine. I have developed a working chess AI that plays descent good moves with code that you hopefully like to read.<br />
+        A few of the more specific goals has been to correctly implement Alpha Beta Pruning and Zobrist Hashing in a way that I think can be understood by most developers.
     </p>
 
     <H2>Background</H2>
@@ -107,108 +107,93 @@ License:     <a href="https://opensource.org/licenses/MS-RL">Microsoft Reciproca
         I have tried before (about ten years ago) to implement a chess engine. This time I decided to use the TDD test first approach.<br />
         I like TDD and I think using TDD was the main reason the engine worked this time. It is very important that the rules of chess are 100% correct implemented.<br />
         Equally important is that undoing moves result exactly into the previous state.<br />
-        I also think that TDD contributes to good code structure and a maintainable system design. It took me about six weeks to finish the first version.
+        I also think that TDD contributes to good code structure and a maintainable system design.
     </p>
 
-    <h2>The Chess Engine</h2>
-    <p>This is how my chess engine is implemented</p>
-    <ol>
-        <li>
-            <b>The board</b><br />
-            The engine must of course understand what chess is.<br />
-            First it has classes for the board, squares, the pieces and their sub types. Also two players, black and white.
-        </li>
-        <li>
-            <b>Moves</b><br />
-            Each piece type has a move pattern. It is used to generate moves.
-            First a list of pseudo legal moves are generated for all pieces of a player. After a pseudo legal move is made it is tested weather the own king is in check.
-            Own king can´t be in check after a move because those moves are illegal in chess.<br />
-            The legal moves are kept.
-        </li>
-        <li>
-            <b>Evaluation</b><br />
-            It is actually better to evaluate moves right away, that is because the search is much more effective when moves are ordered. More about that later.<br />
-            Evaluation gives a score. If black is better it is positive and negative for positions in favor of white.<br />
-            Each piece has a value. Queen is nine. Rook five. Bishops and knight three and pawns are one.<br />
-            The material score is sum of blacks pieces subtracted by sum of whites.<br />
-            Position of pieces are also important. My chess engine evaluates
-            <ul>
-                <li>
-                    Control of center (d and e pawn on rank 4 for white and rank 5 for black)
-                </li>
-                <li>Rooks on open files</li>
-                <li>Queen movement in the opening is bad.</li>
-                <li>Castling to get the king safe is good.</li>
-                <li>Bad knights close to the border.</li>
-                <li>Double pawns</li>
-                <li>Moving bishops and knights once and only once in the opening is good</li>
-            </ul>
-            Evaluation is of course also about the game ending and who is the winner. When a player is in check and has no legal moves it is check mate and the score is set to a very large number if black wins and very low for white.<br />
-            As you probably know, a chess game can also end in draw if a player has no legal moves (Stale mate) or if a game has repeated the same position three times.<br />
-            The game also ends in a draw if no capture or pawn move has been made the last 50 moves.
-        </li>
-        <li>
-            <b>Search</b><br />
-            Now that we can tell bad moves from good we can search for good moves.<br />
-            It is first decided at what depth a search should be performed. It starts at depth 1<br />
-            White player makes his moves and between every white move black player makes his moves for every white move.<br />
-            Since black player will try its best to get as large score as possible,<br />
-            the best move for white is the move that results into a list of black response moves with the lowest max value.<br />
-            This min max search is also greatly improved by logic algorithm called alpha beta pruning, which cuts off many obviously bad moves.<br />
-            <a href="http://will.thimbleby.net/algorithms/doku.php?id=minimax_search_with_alpha-beta_pruning" target="_blank">This is a link to a nice animation explaining Alpha Beta Pruning</a>
-            The search is made with increasing depth until the set time runs out. After each iteration the moves are ordered so good moves are evaluated first.
-        </li>
-    </ol>
-
-    <p>Anyone interested in chess programming should learn a lot by studying my source code also.</p>
     <h2>The code</h2>
-<p>
-    The solution consists of two main projects. The engine (chess.dll) and the user interface.<br/>
-    Chess.dll has everything about the game, the board, the rules and the engine.<br/>
-    It also contains all tests. I saw no reason for having unit-tests in a separate project in this implementation. This way one can easily see what unit-tests belongs to which class.<br/>
-    There are currently 78 tests. Most of them are very fast and code coverage is about 100%.
-    Total number of lines of code are just under 3000, including tests and user interface.<br/>
-    The engine and game class where most of the logic is, is less than 700 lines of code.
-</p>
+    <p>
+        The solution consists of two main projects. The engine (chess.dll) and the user interface.<br />
+        Chess.dll has everything about the game, the board, the rules and the engine.<br />
+        It also contains all tests. I saw no reason for having unit-tests in a separate project in this implementation. This way one can easily see what unit-tests belongs to which class.<br />
+        There are currently 78 tests. Most of them are very fast and code coverage is about 100%.
+        Total number of lines of code are just under 3000, including tests and user interface.<br />
+        The engine and game class where most of the logic is, is less than 700 lines of code.
+    </p>
 
+    <p>
+        <img src="tests.png" alt="tests.png"
+             style="width: 600px; height: 300px">
+    </p>
 
-<p>
-    <img src="tests.png" alt=""
-         style="width: 600px; height: 300px">
-</p>
-
-<p>The Chess UI is a Windows Forms application with only a few features like load, save and setting the time for computer to think.</p>
+    <p>The Chess UI is a Windows Forms application with only a few features like load, save and setting the time for computer to think.</p>
     <p>
         There is a lot of free and good literature on the web explaining the different algorithms and techniques in a chess engine.<br />
-        Below are links to pages that has helped me.<br />
+        Below you find links to pages that has helped me.<br />
     </p>
 
     <h2>Features</h2>
     <ul>
-        <li>Iterative <a href="http://will.thimbleby.net/algorithms/doku.php?id=minimax_search_with_alpha-beta_pruning"  target="_blank">Alpha-Beta Pruning</a>, which drastically decreases the number of positions that needs to be analyzed.<br /> At depth zero a depth two <a href="https://chessprogramming.wikispaces.com/Quiescence+Search">Quiescence Search</a> is also performed to prevent the risk of <a href="https://chessprogramming.wikispaces.com/Horizon+Effect" target="_blank">horizon effect</a>.</li>
-        <li><a href="https://chessprogramming.wikispaces.com/Zobrist+Hashing"  target="_blank">Zobrist Hashing</a> to create fast lookup for already evaluated positions. I keep a few million positions in a database so every position only has to be calculated once.</li>
+        <li>Iterative <a href="http://will.thimbleby.net/algorithms/doku.php?id=minimax_search_with_alpha-beta_pruning" target="_blank">Alpha-Beta Pruning</a>, which drastically decreases the number of positions that needs to be analyzed.<br /> At depth zero a depth two <a href="https://chessprogramming.wikispaces.com/Quiescence+Search">Quiescence Search</a> is also performed to prevent the risk of <a href="https://chessprogramming.wikispaces.com/Horizon+Effect" target="_blank">horizon effect</a>.</li>
+        <li><a href="https://chessprogramming.wikispaces.com/Zobrist+Hashing" target="_blank">Zobrist Hashing</a> to create fast lookup for already evaluated positions. I keep a few million positions in a database so every position only has to be calculated once.</li>
         <li>Parallel threads to increase performance of engine if multiple cores are available.</li>
         <li>The chess board is represented by a single square[64] array. (Bit-boards are a lot faster but perhaps little bit more complicated.)</li>
         <li>Score of the position is based on material and a positional score for each piece. In the opening, a few basic opening principles gives extra points. Special calculations are also performed in the end game.</li>
         <li>Draw by repetition, insufficient material and stale mate are also evaluated.</li>
         <li><i>Opening book is not yet implemented</i></li>
     </ul>
-    <h2>Performance</h2>
-    <p>
-        The engine analyses about 50k positions/sec on my dual core 2.7Ghz laptop. Which is mostly enough to see about five or six moves ahead in the middle game.<br />
-        Most average skilled chess players (like me) should have quite some difficulty beating the engine given the same time to think.<br />
-        When testing it in a chess.com CPU game, I estimate it has a rating around 1300.<br />
-        I think the best way to improve its performance would be to replace board representation with a bit board.<br />
-        That would increase move generation and position evaluation so even deeper searches could be performed.
-    </p>
+
+    <h2>The Chess Engine</h2>
+    <p>This is how my chess engine is implemented</p>
+    <h3>The board</h3>
+    The engine must of course understand what chess is.<br />
+    There are types for the board, its squares, the pieces and their sub types. Also two players, black and white.
+    <h3>Moves</h3>
+    Each piece type has a move pattern. It is used to generate moves.
+    A list of pseudo legal moves are generated for all pieces of a player. After a pseudo legal move is made it is tested weather the own king is in check.
+    Own king can´t be in check after a move so those moves are illegal in chess.<br />
+    The legal moves are kept.
+    <h3>Evaluation</h3>
+    It is actually better to evaluate moves right away. That is because the search is much more effective when moves are ordered. More about that later.<br />
+    Evaluation gives a score. If black is better it is positive and negative for positions in favor of white.<br />
+    Each piece has a value. Queen is nine. Rook five. Bishops and knight three and pawns are one.<br />
+    The material score is sum of blacks pieces subtracted by sum of whites.<br />
+    Position of pieces are also important. My chess engine evaluates
+    <ul>
+        <li>
+            Control of center (d and e pawn on rank 4 for white and rank 5 for black)
+        </li>
+        <li>Rooks on open files</li>
+        <li>Queen movement in the opening is bad.</li>
+        <li>Castling to get the king safe is good.</li>
+        <li>Bad knights close to the border.</li>
+        <li>Double pawns</li>
+        <li>Moving bishops and knights once and only once in the opening is good</li>
+    </ul>
+    Evaluation is also about the game ending and who is the winner. When a player is in check and has no legal moves it is check mate and the score is set to a very large number if black wins and very low for white.<br />
+    As you probably know, a chess game can also end in draw if a player has no legal moves (Stale mate) or if a game has repeated the same position three times.<br />
+    The game also ends in a draw if no capture or pawn move has been made the last 50 moves.
+    <h3>Search</h3>
+    Now that we can tell bad moves from good we can search for good moves.<br />
+    It is first decided at what depth a search should be performed. It starts at depth 1<br />
+    White player makes his moves and between every white move black player makes his moves for every white move.<br />
+    Since black player will try its best to get as large score as possible, the best move for white is the move that results into a list of black response moves with the lowest max value.<br />
+    This min max search is also greatly improved by logic algorithm called alpha beta pruning, which cuts off many obviously bad moves.<br />
+    <a href="http://will.thimbleby.net/algorithms/doku.php?id=minimax_search_with_alpha-beta_pruning" target="_blank">This is a link to a nice animation explaining Alpha Beta Pruning</a>
+    The search is made with increasing depth until the set time runs out. After each iteration the moves are ordered so good moves are evaluated first.
 
     <p>
-        The Zobrist Hash Key is stored in a in memory database together with an integer containing a few data about the position.<br />
-        These data only has to be calculated once. Next time same position hash shows up, the database is queried with that hash key.
+        If you managed to get every thing right something very cool happens now. Your program suddenly starts to show some intelligence.<br />
+        But you are far from finished. You probably want to make the search more efficient, searching at greater depth and improving performance.<br />
+        What will probably take most of the time is score evaluation, and that can be stored in memory with a <a href="https://chessprogramming.wikispaces.com/Zobrist+Hashing" target="_blank">Zobrist Hash Key</a> for faster lookup.
+    </p>
+    <h2>Performance</h2>
+    <p>
+        The <a href="https://chessprogramming.wikispaces.com/Zobrist+Hashing" target="_blank">Zobrist Hash Key</a> is stored in a in memory database together with an integer containing a few data about the position.<br />
+        These data only has to be calculated once. Next time same hash key shows up, the database is queried with the key.
     </p>
     <p>
         This is the data that is packed in an 32 bit integer.<br />
-        The data is packed to decrease size and increase access to the database with the following function using bit shifts.
+        The data is packed to decrease size and increase access to the database using bit shifts.
     </p>
     <ol>
         <li>Command Number (7 bits), used for cleaning old positions not needed.</li>
@@ -218,62 +203,20 @@ License:     <a href="https://opensource.org/licenses/MS-RL">Microsoft Reciproca
         <li>How many recursions it took to find the score. A deeper search replaces scores that are found less deeper for the same position. (5 bits)</li>
         <li>DrawByRepetion, UnsufficienMaterial, StaleMate and Mate. (4 bit, one bit each)</li>
     </ol>
-<pre>
-    <code>
-    int Pack(byte commandNo, bool legal, bool check, int score, int recursions, ScoreInfo scorInfo) {
-            var build = (int)commandNo;
-            build <<= 1;
-            build |= (legal ? 1 : 0);
-            build <<= 1;
-            build |= (check ? 1 : 0);
-            build <<= 1;
-            build |= score < 0 ? 1 : 0;
-            build <<= 13;
-            build |= Math.Abs(score);
-            build <<= 5;
-            build |= recursions;
-            build <<= 4;
-            build |= (byte)scorInfo;
-            return build;
-        }
-    </code>
-</pre>
-
-    <p>Unpacked in the following way</p>
-<pre>
-    <code>
-void Unpack(int build, out byte oCommandNo, out bool oLegal, out bool check, out ScoreInfo oScoreInfo, out int oScore, out byte oRecursions) {
-        oCommandNo = (byte)((build >> 25) & 0x7F);
-        oLegal = ((build >> 24) & 1) == 1;
-        check = ((build >> 23) & 1) == 1;
-        var negScore = ((build >> 22) & 1) == 1;
-        oScore = (build >> 9) & 0x1FFF;
-        oScore = negScore ? oScore * -1 : oScore;
-        oRecursions = (byte)((build >> 4) & 0x1F);
-        oScoreInfo = (ScoreInfo)(build & 0xF);
-    }
-    </code>
-</pre>
 
     <p>Storing the depth of a search  I think is my own invention. I have not had time to benchmark with or without it but it should contribute with some improvements.</p>
-<!--
-<pre>//
-            // Any source code blocks look like this
-            //
-            var i = 0;
-            ...</pre>
-
-<p>Remember to set the Language of your code snippet using the Language dropdown. </p>
-
-<p>Use the &quot;var&quot; button to wrap Variable or class names in &amp;lt;code&amp;gt;
-    tags like <code>this</code>. </p>
--->
-     
-
-<h2>What I have learned during this project</h2>
-    <p>First of all, write unit tests and write them first. I think you should not writing anything on the program until there is a failing test. This is an excellent way of assuring everything is tested. </p>
     <p>
-        The Alpha Beta algorithm is probably the most challenging part of a chess engine. There are many pseudo code examples on the Internet of it, but the only one that I managed to get to work is the one from <a href="http://will.thimbleby.net/algorithms/doku.php?id=minimax_search_with_alpha-beta_pruning">Algorithm Wiki</a><br />
+        The engine analyses about 50k positions/sec on my dual core 2.7Ghz laptop. Which is mostly enough to see about five or six moves ahead in the middle game.<br />
+        Most average skilled chess players (like me) should have quite some difficulty beating the engine given the same time to think.<br />
+        When testing it in a chess.com CPU game, I estimate it has a rating around 1300.<br />
+        I think the best way to improve its performance would be to replace board representation with a bit board.<br />
+        That would increase move generation and position evaluation so even deeper searches could be performed.
+    </p>
+
+    <h2>What I have learned during this project</h2>
+    <p>It is very important to write unit tests and perhaps even write them first. In TDD you have to have a failing test before you can write the function. This is an excellent way of assuring everything is tested. </p>
+    <p>
+        The Alpha Beta algorithm is probably the most challenging part of a chess engine. There are many pseudo code examples on the Internet. I only managed to get on of them to work. It is the one from <a href="http://will.thimbleby.net/algorithms/doku.php?id=minimax_search_with_alpha-beta_pruning">Algorithm Wiki</a><br />
     </p>
     <p>
         Hashing is an important part of Chess programming. The board has to save a position score for faster access. The hash is stored in an 64 bit datatype but there are many more possible states that a chess game can be in.<br />

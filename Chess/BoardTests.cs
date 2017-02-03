@@ -22,7 +22,7 @@ namespace Chess
             Game.New();
         }
 
-        public Game Game { get; set; }
+        private Game Game { get; set; }
 
         [TestMethod]
         public void TestMaterial()

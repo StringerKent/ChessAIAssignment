@@ -66,16 +66,16 @@ namespace Chess
             var childMoves = game.GetLegalNextMoves(0).OrderFor(game.CurrentPlayer.Color).ToArray();
             var evaluatedMoves = childMoves.Select(x => new Evaluation { CmdsString = x.ToCommandString(), Move = x }).ToArray();
             var maximizing = playerColor == Color.Black;
-            var bestCommand = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
+            var bestEvaluation = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
 
             for (var depth = 1; depth < maxDepth; depth++) {
                 Debug.WriteLine($"Start Depth {depth}");
-                var evalMoveCommands = BestCommandAtDepth(game, evaluatedMoves, depth);
+                var evaluation = BestCommandAtDepth(game, evaluatedMoves, depth);
                 evaluatedMoves = playerColor == Color.White
                     ? evaluatedMoves.OrderBy(x => x.Value).ToArray()
                     : evaluatedMoves.OrderByDescending(x => x.Value).ToArray();
 
-                if (evalMoveCommands == null) //canceled
+                if (evaluation == null) //canceled
                 {
                     if (Aborted) {
                         ThinkingFor = null;
@@ -84,13 +84,13 @@ namespace Chess
                     //Keep the last best moves found
                     break;
                 }
-                bestCommand = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
-                if (bestCommand.MateFound)
+                bestEvaluation = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
+                if (bestEvaluation.MateFound)
                     break;
                 Debug.WriteLine($"End depth {depth} ({Stopwatch.Elapsed.TotalSeconds.ToString("F")})");
             }
             ThinkingFor = null;
-            return bestCommand;
+            return bestEvaluation;
         }
 
         private int CoreCount { get; }
@@ -110,44 +110,45 @@ namespace Chess
             var beta = 8000;
             var canceled = false;
             var mateFound = false;
-            //Performance gain on multi core CPU:s with parallel search
-            Parallel.ForEach(evaluations,
+            var commands = evaluations.Select(e => e.CmdsString);
+            Parallel.ForEach(commands,
                 new ParallelOptions { MaxDegreeOfParallelism = parallelism },
-                (childEvaluation) => {
+                (command) => {
                     if (!mateFound) {
                         var gameCopy = game.Copy();
                         //Each thread needs its own Game and moves not to collide with other threads.
                         var copyMoves = gameCopy.GetLegalNextMoves(0).OrderFor(gameCopy.CurrentPlayer.Color);
-                        var copyMove = copyMoves.Single(cm => cm.ToCommandString() == childEvaluation.CmdsString);
+                        var copyMove = copyMoves.Single(cm => cm.ToCommandString() == command);
                         gameCopy.PerformLegalMove(copyMove);
                         var v = AlphaBeta(gameCopy, copyMove, alpha, beta, !maximizing, depth, ref canceled, 1); //Switched Player!
                         gameCopy.UndoLastMove();
-                        childEvaluation.Value = v;
+
+                        
+                        var eval = evaluations.Single(x => x.Move.ToCommandString() == command);
+                        eval.Value = v;
                         mateFound = (maximizing && v == 8000) || (!maximizing && v == -8000);
-                        childEvaluation.BestLine = copyMove.BestLine();
-                        childEvaluation.Move.ScoreInfo = copyMove.ScoreInfo;
-                        childEvaluation.Move.IsCheck = copyMove.IsCheck;
-                        childEvaluation.MateFound = mateFound;
+                        eval.BestLine = copyMove.BestLine();
+                        eval.Move.ScoreInfo = copyMove.ScoreInfo;
+                        eval.Move.IsCheck = copyMove.IsCheck;
+                        eval.MateFound = mateFound;
                     }
                 });
 
-            var bestCommand = maximizing ? evaluations.OrderBy(x => x.Value).Last() : evaluations.OrderBy(x => x.Value).First();
+            
             if (canceled) {
-                //Console.WriteLine($"\r\nDepth: {depth}\r\n Canceled");
+                Debug.WriteLine($"\r\nDepth: {depth}\r\n Canceled");
                 return null;
             }
 
             //Console.WriteLine($"\r\nDepth: {depth}\r\nCut off {CutOffCount} times.\r\nVisited {NodeVisit} nodes.\r\nLeaf Visits:{LeafVisits}\r\nBest Move {bestCommand.Move.ToString()} ({bestCommand.Value})\r\n{bestCommand.Move.BestLine()}");
             //Returning the actual instance. Moves were copied above.
-            var bestEvaluation = evaluations.Single(x => x.CmdsString == bestCommand.CmdsString);
-            bestEvaluation.Value = bestCommand.Value;
+            var bestEvaluation = maximizing ? evaluations.OrderBy(x => x.Value).Last() : evaluations.OrderBy(x => x.Value).First();
             bestEvaluation.Nodes = NodeVisit;
             bestEvaluation.QuiteSearchNodes = QuiteSearchNodes;
             bestEvaluation.LeafVisits = LeafVisits;
             bestEvaluation.AlphaCutoff = AlphaCutOffCount;
             bestEvaluation.BetaCutoff = BetaCutOffCount;
             bestEvaluation.DatabaseStats = PositionsDatabase.Instance.ToString();
-
             return bestEvaluation;
         }
 

@@ -524,7 +524,6 @@ namespace Chess
             if (HashHistory.Count(x => x == Hash) >= 2) {
                 move.ScoreInfo |= ScoreInfo.DrawByRepetion;
                 move.ScoreAfterMove = 0;
-                PositionsDatabase.Instance.Store(this, move, recursions);
                 UndoLastMove();
                 return;
             }

@@ -1,8 +1,6 @@
 http://www.chessbin.com/archive
 
-Söka länge verkar knäcka databasen. Begränsa tänktid. Rensa helt efter varje? Då behövs ju inte command.
-
-Backa, starta flera gånger ger draw.
+Unsuficient material funkar inte.
 
 50 move rule. Resetta vid bondedrag eller capture.
 

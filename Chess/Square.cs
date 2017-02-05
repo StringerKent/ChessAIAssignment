@@ -16,6 +16,7 @@ namespace Chess
             Rank = rank;
             var squareIndex =  (int)file + (int)rank*8;
             Bit = (ulong)1 << squareIndex;
+            Index = squareIndex;
         }
 
         /// <summary>
@@ -37,6 +38,8 @@ namespace Chess
 
         public File File { get;}
         public Rank Rank { get;}
+
+        public int Index { get; }
 
         private byte PieceType { get; set; }
 

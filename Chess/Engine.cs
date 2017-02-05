@@ -69,7 +69,7 @@ namespace Chess
             var bestEvaluation = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
 
             for (var depth = 1; depth < maxDepth; depth++) {
-                Debug.WriteLine($"Start Depth {depth}");
+                Debug.WriteLine($"\r\n==========\r\nStart Depth {depth}");
                 var evaluation = BestCommandAtDepth(game, evaluatedMoves, depth);
                 evaluatedMoves = playerColor == Color.White
                     ? evaluatedMoves.OrderBy(x => x.Value).ToArray()
@@ -85,10 +85,14 @@ namespace Chess
                     break;
                 }
                 bestEvaluation = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
+                Debug.WriteLine($"End depth {depth} ({Stopwatch.Elapsed.TotalSeconds.ToString("F")})");
+                Debug.WriteLine($"Best evaluation at depth{depth}:\r\n{bestEvaluation}");
                 if (bestEvaluation.MateFound)
                     break;
-                Debug.WriteLine($"End depth {depth} ({Stopwatch.Elapsed.TotalSeconds.ToString("F")})");
+                
             }
+            Debug.WriteLine($"Selected evaluation:\r\n{bestEvaluation}");
+
             ThinkingFor = null;
             return bestEvaluation;
         }
@@ -110,7 +114,9 @@ namespace Chess
             var beta = 8000;
             var canceled = false;
             var mateFound = false;
+            var localEvals = evaluations.Select(x => new Evaluation {CmdsString = x.CmdsString, Value = x.Value, Move = x.Move }).ToArray();                                    
             var commands = evaluations.Select(e => e.CmdsString);
+            
             Parallel.ForEach(commands,
                 new ParallelOptions { MaxDegreeOfParallelism = parallelism },
                 (command) => {
@@ -124,7 +130,7 @@ namespace Chess
                         gameCopy.UndoLastMove();
 
                         
-                        var eval = evaluations.Single(x => x.Move.ToCommandString() == command);
+                        var eval = localEvals.Single(x => x.Move.ToCommandString() == command);
                         eval.Value = v;
                         mateFound = (maximizing && v == 8000) || (!maximizing && v == -8000);
                         eval.BestLine = copyMove.BestLine();
@@ -140,16 +146,19 @@ namespace Chess
                 return null;
             }
 
+            for (int i = 0; i < evaluations.Length; i++) {
+                evaluations[i] = localEvals[i];
+            }
             //Console.WriteLine($"\r\nDepth: {depth}\r\nCut off {CutOffCount} times.\r\nVisited {NodeVisit} nodes.\r\nLeaf Visits:{LeafVisits}\r\nBest Move {bestCommand.Move.ToString()} ({bestCommand.Value})\r\n{bestCommand.Move.BestLine()}");
             //Returning the actual instance. Moves were copied above.
-            var bestEvaluation = maximizing ? evaluations.OrderBy(x => x.Value).Last() : evaluations.OrderBy(x => x.Value).First();
+            var bestEvaluation = maximizing ? localEvals.OrderBy(x => x.Value).Last() : localEvals.OrderBy(x => x.Value).First();
             bestEvaluation.Nodes = NodeVisit;
             bestEvaluation.QuiteSearchNodes = QuiteSearchNodes;
             bestEvaluation.LeafVisits = LeafVisits;
             bestEvaluation.AlphaCutoff = AlphaCutOffCount;
             bestEvaluation.BetaCutoff = BetaCutOffCount;
             bestEvaluation.DatabaseStats = PositionsDatabase.Instance.ToString();
-            return bestEvaluation;
+            return evaluations.Single(x => x.CmdsString == bestEvaluation.CmdsString);
         }
 
         internal Evaluation BestAlphaBetaMove(Game game, int depth) {

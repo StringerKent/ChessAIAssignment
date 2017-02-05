@@ -42,14 +42,10 @@ namespace Chess
         internal void SetStartHash(Game game) {
             game.Hash = 0;
             foreach (var piece in game.WhitePlayer.Pieces) {
-                var p = piece.Type;
-                var s = (int)piece.Square.File + (int)piece.Square.Rank * 8;
-                game.Hash ^= ZobristArray[p, s];
+                game.Hash ^= ZobristArray[piece.Type, piece.Square.Index];
             }
             foreach (var piece in game.BlackPlayer.Pieces) {
-                var p = piece.Type;
-                var s = (int)piece.Square.File + (int)piece.Square.Rank * 8;
-                game.Hash ^= ZobristArray[p, s];
+                game.Hash ^= ZobristArray[piece.Type, piece.Square.Index];
             }
 
             game.Hash ^= Side[(int)game.CurrentPlayer.Color];
@@ -58,34 +54,29 @@ namespace Chess
         internal void UpdateHash(Game game, Move move) {
             var fs = move.FromSquare;
             var ts = move.ToSquare;
-            var fromSquare = (int)fs.File + (int)fs.Rank * 8;
-            var toSquare = (int)ts.File + (int)ts.Rank * 8;
-
+            
             var piece = (int)move.Piece.Type;
 
             if (!move.IsPromotion) {
-                game.Hash ^= ZobristArray[piece, fromSquare]; //piece off
-                game.Hash ^= ZobristArray[piece, toSquare]; //piece on new square
+                game.Hash ^= ZobristArray[piece, fs.Index]; //piece off
+                game.Hash ^= ZobristArray[piece, ts.Index]; //piece on new square
             }
 
             if (move.Capture != null) {
-                var sqr = move.CapturedFrom;
-                game.Hash ^= ZobristArray[move.Capture.Type, (int)sqr.File + (int)sqr.Rank * 8];
+                game.Hash ^= ZobristArray[move.Capture.Type, move.CapturedFrom.Index];
                 //captured piece off, includes en passant
             }
 
             if (move.IsCastling) {
-                var rook = move.CastleRook;
-                var toRookSquare = (int)rook.Square.File + (int)rook.Square.Rank * 8;
-                game.Hash ^= ZobristArray[move.CastleRook.Type, toRookSquare];
+                game.Hash ^= ZobristArray[move.CastleRook.Type, move.CastleRook.Square.Index];
                 //Todo Castling options
             }
 
             if (move.IsPromotion) {
                 var pawnType = move.PromotedPawn.Type;
-                game.Hash ^= ZobristArray[pawnType, fromSquare]; //pawn off                 
+                game.Hash ^= ZobristArray[pawnType, fs.Index]; //pawn off                 
                 var type = move.Piece.Color == Color.Black ? PieceType.BlackQueen : PieceType.WhiteQueen;
-                game.Hash ^= ZobristArray[(int)type, toSquare]; //queen on new square                
+                game.Hash ^= ZobristArray[(int)type, ts.Index]; //queen on new square                
             }
 
             game.Hash ^= Side[(int)move.Piece.Color];

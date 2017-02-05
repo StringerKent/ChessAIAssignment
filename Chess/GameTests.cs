@@ -707,7 +707,7 @@ namespace Chess
         }
 
         [TestMethod]
-        public void TestUnsufficientMaterial()
+        public void TestInsufficientMaterial()
         {
             var game = new Game();
             game.New();

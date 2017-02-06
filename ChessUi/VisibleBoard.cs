@@ -93,13 +93,10 @@ namespace ChessUi
             }
         }
 
-        private readonly SolidBrush _hiLightBrush = new SolidBrush(Color.FromArgb(196, SelectedColor));
+        private readonly SolidBrush _hiLightBrush = new SolidBrush(Color.FromArgb(150, SelectedColor));
 
         private void DrawSquares(Graphics g) {
             Squares.Clear();
-            var size = SquareSide / 2;
-            size = size < 1 ? 1 : size;
-            var pieceFont = new Font(FontFamily.GenericSansSerif, size);
             for (var r = Rank._1; r <= Rank._8; r++) {
                 for (var f = File.A; f <= File.H; f++) {
                     var x = Flipped ? Left + (Side - ((int)f + 1) * SquareSide) : Left + (int)f * SquareSide;
@@ -117,12 +114,8 @@ namespace ChessUi
 
                     Squares.Add(chessSquare, rect);
                     if (chessSquare.Piece != null && MouseDownSquare != chessSquare) {
-                        if (_offsetPiece == null || chessSquare.Piece != _offsetPiece.Item1)
-                            g.DrawString(chessSquare.Piece.ImageChar.ToString(), pieceFont, Brushes.Black, x + SquareSide / 16, y + SquareSide / 4);
-                        //{
-                        //    var image = GetImage(chessSquare.Piece);
-                        //    g.DrawImage(image, rect);
-                        //}
+                        if (_animationOffset == null || chessSquare.Piece != _animationOffset.Item1)
+                            DrawPiece(chessSquare, rect, g);
                     }
 
                     //g.DrawString(chessSquare.ToString(), new Font(FontFamily.GenericSansSerif, 12), Brushes.Red, x + SquareSide / 16,
@@ -130,13 +123,41 @@ namespace ChessUi
 
                 }
                 if (MouseDownSquare?.Piece != null)
-                    g.DrawString(MouseDownSquare.Piece.ImageChar.ToString(), pieceFont, Brushes.Black, MouseX - SquareSide / 2, MouseY - SquareSide / 2);
-                if (_offsetPiece != null && _offsetPiece.Item1 != null)
-                    g.DrawString(_offsetPiece.Item1.ImageChar.ToString(), pieceFont, Brushes.Black, _offsetPiece.Item2);
+                {
+                    var x = MouseX - SquareSide / 2;
+                    var y = MouseY - SquareSide / 2;
+                    var rect = new RectangleF(x, y, SquareSide, SquareSide);
+                    DrawPiece(MouseDownSquare, rect, g);
+                }
 
+
+                if (_animationOffset != null && _animationOffset.Item1 != null)
+                {
+                    var rect = new RectangleF(_animationOffset.Item2.X, _animationOffset.Item2.Y, SquareSide * 1.1f, SquareSide * 1.1f);
+                    DrawPiece(_animationOffset.Item1.Square, rect, g);
+                }
             }
-
         }
+
+        private void DrawPiece(Square square, RectangleF rect, Graphics g)
+        {
+            if (PieceImage == PieceImage.Regular)
+            {
+                var image = GetImage(square.Piece);
+                var imageRect = new RectangleF(rect.Left, rect.Top, rect.Width, rect.Height);
+                imageRect.Inflate(-2, -2);
+                g.DrawImage(image, imageRect);
+            }
+            else
+            {
+                var size = SquareSide / 2;
+                size = size < 1 ? 1 : size;
+                rect.Offset(0, size / 3);
+                var pieceFont = new Font(FontFamily.GenericSansSerif, size);
+                g.DrawString(square.Piece.ImageChar.ToString(), pieceFont, Brushes.Black, rect);
+            }
+        }
+    
 
         private Image GetImage(Piece piece)
         {
@@ -175,12 +196,12 @@ namespace ChessUi
         }
 
         internal bool Flipped { get; set; }
+        public PieceImage PieceImage { get; internal set; } = PieceImage.Regular;
 
         public void MouseDown(MouseEventArgs e) {
             MouseDownSquare = GetSquare(e);
             if (MouseDownSquare == null)
                 return;
-            //var moves = Game.Copy().GetLegalNextMoves(0);
             var moves = Game.GetLegalUiMoves();
             var hiLights = moves.Where(x => x.FromSquare.ToString() == MouseDownSquare.ToString()).Select(x => x.ToSquare).ToList();
             HiLights =
@@ -197,24 +218,19 @@ namespace ChessUi
         }
 
         private Square GetSquare(MouseEventArgs e) {
-            return Squares.SingleOrDefault(x => x.Value.Contains(e.X, e.Y)).Key;
-            //var iFile = (int)(e.X - Left) / SquareSide;
-            //if (iFile < 0 || iFile >= 8) return null;
-            //var file = (File)iFile;
-
-            //var side = SquareSide * 8;
-            //var r = -((e.Y - Top - side) / SquareSide);
-            //if (r < 0 || r >= 8) return null;
-
-            //var rank = (Rank)(int)r;
-
-            //return Squares.Single(x => x.Key.File == file && x.Key.Rank == rank).Key;
+            return Squares.SingleOrDefault(x => x.Value.Contains(e.X, e.Y)).Key;            
         }
 
-        public void OffsetPiece(Piece piece, float x, float y) {
-            _offsetPiece = new Tuple<Piece, PointF>(piece, new PointF(x + SquareSide / 16, y + SquareSide / 4));
+        public void OffsetAnimated(Piece piece, float x, float y) {
+            _animationOffset = new Tuple<Piece, PointF>(piece, new PointF(x + SquareSide / 16, y + SquareSide / 4));
         }
 
-        private Tuple<Piece, PointF> _offsetPiece;
+        private Tuple<Piece, PointF> _animationOffset;
+    }
+
+    public enum PieceImage
+    {
+        Newspaper,
+        Regular
     }
 }

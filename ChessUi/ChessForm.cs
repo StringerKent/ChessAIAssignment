@@ -342,11 +342,11 @@ namespace ChessUi
             for (int i = 0; i < steps; i++) {
                 var x = from.Value.X + dx * i;
                 var y = from.Value.Y + dy * i;
-                VisibleBoard.OffsetPiece(piece, x, y);
+                VisibleBoard.OffsetAnimated(piece, x, y);
                 panel1.Invalidate();
                 Application.DoEvents();
             }
-            VisibleBoard.OffsetPiece(null, 0, 0);
+            VisibleBoard.OffsetAnimated(null, 0, 0);
             panel1.Invalidate();
         }
 
@@ -416,6 +416,24 @@ namespace ChessUi
                 if (progBlack.Value < progBlack.Maximum)
                     progBlack.Value += 1;
             }
+        }
+
+        private void newspaperToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            regilarToolStripMenuItem.Checked = !newspaperToolStripMenuItem.Checked;
+            changePieceImage();
+        }
+
+        private void changePieceImage()
+        {
+            VisibleBoard.PieceImage = regilarToolStripMenuItem.Checked ? PieceImage.Regular : PieceImage.Newspaper;
+            panel1.Invalidate();
+        }
+
+        private void regilarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            newspaperToolStripMenuItem.Checked = !regilarToolStripMenuItem.Checked;
+            changePieceImage();
         }
     }
 

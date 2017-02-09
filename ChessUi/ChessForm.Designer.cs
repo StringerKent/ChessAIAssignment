@@ -56,28 +56,56 @@
             this.labelScoreAndLine = new System.Windows.Forms.Label();
             this.buttonFlip = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panelEdit = new System.Windows.Forms.Panel();
+            this.buttonClear = new System.Windows.Forms.Button();
+            this.buttonDone = new System.Windows.Forms.Button();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.radioButtonWhiteMoves = new System.Windows.Forms.RadioButton();
+            this.label2 = new System.Windows.Forms.Label();
+            this.checkBoxBCK = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.checkBoxBCQ = new System.Windows.Forms.CheckBox();
+            this.checkBoxWCK = new System.Windows.Forms.CheckBox();
+            this.checkBoxWCQ = new System.Windows.Forms.CheckBox();
+            this.radioButtonBlack = new System.Windows.Forms.RadioButton();
+            this.radioButtonWhite = new System.Windows.Forms.RadioButton();
+            this.label7 = new System.Windows.Forms.Label();
+            this.pictureBoxPawn = new ChessUi.ChessPiecePictureBox();
+            this.pictureBoxRook = new ChessUi.ChessPiecePictureBox();
+            this.pictureBoxKnight = new ChessUi.ChessPiecePictureBox();
+            this.pictureBoxBishop = new ChessUi.ChessPiecePictureBox();
+            this.pictureBoxQueen = new ChessUi.ChessPiecePictureBox();
             this.panel1 = new ChessUi.DoubledBufferedPanel();
             this.progressBarBottom = new System.Windows.Forms.ProgressBar();
             this.progressBarTop = new System.Windows.Forms.ProgressBar();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThinkBlack)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThinkWhite)).BeginInit();
+            this.panel2.SuspendLayout();
+            this.panelEdit.SuspendLayout();
+            this.panel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPawn)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRook)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxKnight)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBishop)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxQueen)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // listView1
             // 
-            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderNumbeInGame,
             this.columnHeaderWhite,
             this.columnHeaderBlack});
+            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listView1.Location = new System.Drawing.Point(749, 24);
+            this.listView1.Location = new System.Drawing.Point(0, 290);
             this.listView1.Margin = new System.Windows.Forms.Padding(2);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(227, 708);
+            this.listView1.Size = new System.Drawing.Size(234, 392);
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -156,15 +184,18 @@
             // 
             // boardToolStripMenuItem
             // 
+            this.boardToolStripMenuItem.CheckOnClick = true;
             this.boardToolStripMenuItem.Name = "boardToolStripMenuItem";
-            this.boardToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.boardToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
+            this.boardToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.boardToolStripMenuItem.Text = "&Board";
+            this.boardToolStripMenuItem.Click += new System.EventHandler(this.boardToolStripMenuItem_Click);
             // 
             // undoToolStripMenuItem
             // 
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.undoToolStripMenuItem.Text = "&Undo";
             this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
             // 
@@ -182,14 +213,14 @@
             this.newspaperToolStripMenuItem,
             this.regilarToolStripMenuItem});
             this.piecesToolStripMenuItem.Name = "piecesToolStripMenuItem";
-            this.piecesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.piecesToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.piecesToolStripMenuItem.Text = "Pieces";
             // 
             // newspaperToolStripMenuItem
             // 
             this.newspaperToolStripMenuItem.CheckOnClick = true;
             this.newspaperToolStripMenuItem.Name = "newspaperToolStripMenuItem";
-            this.newspaperToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newspaperToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.newspaperToolStripMenuItem.Text = "Newspaper";
             this.newspaperToolStripMenuItem.Click += new System.EventHandler(this.newspaperToolStripMenuItem_Click);
             // 
@@ -199,7 +230,7 @@
             this.regilarToolStripMenuItem.CheckOnClick = true;
             this.regilarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.regilarToolStripMenuItem.Name = "regilarToolStripMenuItem";
-            this.regilarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.regilarToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.regilarToolStripMenuItem.Text = "Regular";
             this.regilarToolStripMenuItem.Click += new System.EventHandler(this.regilarToolStripMenuItem_Click);
             // 
@@ -337,8 +368,260 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // panel2
+            // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.listView1);
+            this.panel2.Controls.Add(this.panelEdit);
+            this.panel2.Location = new System.Drawing.Point(750, 50);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(234, 682);
+            this.panel2.TabIndex = 14;
+            // 
+            // panelEdit
+            // 
+            this.panelEdit.AllowDrop = true;
+            this.panelEdit.Controls.Add(this.buttonClear);
+            this.panelEdit.Controls.Add(this.buttonDone);
+            this.panelEdit.Controls.Add(this.panel3);
+            this.panelEdit.Controls.Add(this.label2);
+            this.panelEdit.Controls.Add(this.checkBoxBCK);
+            this.panelEdit.Controls.Add(this.label1);
+            this.panelEdit.Controls.Add(this.checkBoxBCQ);
+            this.panelEdit.Controls.Add(this.checkBoxWCK);
+            this.panelEdit.Controls.Add(this.checkBoxWCQ);
+            this.panelEdit.Controls.Add(this.radioButtonBlack);
+            this.panelEdit.Controls.Add(this.radioButtonWhite);
+            this.panelEdit.Controls.Add(this.pictureBoxPawn);
+            this.panelEdit.Controls.Add(this.pictureBoxRook);
+            this.panelEdit.Controls.Add(this.pictureBoxKnight);
+            this.panelEdit.Controls.Add(this.pictureBoxBishop);
+            this.panelEdit.Controls.Add(this.pictureBoxQueen);
+            this.panelEdit.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelEdit.Location = new System.Drawing.Point(0, 0);
+            this.panelEdit.Name = "panelEdit";
+            this.panelEdit.Size = new System.Drawing.Size(234, 290);
+            this.panelEdit.TabIndex = 2;
+            this.panelEdit.DragEnter += new System.Windows.Forms.DragEventHandler(this.panel1_DragEnter);
+            // 
+            // buttonClear
+            // 
+            this.buttonClear.Location = new System.Drawing.Point(4, 264);
+            this.buttonClear.Name = "buttonClear";
+            this.buttonClear.Size = new System.Drawing.Size(53, 23);
+            this.buttonClear.TabIndex = 1;
+            this.buttonClear.Text = "Clear";
+            this.buttonClear.UseVisualStyleBackColor = true;
+            // 
+            // buttonDone
+            // 
+            this.buttonDone.Location = new System.Drawing.Point(178, 264);
+            this.buttonDone.Name = "buttonDone";
+            this.buttonDone.Size = new System.Drawing.Size(53, 23);
+            this.buttonDone.TabIndex = 1;
+            this.buttonDone.Text = "Done";
+            this.buttonDone.UseVisualStyleBackColor = true;
+            // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.radioButton1);
+            this.panel3.Controls.Add(this.radioButtonWhiteMoves);
+            this.panel3.Location = new System.Drawing.Point(1, 218);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(232, 54);
+            this.panel3.TabIndex = 4;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(131, 15);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(87, 17);
+            this.radioButton1.TabIndex = 0;
+            this.radioButton1.Text = "Black Moves";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonWhiteMoves
+            // 
+            this.radioButtonWhiteMoves.AutoSize = true;
+            this.radioButtonWhiteMoves.Checked = true;
+            this.radioButtonWhiteMoves.Location = new System.Drawing.Point(10, 15);
+            this.radioButtonWhiteMoves.Name = "radioButtonWhiteMoves";
+            this.radioButtonWhiteMoves.Size = new System.Drawing.Size(88, 17);
+            this.radioButtonWhiteMoves.TabIndex = 0;
+            this.radioButtonWhiteMoves.TabStop = true;
+            this.radioButtonWhiteMoves.Text = "White Moves";
+            this.radioButtonWhiteMoves.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(3, 202);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(34, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Black";
+            // 
+            // checkBoxBCK
+            // 
+            this.checkBoxBCK.AutoSize = true;
+            this.checkBoxBCK.Checked = true;
+            this.checkBoxBCK.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxBCK.Location = new System.Drawing.Point(132, 201);
+            this.checkBoxBCK.Name = "checkBoxBCK";
+            this.checkBoxBCK.Size = new System.Drawing.Size(88, 17);
+            this.checkBoxBCK.TabIndex = 2;
+            this.checkBoxBCK.Text = "Castles Short";
+            this.checkBoxBCK.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 177);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "White";
+            // 
+            // checkBoxBCQ
+            // 
+            this.checkBoxBCQ.AutoSize = true;
+            this.checkBoxBCQ.Checked = true;
+            this.checkBoxBCQ.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxBCQ.Location = new System.Drawing.Point(44, 201);
+            this.checkBoxBCQ.Name = "checkBoxBCQ";
+            this.checkBoxBCQ.Size = new System.Drawing.Size(87, 17);
+            this.checkBoxBCQ.TabIndex = 2;
+            this.checkBoxBCQ.Text = "Castles Long";
+            this.checkBoxBCQ.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxWCK
+            // 
+            this.checkBoxWCK.AutoSize = true;
+            this.checkBoxWCK.Checked = true;
+            this.checkBoxWCK.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxWCK.Location = new System.Drawing.Point(132, 176);
+            this.checkBoxWCK.Name = "checkBoxWCK";
+            this.checkBoxWCK.Size = new System.Drawing.Size(88, 17);
+            this.checkBoxWCK.TabIndex = 2;
+            this.checkBoxWCK.Text = "Castles Short";
+            this.checkBoxWCK.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxWCQ
+            // 
+            this.checkBoxWCQ.AutoSize = true;
+            this.checkBoxWCQ.Checked = true;
+            this.checkBoxWCQ.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxWCQ.Location = new System.Drawing.Point(44, 176);
+            this.checkBoxWCQ.Name = "checkBoxWCQ";
+            this.checkBoxWCQ.Size = new System.Drawing.Size(87, 17);
+            this.checkBoxWCQ.TabIndex = 2;
+            this.checkBoxWCQ.Text = "Castles Long";
+            this.checkBoxWCQ.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonBlack
+            // 
+            this.radioButtonBlack.AutoSize = true;
+            this.radioButtonBlack.Location = new System.Drawing.Point(11, 42);
+            this.radioButtonBlack.Name = "radioButtonBlack";
+            this.radioButtonBlack.Size = new System.Drawing.Size(52, 17);
+            this.radioButtonBlack.TabIndex = 1;
+            this.radioButtonBlack.Text = "Black";
+            this.radioButtonBlack.UseVisualStyleBackColor = true;
+            this.radioButtonBlack.CheckedChanged += new System.EventHandler(this.radioButtonBlack_CheckedChanged);
+            // 
+            // radioButtonWhite
+            // 
+            this.radioButtonWhite.AutoSize = true;
+            this.radioButtonWhite.Checked = true;
+            this.radioButtonWhite.Location = new System.Drawing.Point(11, 19);
+            this.radioButtonWhite.Name = "radioButtonWhite";
+            this.radioButtonWhite.Size = new System.Drawing.Size(53, 17);
+            this.radioButtonWhite.TabIndex = 1;
+            this.radioButtonWhite.TabStop = true;
+            this.radioButtonWhite.Text = "White";
+            this.radioButtonWhite.UseVisualStyleBackColor = true;
+            this.radioButtonWhite.CheckedChanged += new System.EventHandler(this.radioButtonWhite_CheckedChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(824, 28);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(84, 20);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "Edit Board";
+            // 
+            // pictureBoxPawn
+            // 
+            this.pictureBoxPawn.Image = global::ChessUi.Properties.Resources.WhitePawn;
+            this.pictureBoxPawn.Location = new System.Drawing.Point(78, 81);
+            this.pictureBoxPawn.Name = "pictureBoxPawn";
+            this.pictureBoxPawn.PieceType = Chess.PieceType.WhitePawn;
+            this.pictureBoxPawn.Size = new System.Drawing.Size(80, 80);
+            this.pictureBoxPawn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxPawn.TabIndex = 0;
+            this.pictureBoxPawn.TabStop = false;
+            this.pictureBoxPawn.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.pictureBox_GiveFeedback);
+            this.pictureBoxPawn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
+            // 
+            // pictureBoxRook
+            // 
+            this.pictureBoxRook.Image = global::ChessUi.Properties.Resources.WhiteRook;
+            this.pictureBoxRook.Location = new System.Drawing.Point(78, 1);
+            this.pictureBoxRook.Name = "pictureBoxRook";
+            this.pictureBoxRook.PieceType = Chess.PieceType.WhiteRook;
+            this.pictureBoxRook.Size = new System.Drawing.Size(80, 80);
+            this.pictureBoxRook.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxRook.TabIndex = 0;
+            this.pictureBoxRook.TabStop = false;
+            this.pictureBoxRook.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.pictureBox_GiveFeedback);
+            this.pictureBoxRook.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
+            // 
+            // pictureBoxKnight
+            // 
+            this.pictureBoxKnight.Image = global::ChessUi.Properties.Resources.WhiteKnight;
+            this.pictureBoxKnight.Location = new System.Drawing.Point(154, 1);
+            this.pictureBoxKnight.Name = "pictureBoxKnight";
+            this.pictureBoxKnight.PieceType = Chess.PieceType.WhiteNight;
+            this.pictureBoxKnight.Size = new System.Drawing.Size(80, 80);
+            this.pictureBoxKnight.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxKnight.TabIndex = 0;
+            this.pictureBoxKnight.TabStop = false;
+            this.pictureBoxKnight.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.pictureBox_GiveFeedback);
+            this.pictureBoxKnight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
+            // 
+            // pictureBoxBishop
+            // 
+            this.pictureBoxBishop.Image = global::ChessUi.Properties.Resources.WhiteBishop;
+            this.pictureBoxBishop.Location = new System.Drawing.Point(1, 81);
+            this.pictureBoxBishop.Name = "pictureBoxBishop";
+            this.pictureBoxBishop.PieceType = Chess.PieceType.WhiteBishop;
+            this.pictureBoxBishop.Size = new System.Drawing.Size(80, 80);
+            this.pictureBoxBishop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxBishop.TabIndex = 0;
+            this.pictureBoxBishop.TabStop = false;
+            this.pictureBoxBishop.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.pictureBox_GiveFeedback);
+            this.pictureBoxBishop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
+            // 
+            // pictureBoxQueen
+            // 
+            this.pictureBoxQueen.Image = global::ChessUi.Properties.Resources.WhiteQueen;
+            this.pictureBoxQueen.Location = new System.Drawing.Point(157, 81);
+            this.pictureBoxQueen.Name = "pictureBoxQueen";
+            this.pictureBoxQueen.PieceType = Chess.PieceType.WhiteQueen;
+            this.pictureBoxQueen.Size = new System.Drawing.Size(80, 80);
+            this.pictureBoxQueen.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxQueen.TabIndex = 0;
+            this.pictureBoxQueen.TabStop = false;
+            this.pictureBoxQueen.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.pictureBox_GiveFeedback);
+            this.pictureBoxQueen.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
+            // 
             // panel1
             // 
+            this.panel1.AllowDrop = true;
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -349,6 +632,9 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(736, 682);
             this.panel1.TabIndex = 0;
+            this.panel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.panel1_DragDrop);
+            this.panel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.panel1_DragEnter);
+            this.panel1.DragOver += new System.Windows.Forms.DragEventHandler(this.panel1_DragOver);
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             this.panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
             this.panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseMove);
@@ -380,6 +666,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(984, 761);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.buttonFlip);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.labelScoreAndLine);
@@ -390,7 +678,6 @@
             this.Controls.Add(this.numericUpDownThinkBlack);
             this.Controls.Add(this.checkBoxAI_white);
             this.Controls.Add(this.checkBoxAIblack);
-            this.Controls.Add(this.listView1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
             this.KeyPreview = true;
@@ -404,6 +691,16 @@
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThinkBlack)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThinkWhite)).EndInit();
+            this.panel2.ResumeLayout(false);
+            this.panelEdit.ResumeLayout(false);
+            this.panelEdit.PerformLayout();
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPawn)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRook)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxKnight)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBishop)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxQueen)).EndInit();
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -442,6 +739,27 @@
         private System.Windows.Forms.ToolStripMenuItem piecesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newspaperToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem regilarToolStripMenuItem;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel panelEdit;
+        private ChessPiecePictureBox pictureBoxQueen;
+        private System.Windows.Forms.RadioButton radioButtonBlack;
+        private System.Windows.Forms.RadioButton radioButtonWhite;
+        private ChessPiecePictureBox pictureBoxPawn;
+        private ChessPiecePictureBox pictureBoxRook;
+        private ChessPiecePictureBox pictureBoxKnight;
+        private ChessPiecePictureBox pictureBoxBishop;
+        private System.Windows.Forms.Button buttonDone;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton radioButtonWhiteMoves;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox checkBoxBCK;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox checkBoxBCQ;
+        private System.Windows.Forms.CheckBox checkBoxWCK;
+        private System.Windows.Forms.CheckBox checkBoxWCQ;
+        private System.Windows.Forms.Button buttonClear;
+        private System.Windows.Forms.Label label7;
     }
 }
 

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Chess;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace ChessUi
 {
@@ -24,6 +26,7 @@ namespace ChessUi
         }
 
         private void Form1_Load(object sender, EventArgs e) {
+            panelEdit.Height = 0;
             ChessGame = new Game();
             ChessGame.New();
             Engine = new Engine();
@@ -180,7 +183,7 @@ namespace ChessUi
 
         private void panel1_MouseUp(object sender, MouseEventArgs e) {
 
-            VisibleBoard.MouseUp(e);
+            VisibleBoard.MouseUp(e.X, e.Y);
             if (VisibleBoard.MouseDownSquare == null || VisibleBoard.MouseUpSquare == null)
                 return;
 
@@ -215,7 +218,7 @@ namespace ChessUi
 
         private void panel1_MouseDown(object sender, MouseEventArgs e) {
 
-            VisibleBoard.MouseDown(e);
+            VisibleBoard.MouseDown(e.X, e.Y);
             VisibleBoard.MouseX = e.X;
             VisibleBoard.MouseY = e.Y;
             panel1.Invalidate();
@@ -435,6 +438,162 @@ namespace ChessUi
             newspaperToolStripMenuItem.Checked = !regilarToolStripMenuItem.Checked;
             changePieceImage();
         }
+
+        private void boardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToggleEditPanel();
+            if (boardToolStripMenuItem.Checked)
+                EnterEditMode();
+            else
+                ExitEditMode();
+        }
+
+        private void ExitEditMode()
+        {
+            
+        }
+
+        private void EnterEditMode()
+        {
+            ChessGame.EditMode = true;
+            VisibleBoard.EditMode = true;
+        }
+
+        private async void ToggleEditPanel()
+        {
+            if (panelEdit.Height == 0)
+            {
+                for (int i = 0; i < 30; i++)
+                {
+                    await Task.Delay(10);
+                    panelEdit.Height = i * 10;
+                }
+            }
+            else if (panelEdit.Height == 290)
+            {
+                for (int i = 0; i < 30; i++)
+                {
+                    await Task.Delay(10);
+                    panelEdit.Height = 290 - i * 10;
+                }
+            }
+        }
+        
+        
+        private void radioButtonWhite_CheckedChanged(object sender, EventArgs e)
+        {
+            pictureBoxBishop.Image = Properties.Resources.WhiteBishop;
+            pictureBoxBishop.PieceType = PieceType.WhiteBishop;
+
+            pictureBoxKnight.Image = Properties.Resources.WhiteKnight;
+            pictureBoxKnight.PieceType = PieceType.WhiteNight;
+
+            pictureBoxPawn.Image = Properties.Resources.WhitePawn;
+            pictureBoxPawn.PieceType =PieceType.WhitePawn;
+
+            pictureBoxQueen.Image = Properties.Resources.WhiteQueen;
+            pictureBoxQueen.PieceType = PieceType.WhiteQueen;
+
+            pictureBoxRook.Image = Properties.Resources.WhiteRook;
+            pictureBoxRook.PieceType = PieceType.WhiteRook;
+        }
+
+        private void radioButtonBlack_CheckedChanged(object sender, EventArgs e)
+        {
+            pictureBoxBishop.Image = Properties.Resources.BlackBishop;
+            pictureBoxBishop.PieceType = PieceType.BlackBishop;
+
+            pictureBoxKnight.Image = Properties.Resources.BlackKnight;
+            pictureBoxKnight.PieceType = PieceType.BlackKnight;
+
+            pictureBoxPawn.Image = Properties.Resources.BlackPawn;
+            pictureBoxPawn.PieceType = PieceType.BlackPawn;
+
+            pictureBoxQueen.Image = Properties.Resources.BlackQueen;
+            pictureBoxQueen.PieceType = PieceType.BlackQueen;
+
+            pictureBoxRook.Image = Properties.Resources.BlackRook;
+            pictureBoxRook.PieceType = PieceType.BlackRook;
+        }
+
+        private void pictureBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            var pictureBox = (PictureBox)sender;
+            pictureBox.DoDragDrop(pictureBox, DragDropEffects.Copy | DragDropEffects.Move);
+        }
+
+        private void panel1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(typeof(ChessPiecePictureBox)))
+            {
+                e.Effect = DragDropEffects.None;
+                return;
+            }
+
+            e.Effect = DragDropEffects.Copy;
+            var img = ((ChessPiecePictureBox)e.Data.GetData(typeof(ChessPiecePictureBox))).Image;
+            var bitmap = new Bitmap(img);
+            
+            Cursor.Current = CreateCursor(bitmap, 45, 45);
+            bitmap.Dispose();
+        }
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr CreateIconIndirect(ref IconInfo icon);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetIconInfo(IntPtr hIcon, ref IconInfo pIconInfo);
+
+        public struct IconInfo
+        {
+            public bool fIcon;
+            public int xHotspot;
+            public int yHotspot;
+            public IntPtr hbmMask;
+            public IntPtr hbmColor;
+        }
+
+        public static Cursor CreateCursor(Bitmap bmp,
+            int xHotSpot, int yHotSpot)
+        {
+            IconInfo tmp = new IconInfo();
+            GetIconInfo(bmp.GetHicon(), ref tmp);
+            tmp.xHotspot = xHotSpot;
+            tmp.yHotspot = yHotSpot;
+            tmp.fIcon = false;
+            return new Cursor(CreateIconIndirect(ref tmp));
+        }
+
+        private void panel1_DragDrop(object sender, DragEventArgs e)
+        {
+            var chessPiecePictureBox = e.Data.GetData(typeof(ChessPiecePictureBox)) as ChessPiecePictureBox;
+            if (!VisibleBoard.EditMode || chessPiecePictureBox == null)
+                return;
+            var clientPoint = panel1.PointToClient(new Point(e.X, e.Y));
+
+            VisibleBoard.Drop(chessPiecePictureBox.PieceType, clientPoint.X, clientPoint.Y);
+            
+
+            panel1.Invalidate();
+        }
+
+        private void panel1_DragOver(object sender, DragEventArgs e)
+        {
+            if (!VisibleBoard.EditMode || !(sender is ChessPiecePictureBox))
+                return;
+        }
+
+        private void pictureBox_GiveFeedback(object sender, GiveFeedbackEventArgs e)
+        {
+            e.UseDefaultCursors = false;
+        }
+
+        
+    }
+    public class ChessPiecePictureBox : PictureBox
+    {
+        public PieceType PieceType { get; set; }
     }
 
     public class DoubledBufferedPanel : Panel
@@ -457,4 +616,6 @@ namespace ChessUi
             return EvaluatedMove.ToString();
         }
     }
+
+    
 }

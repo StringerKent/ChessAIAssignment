@@ -197,28 +197,29 @@ namespace ChessUi
 
         internal bool Flipped { get; set; }
         public PieceImage PieceImage { get; internal set; } = PieceImage.Regular;
+        public bool EditMode { get; internal set; }
 
-        public void MouseDown(MouseEventArgs e) {
-            MouseDownSquare = GetSquare(e);
+        public void MouseDown(int x, int y) {
+            MouseDownSquare = GetSquare(x, y);
             if (MouseDownSquare == null)
                 return;
             var moves = Game.GetLegalUiMoves();
-            var hiLights = moves.Where(x => x.FromSquare.ToString() == MouseDownSquare.ToString()).Select(x => x.ToSquare).ToList();
+            var hiLights = moves.Where(m => m.FromSquare.ToString() == MouseDownSquare.ToString()).Select(m => m.ToSquare).ToList();
             HiLights =
                 Game.Board.Squares
-                    .Where(x => hiLights.Select(y => y.ToString()).Contains(x.ToString()))
-                    .Select(x => x)
+                    .Where(s => hiLights.Select(h => h.ToString()).Contains(s.ToString()))
+                    .Select(s => s)
                     .ToList();
         }
 
 
-        public void MouseUp(MouseEventArgs e) {
+        public void MouseUp(int x, int y) {
             HiLights.Clear();
-            MouseUpSquare = GetSquare(e);
+            MouseUpSquare = GetSquare(x, y);
         }
 
-        private Square GetSquare(MouseEventArgs e) {
-            return Squares.SingleOrDefault(x => x.Value.Contains(e.X, e.Y)).Key;            
+        private Square GetSquare(int x, int y) {
+            return Squares.SingleOrDefault(sqr => sqr.Value.Contains(x, y)).Key;            
         }
 
         public void OffsetAnimated(Piece piece, float x, float y) {
@@ -226,6 +227,12 @@ namespace ChessUi
         }
 
         private Tuple<Piece, PointF> _animationOffset;
+
+        internal void Drop(PieceType pieceType, int x, int y)
+        {
+            var square = GetSquare(x, y);
+            Game.AddPiece(square, pieceType);
+        }
     }
 
     public enum PieceImage

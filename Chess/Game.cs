@@ -561,6 +561,8 @@ namespace Chess
         internal File? EnPassantFile { get; private set; }
         public int Material => BlackPlayer.Material - WhitePlayer.Material;
 
+        public bool EditMode { get; set; }
+
         private void Castle(Move move) {
             var king = (King)move.Piece;
             Square fromRookSquare = null, toRookSquare = null;
@@ -726,6 +728,56 @@ namespace Chess
                 throw new ApplicationException("Invalid format of add piece string" + pieceString);
             game.AddPiece(file, rank, piece);
             return game;
+        }
+
+        public static void AddPiece(this Game game, Square square, PieceType type)
+        {
+            Piece piece = null;
+            switch (type)
+            {
+                case PieceType.NoPiece:
+                    break;
+                case PieceType.WhiteKing:
+                    piece = new King(Color.White);
+                    break;
+                case PieceType.WhiteQueen:
+                    piece = new Queen(Color.White);
+                    break;
+                case PieceType.WhiteRook:
+                    piece = new Rook(Color.White);
+                    break;
+                case PieceType.WhiteBishop:
+                    piece = new Bishop(Color.White);
+                    break;
+                case PieceType.WhiteNight:
+                    piece = new Knight(Color.White);
+                    break;
+                case PieceType.WhitePawn:
+                    piece = new Pawn(Color.White);
+                    break;
+                case PieceType.BlackKing:
+                    piece = new King(Color.Black);
+                    break;
+                case PieceType.BlackQueen:
+                    piece = new Queen(Color.Black);
+                    break;
+                case PieceType.BlackRook:
+                    piece = new Rook(Color.Black);
+                    break;
+                case PieceType.BlackBishop:
+                    piece = new Bishop(Color.Black);
+                    break;
+                case PieceType.BlackKnight:
+                    piece = new Knight(Color.Black);
+                    break;
+                case PieceType.BlackPawn:
+                    piece = new Pawn(Color.Black);
+                    break;
+                default:
+                    throw new NotImplementedException();
+                    break;
+            }
+            game.AddPiece(square.File, square.Rank, piece);
         }
     }
 }

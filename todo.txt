@@ -1,5 +1,7 @@
 http://www.chessbin.com/archive
 
+Om det finns castling rights efter edit krashar spelet om det inte finns torn och kung på rätt plats.
+
 När svart börjar efter edit blir det ofta problem.
 
 50 move rule. Resetta vid bondedrag eller capture.

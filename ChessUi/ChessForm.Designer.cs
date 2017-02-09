@@ -71,7 +71,8 @@
             this.checkBoxWCQ = new System.Windows.Forms.CheckBox();
             this.radioButtonBlack = new System.Windows.Forms.RadioButton();
             this.radioButtonWhite = new System.Windows.Forms.RadioButton();
-            this.label7 = new System.Windows.Forms.Label();
+            this.buttonEditBoard = new System.Windows.Forms.Button();
+            this.colorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBoxPawn = new ChessUi.ChessPiecePictureBox();
             this.pictureBoxRook = new ChessUi.ChessPiecePictureBox();
             this.pictureBoxKnight = new ChessUi.ChessPiecePictureBox();
@@ -106,7 +107,7 @@
             this.listView1.Margin = new System.Windows.Forms.Padding(2);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(234, 392);
-            this.listView1.TabIndex = 1;
+            this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
             this.listView1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listview_MouseMove);
@@ -177,7 +178,8 @@
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.boardToolStripMenuItem,
-            this.undoToolStripMenuItem});
+            this.undoToolStripMenuItem,
+            this.colorsToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "&Edit";
@@ -187,7 +189,7 @@
             this.boardToolStripMenuItem.CheckOnClick = true;
             this.boardToolStripMenuItem.Name = "boardToolStripMenuItem";
             this.boardToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
-            this.boardToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.boardToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.boardToolStripMenuItem.Text = "&Board";
             this.boardToolStripMenuItem.Click += new System.EventHandler(this.boardToolStripMenuItem_Click);
             // 
@@ -195,7 +197,7 @@
             // 
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.undoToolStripMenuItem.Text = "&Undo";
             this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
             // 
@@ -242,7 +244,7 @@
             this.checkBoxAIblack.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxAIblack.Name = "checkBoxAIblack";
             this.checkBoxAIblack.Size = new System.Drawing.Size(48, 17);
-            this.checkBoxAIblack.TabIndex = 3;
+            this.checkBoxAIblack.TabIndex = 0;
             this.checkBoxAIblack.Text = "CPU";
             this.checkBoxAIblack.UseVisualStyleBackColor = true;
             this.checkBoxAIblack.CheckedChanged += new System.EventHandler(this.checkBoxAIblack_CheckedChanged);
@@ -272,7 +274,7 @@
             0});
             this.numericUpDownThinkBlack.Name = "numericUpDownThinkBlack";
             this.numericUpDownThinkBlack.Size = new System.Drawing.Size(34, 20);
-            this.numericUpDownThinkBlack.TabIndex = 5;
+            this.numericUpDownThinkBlack.TabIndex = 1;
             this.numericUpDownThinkBlack.Value = new decimal(new int[] {
             5,
             0,
@@ -333,7 +335,7 @@
             0});
             this.numericUpDownThinkWhite.Name = "numericUpDownThinkWhite";
             this.numericUpDownThinkWhite.Size = new System.Drawing.Size(34, 20);
-            this.numericUpDownThinkWhite.TabIndex = 10;
+            this.numericUpDownThinkWhite.TabIndex = 5;
             this.numericUpDownThinkWhite.Value = new decimal(new int[] {
             5,
             0,
@@ -356,8 +358,8 @@
             this.buttonFlip.Location = new System.Drawing.Point(689, 24);
             this.buttonFlip.Margin = new System.Windows.Forms.Padding(2);
             this.buttonFlip.Name = "buttonFlip";
-            this.buttonFlip.Size = new System.Drawing.Size(56, 22);
-            this.buttonFlip.TabIndex = 13;
+            this.buttonFlip.Size = new System.Drawing.Size(56, 23);
+            this.buttonFlip.TabIndex = 2;
             this.buttonFlip.Text = "Flip";
             this.buttonFlip.UseVisualStyleBackColor = true;
             this.buttonFlip.Click += new System.EventHandler(this.buttonFlip_Click);
@@ -407,20 +409,22 @@
             // 
             // buttonClear
             // 
+            this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonClear.Location = new System.Drawing.Point(4, 264);
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(53, 23);
-            this.buttonClear.TabIndex = 1;
+            this.buttonClear.TabIndex = 4;
             this.buttonClear.Text = "Clear";
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
             // 
             // buttonDone
             // 
+            this.buttonDone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonDone.Location = new System.Drawing.Point(178, 264);
             this.buttonDone.Name = "buttonDone";
             this.buttonDone.Size = new System.Drawing.Size(53, 23);
-            this.buttonDone.TabIndex = 1;
+            this.buttonDone.TabIndex = 5;
             this.buttonDone.Text = "Done";
             this.buttonDone.UseVisualStyleBackColor = true;
             this.buttonDone.Click += new System.EventHandler(this.buttonDone_Click);
@@ -429,9 +433,9 @@
             // 
             this.panel3.Controls.Add(this.radioButtonBlackMoves);
             this.panel3.Controls.Add(this.radioButtonWhiteMoves);
-            this.panel3.Location = new System.Drawing.Point(1, 218);
+            this.panel3.Location = new System.Drawing.Point(1, 221);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(232, 54);
+            this.panel3.Size = new System.Drawing.Size(232, 42);
             this.panel3.TabIndex = 4;
             // 
             // radioButtonBlackMoves
@@ -440,7 +444,7 @@
             this.radioButtonBlackMoves.Location = new System.Drawing.Point(131, 15);
             this.radioButtonBlackMoves.Name = "radioButtonBlackMoves";
             this.radioButtonBlackMoves.Size = new System.Drawing.Size(87, 17);
-            this.radioButtonBlackMoves.TabIndex = 0;
+            this.radioButtonBlackMoves.TabIndex = 1;
             this.radioButtonBlackMoves.Text = "Black Moves";
             this.radioButtonBlackMoves.UseVisualStyleBackColor = true;
             this.radioButtonBlackMoves.CheckedChanged += new System.EventHandler(this.radioButtonBlackMoves_CheckedChanged);
@@ -461,7 +465,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 202);
+            this.label2.Location = new System.Drawing.Point(8, 178);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(34, 13);
             this.label2.TabIndex = 3;
@@ -472,17 +476,18 @@
             this.checkBoxBCK.AutoSize = true;
             this.checkBoxBCK.Checked = true;
             this.checkBoxBCK.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxBCK.Location = new System.Drawing.Point(132, 201);
+            this.checkBoxBCK.Location = new System.Drawing.Point(137, 177);
             this.checkBoxBCK.Name = "checkBoxBCK";
             this.checkBoxBCK.Size = new System.Drawing.Size(88, 17);
-            this.checkBoxBCK.TabIndex = 2;
+            this.checkBoxBCK.TabIndex = 1;
             this.checkBoxBCK.Text = "Castles Short";
             this.checkBoxBCK.UseVisualStyleBackColor = true;
+            this.checkBoxBCK.CheckedChanged += new System.EventHandler(this.checkBoxBCK_CheckedChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 177);
+            this.label1.Location = new System.Drawing.Point(8, 205);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(35, 13);
             this.label1.TabIndex = 3;
@@ -493,36 +498,39 @@
             this.checkBoxBCQ.AutoSize = true;
             this.checkBoxBCQ.Checked = true;
             this.checkBoxBCQ.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxBCQ.Location = new System.Drawing.Point(44, 201);
+            this.checkBoxBCQ.Location = new System.Drawing.Point(49, 177);
             this.checkBoxBCQ.Name = "checkBoxBCQ";
             this.checkBoxBCQ.Size = new System.Drawing.Size(87, 17);
-            this.checkBoxBCQ.TabIndex = 2;
+            this.checkBoxBCQ.TabIndex = 0;
             this.checkBoxBCQ.Text = "Castles Long";
             this.checkBoxBCQ.UseVisualStyleBackColor = true;
+            this.checkBoxBCQ.CheckedChanged += new System.EventHandler(this.checkBoxBCQ_CheckedChanged);
             // 
             // checkBoxWCK
             // 
             this.checkBoxWCK.AutoSize = true;
             this.checkBoxWCK.Checked = true;
             this.checkBoxWCK.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxWCK.Location = new System.Drawing.Point(132, 176);
+            this.checkBoxWCK.Location = new System.Drawing.Point(137, 204);
             this.checkBoxWCK.Name = "checkBoxWCK";
             this.checkBoxWCK.Size = new System.Drawing.Size(88, 17);
-            this.checkBoxWCK.TabIndex = 2;
+            this.checkBoxWCK.TabIndex = 3;
             this.checkBoxWCK.Text = "Castles Short";
             this.checkBoxWCK.UseVisualStyleBackColor = true;
+            this.checkBoxWCK.CheckedChanged += new System.EventHandler(this.checkBoxWCK_CheckedChanged);
             // 
             // checkBoxWCQ
             // 
             this.checkBoxWCQ.AutoSize = true;
             this.checkBoxWCQ.Checked = true;
             this.checkBoxWCQ.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxWCQ.Location = new System.Drawing.Point(44, 176);
+            this.checkBoxWCQ.Location = new System.Drawing.Point(49, 204);
             this.checkBoxWCQ.Name = "checkBoxWCQ";
             this.checkBoxWCQ.Size = new System.Drawing.Size(87, 17);
             this.checkBoxWCQ.TabIndex = 2;
             this.checkBoxWCQ.Text = "Castles Long";
             this.checkBoxWCQ.UseVisualStyleBackColor = true;
+            this.checkBoxWCQ.CheckedChanged += new System.EventHandler(this.checkBoxWCQ_CheckedChanged);
             // 
             // radioButtonBlack
             // 
@@ -548,15 +556,23 @@
             this.radioButtonWhite.UseVisualStyleBackColor = true;
             this.radioButtonWhite.CheckedChanged += new System.EventHandler(this.radioButtonWhite_CheckedChanged);
             // 
-            // label7
+            // buttonEditBoard
             // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(824, 28);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(84, 20);
-            this.label7.TabIndex = 15;
-            this.label7.Text = "Edit Board";
+            this.buttonEditBoard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonEditBoard.Location = new System.Drawing.Point(839, 24);
+            this.buttonEditBoard.Name = "buttonEditBoard";
+            this.buttonEditBoard.Size = new System.Drawing.Size(56, 23);
+            this.buttonEditBoard.TabIndex = 3;
+            this.buttonEditBoard.Text = "Edit";
+            this.buttonEditBoard.UseVisualStyleBackColor = true;
+            this.buttonEditBoard.Click += new System.EventHandler(this.buttonEditBoard_Click);
+            // 
+            // colorsToolStripMenuItem
+            // 
+            this.colorsToolStripMenuItem.Name = "colorsToolStripMenuItem";
+            this.colorsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.colorsToolStripMenuItem.Text = "&Colors";
+            this.colorsToolStripMenuItem.Click += new System.EventHandler(this.colorsToolStripMenuItem_Click);
             // 
             // pictureBoxPawn
             // 
@@ -670,7 +686,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(984, 761);
-            this.Controls.Add(this.label7);
+            this.Controls.Add(this.buttonEditBoard);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.buttonFlip);
             this.Controls.Add(this.label5);
@@ -763,7 +779,8 @@
         private System.Windows.Forms.CheckBox checkBoxWCK;
         private System.Windows.Forms.CheckBox checkBoxWCQ;
         private System.Windows.Forms.Button buttonClear;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button buttonEditBoard;
+        private System.Windows.Forms.ToolStripMenuItem colorsToolStripMenuItem;
     }
 }
 

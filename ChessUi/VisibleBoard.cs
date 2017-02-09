@@ -13,13 +13,31 @@ namespace ChessUi
 {
     public class VisibleBoard
     {
-        public VisibleBoard(Game game, Engine engine) {
+        public VisibleBoard(Game game, Engine engine)
+        {
             Game = game;
             Engine = engine;
+            ColorTheme = 90;
         }
 
         private Game Game { get; }
         private Engine Engine { get; }
+
+        private int _colorTheme;
+        internal int ColorTheme {
+            get { return _colorTheme; }
+            set {
+                _colorTheme = value;
+                DarkBrush = new SolidBrush(Hsv.HsvToColor(_colorTheme, 1, 0.5d));
+                LightBrush = new SolidBrush(Hsv.HsvToColor(_colorTheme, 0.3, 1));
+                BorderColor = Hsv.HsvToColor(_colorTheme, 1, 0.2);
+            }
+        }
+
+        private Brush DarkBrush { get; set; }
+        private Brush LightBrush { get; set; }
+
+        private Color BorderColor { get; set; }
 
         public Dictionary<Square, RectangleF> Squares { get; set; } = new Dictionary<Square, RectangleF>();
 
@@ -35,13 +53,14 @@ namespace ChessUi
 
         public static Color SelectedColor = Color.FromArgb(255, 204, 232, 255);
 
-        public void Paint(Graphics g) {
+        public void Paint(Graphics g)
+        {
             if (Game == null)
                 return;
 
             g.CompositingQuality = CompositingQuality.HighQuality;
             g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-            g.Clear(Color.Black);
+            g.Clear(BorderColor);
             var width = g.VisibleClipBounds.Width;
             var height = g.VisibleClipBounds.Height;
             Side = height < width ? height : width;
@@ -56,8 +75,9 @@ namespace ChessUi
             DrawLabels(g);
             DrawToPlay(g);
         }
-        
-        private void DrawToPlay(Graphics g) {
+
+        private void DrawToPlay(Graphics g)
+        {
             var doing = " to play";
             if (Engine.ThinkingFor != null)
                 doing = " thinking";
@@ -75,18 +95,21 @@ namespace ChessUi
                 g.DrawString(text, labelFont, Brushes.White, 10, 10);
         }
 
-        private void DrawLabels(Graphics g) {
+        private void DrawLabels(Graphics g)
+        {
             var size = SquareSide / 4;
             size = size < 1 ? 1 : size;
             var labelFont = new Font(FontFamily.GenericSansSerif, size);
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < 8; i++)
+            {
                 var x = Left - SquareSide / 3;
                 var y = Flipped ? Top + Side - ((i + 1) * SquareSide) + SquareSide / 4 : Top + SquareSide * i + SquareSide / 4;
                 g.DrawString((8 - i).ToString(), labelFont, Brushes.White, x, y);
             }
 
             var labels = "abcdefgh".ToCharArray();
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < 8; i++)
+            {
                 var x = Flipped ? Left + (Side - (i + 1) * SquareSide) + SquareSide / 4 : Left + i * SquareSide + SquareSide / 4;
                 var y = Top + SquareSide * 8;
                 g.DrawString(labels[i].ToString(), labelFont, Brushes.White, x, y);
@@ -95,14 +118,17 @@ namespace ChessUi
 
         private readonly SolidBrush _hiLightBrush = new SolidBrush(Color.FromArgb(150, SelectedColor));
 
-        private void DrawSquares(Graphics g) {
+        private void DrawSquares(Graphics g)
+        {
             Squares.Clear();
-            for (var r = Rank._1; r <= Rank._8; r++) {
-                for (var f = File.A; f <= File.H; f++) {
+            for (var r = Rank._1; r <= Rank._8; r++)
+            {
+                for (var f = File.A; f <= File.H; f++)
+                {
                     var x = Flipped ? Left + (Side - ((int)f + 1) * SquareSide) : Left + (int)f * SquareSide;
                     var y = Flipped ? Top + ((int)r * SquareSide) : Top + Side - ((int)r + 1) * SquareSide;
                     var chessSquare = Game.Board.Square(f, r);
-                    var brush = chessSquare.Color == Chess.Color.Black ? Brushes.Gray : Brushes.AntiqueWhite;
+                    var brush = chessSquare.Color == Chess.Color.Black ? DarkBrush : LightBrush;
 
                     if (MouseDownSquare == chessSquare)
                         brush = new SolidBrush(ControlPaint.LightLight(((SolidBrush)brush).Color));
@@ -113,7 +139,8 @@ namespace ChessUi
                         g.FillRectangle(_hiLightBrush, rect);
 
                     Squares.Add(chessSquare, rect);
-                    if (chessSquare.Piece != null && MouseDownSquare != chessSquare) {
+                    if (chessSquare.Piece != null && MouseDownSquare != chessSquare)
+                    {
                         if (_animationOffset == null || chessSquare.Piece != _animationOffset.Item1)
                             DrawPiece(chessSquare, rect, g);
                     }
@@ -157,7 +184,7 @@ namespace ChessUi
                 g.DrawString(square.Piece.ImageChar.ToString(), pieceFont, Brushes.Black, rect);
             }
         }
-    
+
 
         private Image GetImage(Piece piece)
         {
@@ -199,7 +226,8 @@ namespace ChessUi
         public PieceImage PieceImage { get; internal set; } = PieceImage.Regular;
         public bool EditMode { get; internal set; }
 
-        public void MouseDown(int x, int y) {
+        public void MouseDown(int x, int y)
+        {
             MouseDownSquare = GetSquare(x, y);
             if (MouseDownSquare == null)
                 return;
@@ -220,16 +248,19 @@ namespace ChessUi
         }
 
 
-        public void MouseUp(int x, int y) {
+        public void MouseUp(int x, int y)
+        {
             HiLights.Clear();
             MouseUpSquare = GetSquare(x, y);
         }
 
-        private Square GetSquare(int x, int y) {
-            return Squares.SingleOrDefault(sqr => sqr.Value.Contains(x, y)).Key;            
+        private Square GetSquare(int x, int y)
+        {
+            return Squares.SingleOrDefault(sqr => sqr.Value.Contains(x, y)).Key;
         }
 
-        public void OffsetAnimated(Piece piece, float x, float y) {
+        public void OffsetAnimated(Piece piece, float x, float y)
+        {
             _animationOffset = new Tuple<Piece, PointF>(piece, new PointF(x + SquareSide / 16, y + SquareSide / 4));
         }
 
@@ -246,5 +277,110 @@ namespace ChessUi
     {
         Newspaper,
         Regular
+    }
+
+    public class Hsv
+    {
+        public static Color HsvToColor(double h, double S, double V)
+        {
+            double H = h;
+            while (H < 0) { H += 360; };
+            while (H >= 360) { H -= 360; };
+            double R, G, B;
+            if (V <= 0)
+            { R = G = B = 0; }
+            else if (S <= 0)
+            {
+                R = G = B = V;
+            }
+            else
+            {
+                double hf = H / 60.0;
+                int i = (int)Math.Floor(hf);
+                double f = hf - i;
+                double pv = V * (1 - S);
+                double qv = V * (1 - S * f);
+                double tv = V * (1 - S * (1 - f));
+                switch (i)
+                {
+
+                    // Red is the dominant color
+
+                    case 0:
+                        R = V;
+                        G = tv;
+                        B = pv;
+                        break;
+
+                    // Green is the dominant color
+
+                    case 1:
+                        R = qv;
+                        G = V;
+                        B = pv;
+                        break;
+                    case 2:
+                        R = pv;
+                        G = V;
+                        B = tv;
+                        break;
+
+                    // Blue is the dominant color
+
+                    case 3:
+                        R = pv;
+                        G = qv;
+                        B = V;
+                        break;
+                    case 4:
+                        R = tv;
+                        G = pv;
+                        B = V;
+                        break;
+
+                    // Red is the dominant color
+
+                    case 5:
+                        R = V;
+                        G = pv;
+                        B = qv;
+                        break;
+
+                    // Just in case we overshoot on our math by a little, we put these here. Since its a switch it won't slow us down at all to put these here.
+
+                    case 6:
+                        R = V;
+                        G = tv;
+                        B = pv;
+                        break;
+                    case -1:
+                        R = V;
+                        G = pv;
+                        B = qv;
+                        break;
+
+                    // The color is not defined, we should throw an error.
+
+                    default:
+                        //LFATAL("i Value error in Pixel conversion, Value is %d", i);
+                        R = G = B = V; // Just pretend its black/white
+                        break;
+                }
+            }
+            int r = Clamp((int)(R * 255.0));
+            int g = Clamp((int)(G * 255.0));
+            int b = Clamp((int)(B * 255.0));
+            return Color.FromArgb(255, r, g, b);
+        }
+
+        /// <summary>
+        /// Clamp a value to 0-255
+        /// </summary>
+        static int Clamp(int i)
+        {
+            if (i < 0) return 0;
+            if (i > 255) return 255;
+            return i;
+        }
     }
 }

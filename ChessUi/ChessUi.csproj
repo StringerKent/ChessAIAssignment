@@ -76,11 +76,20 @@
     <Compile Include="ChessForm.Designer.cs">
       <DependentUpon>ChessForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ColorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ColorForm.Designer.cs">
+      <DependentUpon>ColorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VisibleBoard.cs" />
     <EmbeddedResource Include="ChessForm.resx">
       <DependentUpon>ChessForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorForm.resx">
+      <DependentUpon>ColorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -118,6 +127,7 @@
     <Content Include="images\BlackPawn.png" />
     <Content Include="images\BlackQueen.png" />
     <Content Include="images\BlackRook.png" />
+    <Content Include="images\Icon.png" />
     <Content Include="images\mate in two black.png" />
     <Content Include="images\mate in two white.png" />
     <Content Include="images\WhiteBishop.png" />

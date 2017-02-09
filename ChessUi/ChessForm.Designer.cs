@@ -61,7 +61,7 @@
             this.buttonClear = new System.Windows.Forms.Button();
             this.buttonDone = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.radioButtonBlackMoves = new System.Windows.Forms.RadioButton();
             this.radioButtonWhiteMoves = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
             this.checkBoxBCK = new System.Windows.Forms.CheckBox();
@@ -413,6 +413,7 @@
             this.buttonClear.TabIndex = 1;
             this.buttonClear.Text = "Clear";
             this.buttonClear.UseVisualStyleBackColor = true;
+            this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
             // 
             // buttonDone
             // 
@@ -422,25 +423,27 @@
             this.buttonDone.TabIndex = 1;
             this.buttonDone.Text = "Done";
             this.buttonDone.UseVisualStyleBackColor = true;
+            this.buttonDone.Click += new System.EventHandler(this.buttonDone_Click);
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.radioButton1);
+            this.panel3.Controls.Add(this.radioButtonBlackMoves);
             this.panel3.Controls.Add(this.radioButtonWhiteMoves);
             this.panel3.Location = new System.Drawing.Point(1, 218);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(232, 54);
             this.panel3.TabIndex = 4;
             // 
-            // radioButton1
+            // radioButtonBlackMoves
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(131, 15);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(87, 17);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.Text = "Black Moves";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioButtonBlackMoves.AutoSize = true;
+            this.radioButtonBlackMoves.Location = new System.Drawing.Point(131, 15);
+            this.radioButtonBlackMoves.Name = "radioButtonBlackMoves";
+            this.radioButtonBlackMoves.Size = new System.Drawing.Size(87, 17);
+            this.radioButtonBlackMoves.TabIndex = 0;
+            this.radioButtonBlackMoves.Text = "Black Moves";
+            this.radioButtonBlackMoves.UseVisualStyleBackColor = true;
+            this.radioButtonBlackMoves.CheckedChanged += new System.EventHandler(this.radioButtonBlackMoves_CheckedChanged);
             // 
             // radioButtonWhiteMoves
             // 
@@ -453,6 +456,7 @@
             this.radioButtonWhiteMoves.TabStop = true;
             this.radioButtonWhiteMoves.Text = "White Moves";
             this.radioButtonWhiteMoves.UseVisualStyleBackColor = true;
+            this.radioButtonWhiteMoves.CheckedChanged += new System.EventHandler(this.radioButtonWhiteMoves_CheckedChanged);
             // 
             // label2
             // 
@@ -750,7 +754,7 @@
         private ChessPiecePictureBox pictureBoxBishop;
         private System.Windows.Forms.Button buttonDone;
         private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton radioButtonBlackMoves;
         private System.Windows.Forms.RadioButton radioButtonWhiteMoves;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox checkBoxBCK;

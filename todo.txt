@@ -1,6 +1,6 @@
 http://www.chessbin.com/archive
 
-Unsuficient material funkar inte.
+När svart börjar efter edit blir det ofta problem.
 
 50 move rule. Resetta vid bondedrag eller capture.
 
@@ -13,15 +13,9 @@ Läsa igenom all kod för att se om något kan göras mer pedagogiskt.
 
 Lägga till bad bishops igen och testa.
 
-Skriva om sökning med ökande djup, exempel på matt på tre drag. 18 vs 1 sekund.
-
-Skriva om packning och vad som sparas för varje drag. Recursions value.
-
 Tester för GetCaptures
 
 Testa hela cpu-cpu-matcher för att få fram fel.
-
-Alpha beta som tar hänsyn vem som gör det första draget. Börja alltid med max, men neggerar om man spelar för vit.
 
 todo´s
 

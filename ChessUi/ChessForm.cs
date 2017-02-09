@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Chess;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Color = Chess.Color;
 
 namespace ChessUi
 {
@@ -57,18 +58,33 @@ namespace ChessUi
                     UseItemStyleForSubItems = false
                 });
             } else {
+                //After a edit it can be blacks move.
+                if (listView1.Items.Count == 0)
+                    listView1.Items.Add(new ListViewItem {
+                    Text = move.NumberInGame.ToString(),
+                    SubItems =
+                        {
+                            new ListViewItem.ListViewSubItem {Text = ""}
+                        },
+                    UseItemStyleForSubItems = false
+                });
+
                 listView1.Items[listView1.Items.Count - 1].SubItems.Add(new MoveListSubItem(evaluatedMove));
             }
             var list = GetMoveListItems();
             list.ForEach(x => x.ResetStyle());
-            list.Last().BackColor = VisibleBoard.SelectedColor;
+            if (list.Any())
+                list.Last().BackColor = VisibleBoard.SelectedColor;
         }
 
         private List<MoveListSubItem> GetMoveListItems() {
             var list = new List<MoveListSubItem>();
             foreach (var item in listView1.Items) {
                 var listViewItem = (ListViewItem)item;
-                var whiteMoveItem = (MoveListSubItem)listViewItem.SubItems[1];
+                var whiteMoveItem = listViewItem.SubItems[1] as MoveListSubItem;
+                if (whiteMoveItem == null)
+                    continue;
+                
                 list.Add(whiteMoveItem);
                 if (listViewItem.SubItems.Count > 2) {
                     var blackMoveItem = (MoveListSubItem)listViewItem.SubItems[2];
@@ -184,6 +200,13 @@ namespace ChessUi
         private void panel1_MouseUp(object sender, MouseEventArgs e) {
 
             VisibleBoard.MouseUp(e.X, e.Y);
+
+            if (VisibleBoard.EditMode)
+            {
+                MakeEditMove(e.X, e.Y);
+                return;
+            }
+
             if (VisibleBoard.MouseDownSquare == null || VisibleBoard.MouseUpSquare == null)
                 return;
 
@@ -205,6 +228,20 @@ namespace ChessUi
             VisibleBoard.MouseUpSquare = null;
             panel1.Invalidate();
 
+        }
+
+        private void MakeEditMove(int x, int y)
+        {
+            var fromSquare = VisibleBoard.MouseDownSquare;
+            var toSquare = VisibleBoard.MouseUpSquare;
+            if (VisibleBoard.MouseDownSquare == null)
+                return;
+
+            if (fromSquare.Piece == null)
+                return;
+
+            ChessGame.MakeEditMove(fromSquare, toSquare);
+            panel1.Invalidate();
         }
 
         private void CheckForEnd() {
@@ -450,12 +487,28 @@ namespace ChessUi
 
         private void ExitEditMode()
         {
-            
+            checkBoxAI_white.Enabled = true;
+            checkBoxAIblack.Enabled = true;
+            ChessGame.EditMode = false;
+            VisibleBoard.EditMode = false;
+            ChessGame.SetInitials();
         }
 
         private void EnterEditMode()
         {
-            ChessGame.EditMode = true;
+            StopAi();
+            checkBoxAI_white.Enabled = false;
+            checkBoxAIblack.Enabled = false;
+            checkBoxWCK.Checked = !ChessGame.WhitePlayer.HasCastledKingSide;
+            checkBoxWCQ.Checked = !ChessGame.WhitePlayer.HasCastledQueenSide;
+            checkBoxBCK.Checked = !ChessGame.BlackPlayer.HasCastledKingSide;
+            checkBoxBCQ.Checked = !ChessGame.BlackPlayer.HasCastledQueenSide;
+            if (ChessGame.CurrentPlayer.Color == Color.White)
+                radioButtonWhiteMoves.Checked = true;
+            else
+                radioButtonBlackMoves.Checked = true;
+            listView1.Items.Clear();
+            ChessGame.EnterEditMode();
             VisibleBoard.EditMode = true;
         }
 
@@ -589,7 +642,30 @@ namespace ChessUi
             e.UseDefaultCursors = false;
         }
 
-        
+        private void buttonClear_Click(object sender, EventArgs e)
+        {
+            if (!ChessGame.EditMode)
+                return;
+
+            ChessGame.EditClearPieces();
+            panel1.Invalidate();
+        }
+
+        private void radioButtonWhiteMoves_CheckedChanged(object sender, EventArgs e)
+        {
+            ChessGame.CurrentPlayer = ChessGame.WhitePlayer;
+            panel1.Invalidate();
+        }
+
+        private void radioButtonBlackMoves_CheckedChanged(object sender, EventArgs e) {
+            ChessGame.CurrentPlayer = ChessGame.BlackPlayer;
+            panel1.Invalidate();
+        }
+
+        private void buttonDone_Click(object sender, EventArgs e) {
+            ToggleEditPanel();
+            ExitEditMode();
+        }
     }
     public class ChessPiecePictureBox : PictureBox
     {

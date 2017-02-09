@@ -19,8 +19,8 @@ namespace Chess
         public bool IsChecked { get; set; }
 
         public bool Mated { get; set; }
-        internal bool HasCastledQueenSide { get; set; }
-        internal bool HasCastledKingSide { get; set; }
+        public bool HasCastledQueenSide { get; set; }
+        public bool HasCastledKingSide { get; set; }
         internal King King { get; set; }
         internal Pawn[] Pawns { get; set; }
         internal Piece[] KnightsBishops { get; set; }

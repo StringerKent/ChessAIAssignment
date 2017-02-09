@@ -203,13 +203,20 @@ namespace ChessUi
             MouseDownSquare = GetSquare(x, y);
             if (MouseDownSquare == null)
                 return;
-            var moves = Game.GetLegalUiMoves();
-            var hiLights = moves.Where(m => m.FromSquare.ToString() == MouseDownSquare.ToString()).Select(m => m.ToSquare).ToList();
-            HiLights =
-                Game.Board.Squares
-                    .Where(s => hiLights.Select(h => h.ToString()).Contains(s.ToString()))
-                    .Select(s => s)
-                    .ToList();
+
+            if (!EditMode)
+            {
+                var moves = Game.GetLegalUiMoves();
+                var hiLights =
+                    moves.Where(m => m.FromSquare.ToString() == MouseDownSquare.ToString())
+                        .Select(m => m.ToSquare)
+                        .ToList();
+                HiLights =
+                    Game.Board.Squares
+                        .Where(s => hiLights.Select(h => h.ToString()).Contains(s.ToString()))
+                        .Select(s => s)
+                        .ToList();
+            }
         }
 
 

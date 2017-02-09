@@ -274,6 +274,14 @@ namespace Chess
             return gameCopy;
         }
 
+        public void EditClearPieces() {
+            WhitePlayer.Pieces.Clear();
+            BlackPlayer.Pieces.Clear();
+            Board.ClearPieces();
+            AddPiece(File.E, Rank._1, new King(Color.White));
+            AddPiece(File.E, Rank._8, new King(Color.Black));
+        }
+
         internal byte CommandCount { get; private set; }
 
         internal bool TryStringMove(string command) {
@@ -327,7 +335,7 @@ namespace Chess
             return true;
         }
 
-        internal void SetInitials() {
+        public void SetInitials() {
             PositionsDatabase.Instance.SetStartHash(this);
             InitialPosition = GetPosition();
             SetPieceFastAccess();
@@ -695,6 +703,36 @@ namespace Chess
             WhitePlayer.KnightsBishops = WhitePlayer.Pieces.Where(x => x.Value == 3).ToArray();
             BlackPlayer.KnightsBishops = BlackPlayer.Pieces.Where(x => x.Value == 3).ToArray();
 
+        }
+
+        public void MakeEditMove(Square fromSquare, Square toSquare)
+        {
+            var piece = fromSquare.Piece;
+            piece.Square = null;
+            fromSquare.Piece = null;
+
+            if (toSquare != null)
+            {
+                toSquare.Piece = piece;
+                piece.Square = toSquare;
+            }
+            else
+            {
+                if (piece.Color == Color.White)
+                    WhitePlayer.Pieces.Remove(piece);
+                else
+                    BlackPlayer.Pieces.Remove(piece);
+            }
+        }
+
+        public void EnterEditMode()
+        {
+            EditMode = true;
+            WhitePlayer.Moves.Clear();
+            BlackPlayer.Moves.Clear();
+            HashHistory.Clear();
+            CommandCount = 0;
+            PositionsDatabase.Instance.Reset();
         }
     }
 

@@ -42,5 +42,6 @@ namespace Chess
                 Mated = Mated
             };
         }
+        
     }
 }

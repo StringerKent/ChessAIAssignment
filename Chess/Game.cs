@@ -305,7 +305,11 @@ namespace Chess
             BlackPlayer.Pieces.Clear();
             Board.ClearPieces();
             AddPiece(File.E, Rank._1, new King(Color.White));
+            WhitePlayer.King = (King)WhitePlayer.Pieces.Single(x => x is King);
             AddPiece(File.E, Rank._8, new King(Color.Black));
+            BlackPlayer.King = (King)BlackPlayer.Pieces.Single(x => x is King);
+            
+
         }
 
         internal byte CommandCount { get; private set; }
@@ -377,6 +381,7 @@ namespace Chess
 
         private void InitialMaterial(Player player)
         {
+            player.Material = 0;
             foreach (var piece in player.Pieces)
                 player.Material += piece.Value * 100;
         }
@@ -805,6 +810,11 @@ namespace Chess
             HashHistory.Clear();
             CommandCount = 0;
             PositionsDatabase.Instance.Reset();
+        }
+
+        public bool OtherKingAttacked()
+        {
+            return KingChecked(OtherPlayer);
         }
     }
 

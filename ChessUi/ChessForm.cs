@@ -34,8 +34,7 @@ namespace ChessUi
             VisibleBoard = new VisibleBoard(ChessGame, Engine);
         }
 
-        internal void Redraw()
-        {
+        internal void Redraw() {
             panel1.Invalidate();
         }
 
@@ -66,13 +65,13 @@ namespace ChessUi
                 //After a edit it can be blacks move.
                 if (listView1.Items.Count == 0)
                     listView1.Items.Add(new ListViewItem {
-                    Text = move.NumberInGame.ToString(),
-                    SubItems =
+                        Text = move.NumberInGame.ToString(),
+                        SubItems =
                         {
                             new ListViewItem.ListViewSubItem {Text = ""}
                         },
-                    UseItemStyleForSubItems = false
-                });
+                        UseItemStyleForSubItems = false
+                    });
 
                 listView1.Items[listView1.Items.Count - 1].SubItems.Add(new MoveListSubItem(evaluatedMove));
             }
@@ -89,7 +88,7 @@ namespace ChessUi
                 var whiteMoveItem = listViewItem.SubItems[1] as MoveListSubItem;
                 if (whiteMoveItem == null)
                     continue;
-                
+
                 list.Add(whiteMoveItem);
                 if (listViewItem.SubItems.Count > 2) {
                     var blackMoveItem = (MoveListSubItem)listViewItem.SubItems[2];
@@ -206,8 +205,7 @@ namespace ChessUi
 
             VisibleBoard.MouseUp(e.X, e.Y);
 
-            if (VisibleBoard.EditMode)
-            {
+            if (VisibleBoard.EditMode) {
                 MakeEditMove(e.X, e.Y);
                 return;
             }
@@ -215,8 +213,7 @@ namespace ChessUi
             if (VisibleBoard.MouseDownSquare == null)
                 return;
 
-            if (VisibleBoard.MouseUpSquare == null)
-            {
+            if (VisibleBoard.MouseUpSquare == null) {
                 VisibleBoard.MouseDownSquare = null;
                 panel1.Invalidate();
                 return;
@@ -242,13 +239,12 @@ namespace ChessUi
 
         }
 
-        private void MakeEditMove(int x, int y)
-        {
+        private void MakeEditMove(int x, int y) {
             var fromSquare = VisibleBoard.MouseDownSquare;
             var toSquare = VisibleBoard.MouseUpSquare;
             if (VisibleBoard.MouseDownSquare == null)
                 return;
-                       
+
 
             ChessGame.MakeEditMove(fromSquare, toSquare);
             VisibleBoard.MouseDownSquare = null;
@@ -261,6 +257,7 @@ namespace ChessUi
                     MessageBox.Show(this, $"{ChessGame.Winner.Color} won!", "Chess Ai");
                 else
                     MessageBox.Show(this, "Draw");
+                StopAi();
             }
         }
 
@@ -328,7 +325,7 @@ namespace ChessUi
 
             if (ChessGame.CurrentPlayer.Color == Chess.Color.Black && checkedBlack ||
                 ChessGame.CurrentPlayer.Color == Chess.Color.White && checkWhite) {
-                
+
                 var thinkFor = ChessGame.CurrentPlayer.Color == Chess.Color.White
                     ? TimeSpan.FromSeconds((int)numericUpDownThinkWhite.Value)
                     : TimeSpan.FromSeconds((int)numericUpDownThinkBlack.Value);
@@ -469,36 +466,35 @@ namespace ChessUi
             }
         }
 
-        private void newspaperToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void newspaperToolStripMenuItem_Click(object sender, EventArgs e) {
             regilarToolStripMenuItem.Checked = !newspaperToolStripMenuItem.Checked;
             changePieceImage();
         }
 
-        private void changePieceImage()
-        {
+        private void changePieceImage() {
             VisibleBoard.PieceImage = regilarToolStripMenuItem.Checked ? PieceImage.Regular : PieceImage.Newspaper;
             panel1.Invalidate();
         }
 
-        private void regilarToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void regilarToolStripMenuItem_Click(object sender, EventArgs e) {
             newspaperToolStripMenuItem.Checked = !regilarToolStripMenuItem.Checked;
             changePieceImage();
         }
 
-        private void boardToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void boardToolStripMenuItem_Click(object sender, EventArgs e) {
             if (boardToolStripMenuItem.Checked)
                 EnterEditMode();
             else
                 ExitEditMode();
-            ToggleEditPanel();
         }
-              
 
-        private void ExitEditMode()
-        {
+        private void ExitEditMode() {
+            if (ChessGame.OtherKingAttacked())
+            {
+                MessageBox.Show(this, $"{ChessGame.OtherPlayer.Color} King can not be attacked when it is {ChessGame.CurrentPlayer.Color}s turn.", "Invalid Setup");
+                return;
+            }
+
             WhiteLongCastlingRights();
             WhiteShortCastlingRights();
             BlackLongCastlingRights();
@@ -508,11 +504,11 @@ namespace ChessUi
             checkBoxAIblack.Enabled = true;
             ChessGame.EditMode = false;
             VisibleBoard.EditMode = false;
+            ToggleEditPanel();
             ChessGame.SetInitials();
         }
 
-        private void EnterEditMode()
-        {
+        private void EnterEditMode() {
             boardToolStripMenuItem.Checked = true;
             StopAi();
             checkBoxAI_white.Enabled = false;
@@ -528,31 +524,24 @@ namespace ChessUi
             listView1.Items.Clear();
             ChessGame.EnterEditMode();
             VisibleBoard.EditMode = true;
+            ToggleEditPanel();
         }
 
-        private async void ToggleEditPanel()
-        {
-            if (VisibleBoard.EditMode)
-            {
-                for (int i = 0; i < 30; i++)
-                {
+        private async void ToggleEditPanel() {
+            if (VisibleBoard.EditMode) {
+                for (int i = 0; i < 30; i++) {
                     await Task.Delay(10);
                     panelEdit.Height = i * 10;
                 }
-            }
-            else if (panelEdit.Height == 290)
-            {
-                for (int i = 0; i < 30; i++)
-                {
+            } else if (panelEdit.Height == 290) {
+                for (int i = 0; i < 30; i++) {
                     await Task.Delay(10);
                     panelEdit.Height = 290 - i * 10;
                 }
             }
         }
-        
-        
-        private void radioButtonWhite_CheckedChanged(object sender, EventArgs e)
-        {
+
+        private void radioButtonWhite_CheckedChanged(object sender, EventArgs e) {
             pictureBoxBishop.Image = Properties.Resources.WhiteBishop;
             pictureBoxBishop.PieceType = PieceType.WhiteBishop;
 
@@ -560,7 +549,7 @@ namespace ChessUi
             pictureBoxKnight.PieceType = PieceType.WhiteNight;
 
             pictureBoxPawn.Image = Properties.Resources.WhitePawn;
-            pictureBoxPawn.PieceType =PieceType.WhitePawn;
+            pictureBoxPawn.PieceType = PieceType.WhitePawn;
 
             pictureBoxQueen.Image = Properties.Resources.WhiteQueen;
             pictureBoxQueen.PieceType = PieceType.WhiteQueen;
@@ -569,8 +558,7 @@ namespace ChessUi
             pictureBoxRook.PieceType = PieceType.WhiteRook;
         }
 
-        private void radioButtonBlack_CheckedChanged(object sender, EventArgs e)
-        {
+        private void radioButtonBlack_CheckedChanged(object sender, EventArgs e) {
             pictureBoxBishop.Image = Properties.Resources.BlackBishop;
             pictureBoxBishop.PieceType = PieceType.BlackBishop;
 
@@ -587,16 +575,13 @@ namespace ChessUi
             pictureBoxRook.PieceType = PieceType.BlackRook;
         }
 
-        private void pictureBox_MouseDown(object sender, MouseEventArgs e)
-        {
+        private void pictureBox_MouseDown(object sender, MouseEventArgs e) {
             var pictureBox = (PictureBox)sender;
             pictureBox.DoDragDrop(pictureBox, DragDropEffects.Copy | DragDropEffects.Move);
         }
 
-        private void panel1_DragEnter(object sender, DragEventArgs e)
-        {
-            if (!e.Data.GetDataPresent(typeof(ChessPiecePictureBox)))
-            {
+        private void panel1_DragEnter(object sender, DragEventArgs e) {
+            if (!e.Data.GetDataPresent(typeof(ChessPiecePictureBox))) {
                 e.Effect = DragDropEffects.None;
                 return;
             }
@@ -604,7 +589,7 @@ namespace ChessUi
             e.Effect = DragDropEffects.Copy;
             var img = ((ChessPiecePictureBox)e.Data.GetData(typeof(ChessPiecePictureBox))).Image;
             var bitmap = new Bitmap(img);
-            
+
             Cursor.Current = CreateCursor(bitmap, 45, 45);
             bitmap.Dispose();
         }
@@ -625,52 +610,49 @@ namespace ChessUi
             public IntPtr hbmColor;
         }
 
-        public static Cursor CreateCursor(Bitmap bmp,
-            int xHotSpot, int yHotSpot)
-        {
-            IconInfo tmp = new IconInfo();
-            GetIconInfo(bmp.GetHicon(), ref tmp);
-            tmp.xHotspot = xHotSpot;
-            tmp.yHotspot = yHotSpot;
-            tmp.fIcon = false;
-            return new Cursor(CreateIconIndirect(ref tmp));
+        private static Cursor CreateCursor(Bitmap bmp, int xHotSpot, int yHotSpot) {
+            var inconInfo = new IconInfo();
+            GetIconInfo(bmp.GetHicon(), ref inconInfo);
+            inconInfo.xHotspot = xHotSpot;
+            inconInfo.yHotspot = yHotSpot;
+            inconInfo.fIcon = false;
+            return new Cursor(CreateIconIndirect(ref inconInfo));
         }
 
-        private void panel1_DragDrop(object sender, DragEventArgs e)
-        {
+        private void panel1_DragDrop(object sender, DragEventArgs e) {
             var chessPiecePictureBox = e.Data.GetData(typeof(ChessPiecePictureBox)) as ChessPiecePictureBox;
             if (!VisibleBoard.EditMode || chessPiecePictureBox == null)
                 return;
             var clientPoint = panel1.PointToClient(new Point(e.X, e.Y));
 
             VisibleBoard.Drop(chessPiecePictureBox.PieceType, clientPoint.X, clientPoint.Y);
-            
+
 
             panel1.Invalidate();
         }
 
-        private void panel1_DragOver(object sender, DragEventArgs e)
-        {
+        private void panel1_DragOver(object sender, DragEventArgs e) {
             if (!VisibleBoard.EditMode || !(sender is ChessPiecePictureBox))
                 return;
         }
 
-        private void pictureBox_GiveFeedback(object sender, GiveFeedbackEventArgs e)
-        {
+        private void pictureBox_GiveFeedback(object sender, GiveFeedbackEventArgs e) {
             e.UseDefaultCursors = false;
         }
 
-        private void buttonClear_Click(object sender, EventArgs e)
-        {
+        private void buttonClear_Click(object sender, EventArgs e) {
             if (!ChessGame.EditMode)
                 return;
 
             ChessGame.EditClearPieces();
+            checkBoxBCK.Checked = false;
+            checkBoxBCQ.Checked = false;
+            checkBoxWCK.Checked = false;
+            checkBoxWCQ.Checked = false;
             panel1.Invalidate();
         }
 
-        private void radioButtonWhiteMoves_CheckedChanged(object sender, EventArgs e)
-        {
+        private void radioButtonWhiteMoves_CheckedChanged(object sender, EventArgs e) {
             ChessGame.CurrentPlayer = ChessGame.WhitePlayer;
             panel1.Invalidate();
         }
@@ -682,108 +664,96 @@ namespace ChessUi
 
         private void buttonDone_Click(object sender, EventArgs e) {
             ExitEditMode();
-            ToggleEditPanel();            
         }
 
-        private void checkBoxWCK_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBoxWCK_CheckedChanged(object sender, EventArgs e) {
             WhiteShortCastlingRights();
-        }               
+        }
 
-        private void checkBoxWCQ_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBoxWCQ_CheckedChanged(object sender, EventArgs e) {
             WhiteLongCastlingRights();
         }
 
-        private void checkBoxBCQ_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBoxBCQ_CheckedChanged(object sender, EventArgs e) {
             BlackLongCastlingRights();
         }
 
-        private void checkBoxBCK_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBoxBCK_CheckedChanged(object sender, EventArgs e) {
             BlackShortCastlingRights();
         }
 
-        private void WhiteShortCastlingRights()
-        {
+        private void WhiteShortCastlingRights() {
             var kingOk = ChessGame.WhitePlayer.Pieces.OfType<King>().Single().Square.ToString() == "e1";
             var rookOk = ChessGame.WhitePlayer.Pieces.OfType<Rook>().Any(rook => rook.Square.ToString() == "h1");
 
-            if (kingOk && rookOk)
-            {
+            if (kingOk && rookOk) {
                 ChessGame.WhitePlayer.HasCastledKingSide = !checkBoxWCK.Checked;
-            }
-            else if (checkBoxWCK.Checked)
-            {
+            } else {
                 ChessGame.WhitePlayer.HasCastledKingSide = true;
-                checkBoxWCK.Checked = false;
-                MessageBox.Show(this, "Piece setup does not allow castling King side.");
+                if (checkBoxWCK.Checked)
+                {
+                    checkBoxWCK.Checked = false;
+                    MessageBox.Show(this, "Piece setup does not allow castling King side.");
+                }
             }
         }
 
-        private void WhiteLongCastlingRights()
-        {
+        private void WhiteLongCastlingRights() {
             var kingOk = ChessGame.WhitePlayer.Pieces.OfType<King>().Single().Square.ToString() == "e1";
             var rookOk = ChessGame.WhitePlayer.Pieces.OfType<Rook>().Any(rook => rook.Square.ToString() == "a1");
 
-            if (kingOk && rookOk)
-            {
+            if (kingOk && rookOk) {
                 ChessGame.WhitePlayer.HasCastledQueenSide = !checkBoxWCQ.Checked;
-            }
-            else if (checkBoxWCQ.Checked)
-            {
+            } else {
                 ChessGame.WhitePlayer.HasCastledQueenSide = true;
-                checkBoxWCQ.Checked = false;
-                MessageBox.Show(this, "Piece setup does not allow castling Queen side.");                
+                if (checkBoxWCQ.Checked)
+                {
+                    checkBoxWCQ.Checked = false;
+                    MessageBox.Show(this, "Piece setup does not allow castling Queen side.");
+                }
             }
         }
 
-        private void BlackShortCastlingRights()
-        {
+        private void BlackShortCastlingRights() {
             var kingOk = ChessGame.BlackPlayer.Pieces.OfType<King>().Single().Square.ToString() == "e8";
             var rookOk = ChessGame.BlackPlayer.Pieces.OfType<Rook>().Any(rook => rook.Square.ToString() == "h8");
 
-            if (kingOk && rookOk)
-            {
+            if (kingOk && rookOk) {
                 ChessGame.BlackPlayer.HasCastledKingSide = !checkBoxBCK.Checked;
-            }
-            else if (checkBoxBCK.Checked)
-            {
+            } else {
                 ChessGame.BlackPlayer.HasCastledKingSide = true;
-                MessageBox.Show(this, "Piece setup does not allow castling King side.");
-                checkBoxBCK.Checked = false;
+                if (checkBoxBCK.Checked)
+                {
+                    checkBoxBCK.Checked = false;
+                    MessageBox.Show(this, "Piece setup does not allow castling King side.");
+                }
             }
         }
 
-        private void BlackLongCastlingRights()
-        {
+        private void BlackLongCastlingRights() {
             var kingOk = ChessGame.BlackPlayer.Pieces.OfType<King>().Single().Square.ToString() == "e8";
             var rookOk = ChessGame.BlackPlayer.Pieces.OfType<Rook>().Any(rook => rook.Square.ToString() == "a8");
 
-            if (kingOk && rookOk)
-            {
+            if (kingOk && rookOk) {
                 ChessGame.BlackPlayer.HasCastledQueenSide = !checkBoxBCQ.Checked;
-            }
-            else if (checkBoxBCQ.Checked)
-            {
+            } else {
                 ChessGame.BlackPlayer.HasCastledQueenSide = true;
-                checkBoxBCQ.Checked = false;
-                MessageBox.Show(this, "Piece setup does not allow castling Queen side.");
+                if (checkBoxBCQ.Checked)
+                {
+                    checkBoxBCQ.Checked = false;
+                    MessageBox.Show(this, "Piece setup does not allow castling Queen side.");
+                }
             }
         }
 
-        private void buttonEditBoard_Click(object sender, EventArgs e)
-        {
+        private void buttonEditBoard_Click(object sender, EventArgs e) {
             if (!VisibleBoard.EditMode)
                 EnterEditMode();
             else
-                ExitEditMode();
-            ToggleEditPanel();
+                ExitEditMode();            
         }
 
-        private void colorsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void colorsToolStripMenuItem_Click(object sender, EventArgs e) {
             var colorForm = new ColorForm(this);
             colorForm.Show(this);
         }
@@ -814,5 +784,5 @@ namespace ChessUi
         }
     }
 
-    
+
 }

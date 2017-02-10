@@ -1,6 +1,14 @@
-http://www.chessbin.com/archive
 
-Om det finns castling rights efter edit krashar spelet om det inte finns torn och kung på rätt plats.
+Edit article
+	* Feb 10, 2017 - Version
+		- New Edit board function.
+		- Pimped the UI just a litlebit.
+			Thanks to Daniela Di Lena, for the free graphics.
+	
+
+Testa material efter edit.
+
+Move tostring anorlunda för svart.
 
 När svart börjar efter edit blir det ofta problem.
 
@@ -36,13 +44,7 @@ Try refactor Move
 Coverage
 
 Ui
-
 	- Tagna pjäser i ui
-	- Editera
-	- Snyggare pjäser.
-	- Visa bästa drag
-	
-Eval
 		
 Book
 

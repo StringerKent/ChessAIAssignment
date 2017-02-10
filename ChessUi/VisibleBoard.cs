@@ -28,16 +28,16 @@ namespace ChessUi
             get { return _colorTheme; }
             set {
                 _colorTheme = value;
-                DarkBrush = new SolidBrush(Hsv.HsvToColor(_colorTheme, 1, 0.5d));
+                DarkBrush = new SolidBrush(Hsv.HsvToColor(_colorTheme, 1, 0.5));
                 LightBrush = new SolidBrush(Hsv.HsvToColor(_colorTheme, 0.3, 1));
-                BorderColor = Hsv.HsvToColor(_colorTheme, 1, 0.2);
+                BorderBrush = new SolidBrush(Hsv.HsvToColor(_colorTheme, 1, 0.35));
             }
         }
 
         private Brush DarkBrush { get; set; }
         private Brush LightBrush { get; set; }
 
-        private Color BorderColor { get; set; }
+        private Brush BorderBrush { get; set; }
 
         public Dictionary<Square, RectangleF> Squares { get; set; } = new Dictionary<Square, RectangleF>();
 
@@ -60,7 +60,7 @@ namespace ChessUi
 
             g.CompositingQuality = CompositingQuality.HighQuality;
             g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-            g.Clear(BorderColor);
+            g.Clear(Color.Gray);
             var width = g.VisibleClipBounds.Width;
             var height = g.VisibleClipBounds.Height;
             Side = height < width ? height : width;
@@ -70,48 +70,59 @@ namespace ChessUi
             Left = center.X - Side / 2;
             Top = center.Y - Side / 2;
             SquareSide = Side / 8;
-
+            DrawBorder(g);
             DrawSquares(g);
             DrawLabels(g);
             DrawToPlay(g);
         }
 
+        private void DrawBorder(Graphics graphics)
+        {
+            var border = SquareSide/3;
+            var rect = new RectangleF(Left - border, Top - border, Side + border * 2, Side + border * 2);
+            graphics.FillRectangle(BorderBrush, rect);
+        }
+
         private void DrawToPlay(Graphics g)
         {
-            var doing = " to play";
+            var doing = "to play";
             if (Engine.ThinkingFor != null)
-                doing = " thinking";
+                doing = "thinking";
             var text = $"{Game.CurrentPlayer.Color} {doing}" + (Game.CurrentPlayer.IsChecked ? " (checked)" : "");
             var size = SquareSide / 4;
             size = size < 1 ? 1 : size;
             var labelFont = new Font(FontFamily.GenericSansSerif, size);
 
+            var textWidth = g.MeasureString(text, labelFont).Width;
             var player = Game.CurrentPlayer;
             if (Flipped)
                 player = Game.OtherPlayer;
+            var centerX = g.VisibleClipBounds.Width/2 - textWidth / 2;
             if (player == Game.WhitePlayer)
-                g.DrawString(text, labelFont, Brushes.White, 10, g.ClipBounds.Height - SquareSide / 2);
+                g.DrawString(text, labelFont, Brushes.White, centerX, g.ClipBounds.Height - SquareSide / 2);
             else
-                g.DrawString(text, labelFont, Brushes.White, 10, 10);
+                g.DrawString(text, labelFont, Brushes.White, centerX, 4);
         }
 
         private void DrawLabels(Graphics g)
         {
-            var size = SquareSide / 4;
+            var size = SquareSide / 5;
             size = size < 1 ? 1 : size;
             var labelFont = new Font(FontFamily.GenericSansSerif, size);
             for (int i = 0; i < 8; i++)
             {
-                var x = Left - SquareSide / 3;
-                var y = Flipped ? Top + Side - ((i + 1) * SquareSide) + SquareSide / 4 : Top + SquareSide * i + SquareSide / 4;
+                var x = Left - SquareSide / 4;
+                var y = Flipped ? Top + Side - ((i + 1) * SquareSide) + SquareSide / 4 + size /2 : Top + SquareSide * i + SquareSide / 4 + size/2;
                 g.DrawString((8 - i).ToString(), labelFont, Brushes.White, x, y);
             }
 
             var labels = "abcdefgh".ToCharArray();
             for (int i = 0; i < 8; i++)
             {
-                var x = Flipped ? Left + (Side - (i + 1) * SquareSide) + SquareSide / 4 : Left + i * SquareSide + SquareSide / 4;
+                var x = Flipped ? Left + (Side - (i + 1) * SquareSide) + SquareSide / 4 + size / 2 : Left + i * SquareSide + SquareSide / 4 + size / 2;
                 var y = Top + SquareSide * 8;
+                if (i == 6)
+                    y -= size/4; //moves letter g up.
                 g.DrawString(labels[i].ToString(), labelFont, Brushes.White, x, y);
             }
         }
@@ -269,6 +280,8 @@ namespace ChessUi
         internal void Drop(PieceType pieceType, int x, int y)
         {
             var square = GetSquare(x, y);
+            if (square.Piece != null)
+                return;
             Game.AddPiece(square, pieceType);
         }
     }

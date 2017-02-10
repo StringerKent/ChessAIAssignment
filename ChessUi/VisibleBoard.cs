@@ -179,6 +179,8 @@ namespace ChessUi
 
         private void DrawPiece(Square square, RectangleF rect, Graphics g)
         {
+            if (square?.Piece == null)
+                return;
             if (PieceImage == PieceImage.Regular)
             {
                 var image = GetImage(square.Piece);

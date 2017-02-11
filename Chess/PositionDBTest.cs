@@ -42,7 +42,7 @@ namespace Chess
             var check = true;
             var score = (short)8100;
             var recursions = (byte)31;
-            var scorInfo = ScoreInfo.Mate | ScoreInfo.InsufficienMaterial;
+            var scorInfo = ScoreInfo.Mate | ScoreInfo.InsufficientMaterial;
             var build = PositionsDatabase.Pack(commandNo, legal, check, score, recursions, scorInfo);
 
             byte oCommandNo;
@@ -124,7 +124,7 @@ namespace Chess
             bool check = true;
             var score = 8190;
             var recursions = (byte)31;
-            var scoreInfo = ScoreInfo.DrawByRepetion | ScoreInfo.StaleMate | ScoreInfo.Mate | ScoreInfo.InsufficienMaterial;
+            var scoreInfo = ScoreInfo.DrawByRepetion | ScoreInfo.StaleMate | ScoreInfo.Mate | ScoreInfo.InsufficientMaterial;
             var build = PositionsDatabase.Pack(commandNo, legal, check, score, recursions, scoreInfo);
 
             byte oCommandNo;

@@ -100,7 +100,7 @@ namespace Chess
     public enum ScoreInfo : byte
     {
         DrawByRepetion = 1,
-        InsufficienMaterial = 2,
+        InsufficientMaterial = 2,
         StaleMate = 4,
         Mate = 8
     }

@@ -218,7 +218,7 @@ namespace Chess
             move.WhiteWasChecked = WhitePlayer.IsChecked;
             move.BlackWasChecked = BlackPlayer.IsChecked;
 
-            if (move.ScoreInfo.HasFlag(ScoreInfo.InsufficienMaterial))
+            if (move.ScoreInfo.HasFlag(ScoreInfo.InsufficientMaterial))
                 Ended = true;
             if (move.ScoreInfo.HasFlag(ScoreInfo.DrawByRepetion))
                 Ended = true;
@@ -437,7 +437,7 @@ namespace Chess
 
             //It is only interesting to check for insufficient material if the material has decreased.
             if (move.Capture != null && InsufficientMaterial()) {
-                move.ScoreInfo |= ScoreInfo.InsufficienMaterial;
+                move.ScoreInfo |= ScoreInfo.InsufficientMaterial;
                 move.ScoreAfterMove = 0;
                 return;
             }

@@ -222,7 +222,7 @@ namespace ChessUi
                 var cmd = new MoveCommand(VisibleBoard.MouseDownSquare.File, VisibleBoard.MouseDownSquare.Rank,
                     VisibleBoard.MouseUpSquare.File, VisibleBoard.MouseUpSquare.Rank);
                 if (ChessGame.TryPossibleMoveCommand(cmd)) {
-                    var evaluatedMove = new Evaluation { Move = ChessGame.OtherPlayer.Moves.Last() };
+                    var evaluatedMove = new Evaluation { Move = ChessGame.OtherPlayer.Moves.First() };
                     MoveToList(evaluatedMove);
                     //SetScoreLabel(evaluatedMove);
                     panel1.Invalidate();
@@ -366,7 +366,7 @@ namespace ChessUi
                     return;
                 }
 
-                evaluatedMove.Move = ChessGame.OtherPlayer.Moves.Last();
+                evaluatedMove.Move = ChessGame.OtherPlayer.Moves.First();
                 MoveToList(evaluatedMove);
 
                 CheckForEnd();

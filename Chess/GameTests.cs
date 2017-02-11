@@ -722,7 +722,7 @@ namespace Chess
 
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.C, Rank._5, File.D, Rank._4)));
             Assert.IsTrue(game.Ended);
-            Assert.AreEqual(0, game.WhitePlayer.Moves.Last().ScoreAfterMove.Value);
+            Assert.AreEqual(0, game.WhitePlayer.Moves.First().ScoreAfterMove.Value);
         }
 
         [TestMethod]

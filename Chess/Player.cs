@@ -15,7 +15,7 @@ namespace Chess
         }
         public List<Piece> Pieces { get; set; } = new List<Piece>();
         public Color Color { get; private set; }
-        public List<Move> Moves { get; set; } = new List<Move>();
+        public Stack<Move> Moves { get; set; } = new Stack<Move>();
         public bool IsChecked { get; set; }
 
         public bool Mated { get; set; }

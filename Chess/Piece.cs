@@ -606,7 +606,7 @@ namespace Chess
 
             //moves.Add(new Move(this, squareBehindPawn, isEnPassant: true, capturedEnPassant: capture));
 
-            var oppLastMovedPiece = game.OtherPlayer.Moves.LastOrDefault()?.Piece;
+            var oppLastMovedPiece = game.OtherPlayer.Moves.FirstOrDefault()?.Piece;
             if (!(oppLastMovedPiece is Pawn))
                 return;
 

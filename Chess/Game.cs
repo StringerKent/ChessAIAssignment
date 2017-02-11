@@ -146,7 +146,7 @@ namespace Chess
             if (CurrentPlayer.Color == Color.Black)
                 move.NumberInGame = BlackPlayer.Moves.Count + 1;
             else
-                move.NumberInGame = (BlackPlayer.Moves.LastOrDefault()?.NumberInGame ?? 0) + 1;
+                move.NumberInGame = (BlackPlayer.Moves.FirstOrDefault()?.NumberInGame ?? 0) + 1;
 
             PerformLegalMove(move);
             CommandCount++;
@@ -177,7 +177,7 @@ namespace Chess
         }
 
         public void UndoLastMove() {
-            var move = OtherPlayer.Moves.LastOrDefault();
+            var move = OtherPlayer.Moves.FirstOrDefault();
             if (move == null)
                 return;
             WhitePlayer.Mated = false;
@@ -216,7 +216,7 @@ namespace Chess
                 move.CapturedFrom.Piece = null;
                 move.Capture.Square = null;
             }
-            CurrentPlayer.Moves.Add(move); //If it is found later that this is a illegal move it is removed in the undo - function
+            CurrentPlayer.Moves.Push(move); //If it is found later that this is a illegal move it is removed in the undo - function
 
             move.WhiteWasChecked = WhitePlayer.IsChecked;
             move.BlackWasChecked = BlackPlayer.IsChecked;
@@ -304,7 +304,7 @@ namespace Chess
                 WhitePlayer.Pieces.Add(piece);
         }
 
-        internal IList<Move> GetPossibleMoves() {
+        internal List<Move> GetPossibleMoves() {
             var moves = new List<Move>();
             foreach (var piece in CurrentPlayer.Pieces)
                 piece.AddPossibleMoves(this, moves);
@@ -358,7 +358,7 @@ namespace Chess
                 player.Material += piece.Value;
         }
 
-        private IList<Move> GetPossibleCaptureMoves() {
+        private List<Move> GetPossibleCaptureMoves() {
 
             var moves = new List<Move>();
             foreach (var piece in CurrentPlayer.Pieces)
@@ -634,7 +634,7 @@ namespace Chess
             BlackPlayer.IsChecked = move.BlackWasChecked;
             WhitePlayer.IsChecked = move.WhiteWasChecked;
             EnPassantFile = move.PreviousEnPassant;
-            CurrentPlayer.Moves.Remove(move);
+            CurrentPlayer.Moves.Pop();
         }
 
         private void UnCastle(Move move) {

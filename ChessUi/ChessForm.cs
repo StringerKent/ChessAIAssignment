@@ -119,10 +119,10 @@ namespace ChessUi
             panel1.Invalidate();
         }
 
-        private void MoveForWards() {
+        private bool MoveForWards() {
             var lastIndex = listView1.Items.Count - 1;
             if (lastIndex < 0)
-                return;
+                return false;
 
             var list = GetMoveListItems();
 
@@ -131,12 +131,12 @@ namespace ChessUi
             if (selectedSubItem == null) {
                 var nextSubItem = list.FirstOrDefault();
                 if (nextSubItem == null)
-                    return;
+                    return false;
             }
 
             var index = list.IndexOf(selectedSubItem) + 1;
             if (index > list.Count - 1)
-                return;
+                return false;
 
             list.ForEach(x => x.ResetStyle());
 
@@ -148,6 +148,7 @@ namespace ChessUi
             SetScoreLabel(list[index].EvaluatedMove);
             AnimateMove(list[index].EvaluatedMove);
             panel1.Invalidate();
+            return true;
         }
 
         private void Undo() {
@@ -290,7 +291,10 @@ namespace ChessUi
         private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
             var sfd = new SaveFileDialog();
             if (sfd.ShowDialog(this) == DialogResult.OK)
+            {
+                while (MoveForWards()){}
                 ChessGame.Save(sfd.FileName);
+            }
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -384,8 +388,8 @@ namespace ChessUi
                 to = temp;
             }
             const float steps = 20;
-            var dx = (to.Value.X - from.Value.X) / steps;
-            var dy = (to.Value.Y - from.Value.Y) / steps;
+            var dx = (to.Value.X - from.Value.X) / (steps- 1);
+            var dy = (to.Value.Y - from.Value.Y) / (steps - 1);
             var animId = Guid.NewGuid();
             animations.Remove(animations.Last());
             animations.Add(animId);

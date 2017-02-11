@@ -16,15 +16,12 @@ namespace ChessConsole
     {
         static void Main(string[] args)
         {
-            var a = (int)200;
-            Console.WriteLine($"{a}: {Convert.ToString(a, 2)}");
-            a <<= 1;
-            Console.WriteLine($"{a}: {Convert.ToString(a, 2)}");
+            TestPerformance();
 
             Console.ReadLine();
         }
 
-        private void TestPerformance()
+        private static void TestPerformance()
         {
             var testClass = new EngineTests();
             try {

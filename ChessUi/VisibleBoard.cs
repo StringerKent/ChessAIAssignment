@@ -171,7 +171,7 @@ namespace ChessUi
 
                 if (_animationOffset != null && _animationOffset.Item1 != null)
                 {
-                    var rect = new RectangleF(_animationOffset.Item2.X, _animationOffset.Item2.Y, SquareSide * 1.1f, SquareSide * 1.1f);
+                    var rect = new RectangleF(_animationOffset.Item2.X, _animationOffset.Item2.Y, SquareSide, SquareSide);
                     DrawPiece(_animationOffset.Item1.Square, rect, g);
                 }
             }
@@ -274,7 +274,7 @@ namespace ChessUi
 
         public void OffsetAnimated(Piece piece, float x, float y)
         {
-            _animationOffset = new Tuple<Piece, PointF>(piece, new PointF(x + SquareSide / 16, y + SquareSide / 4));
+            _animationOffset = new Tuple<Piece, PointF>(piece, new PointF(x, y));
         }
 
         private Tuple<Piece, PointF> _animationOffset;

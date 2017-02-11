@@ -142,6 +142,12 @@ namespace Chess
             TryPerform(move, 0);
             if (!move.IsLegal.Value)
                 return false;
+            
+            if (CurrentPlayer.Color == Color.Black)
+                move.NumberInGame = BlackPlayer.Moves.Count + 1;
+            else
+                move.NumberInGame = (BlackPlayer.Moves.LastOrDefault()?.NumberInGame ?? 0) + 1;
+
             PerformLegalMove(move);
             CommandCount++;
             if (CommandCount > 127) //There was not room for a bigger number
@@ -210,9 +216,6 @@ namespace Chess
                 move.CapturedFrom.Piece = null;
                 move.Capture.Square = null;
             }
-
-            move.NumberInGame = (byte)(OtherPlayer.Moves.Count + 1);
-
             CurrentPlayer.Moves.Add(move); //If it is found later that this is a illegal move it is removed in the undo - function
 
             move.WhiteWasChecked = WhitePlayer.IsChecked;

@@ -48,7 +48,7 @@ namespace Chess
 
         public int? ScoreAfterMove { get; set; }
         
-        public byte NumberInGame { get; set; }
+        public int NumberInGame { get; set; }
 
         public override string ToString() {
             if (IsCastling) {

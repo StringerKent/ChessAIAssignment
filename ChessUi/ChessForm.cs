@@ -86,10 +86,8 @@ namespace ChessUi
             foreach (var item in listView1.Items) {
                 var listViewItem = (ListViewItem)item;
                 var whiteMoveItem = listViewItem.SubItems[1] as MoveListSubItem;
-                if (whiteMoveItem == null)
-                    continue;
-
-                list.Add(whiteMoveItem);
+                if (whiteMoveItem != null)
+                    list.Add(whiteMoveItem);
                 if (listViewItem.SubItems.Count > 2) {
                     var blackMoveItem = (MoveListSubItem)listViewItem.SubItems[2];
                     list.Add(blackMoveItem);
@@ -375,6 +373,7 @@ namespace ChessUi
             }
         }
 
+        private List<Guid> animations = new List<Guid>(new []{Guid.NewGuid()});
         private void AnimateMove(Evaluation evaluatedMove, bool reverse = false) {
             var from = VisibleBoard.Squares.Single(x => x.Key.ToString() == evaluatedMove.Move.FromSquare.ToString());
             var to = VisibleBoard.Squares.Single(x => x.Key.ToString() == evaluatedMove.Move.ToSquare.ToString());
@@ -387,7 +386,12 @@ namespace ChessUi
             const float steps = 20;
             var dx = (to.Value.X - from.Value.X) / steps;
             var dy = (to.Value.Y - from.Value.Y) / steps;
+            var animId = Guid.NewGuid();
+            animations.Remove(animations.Last());
+            animations.Add(animId);
             for (int i = 0; i < steps; i++) {
+                if (!animations.Contains(animId))
+                    break;
                 var x = from.Value.X + dx * i;
                 var y = from.Value.Y + dy * i;
                 VisibleBoard.OffsetAnimated(piece, x, y);

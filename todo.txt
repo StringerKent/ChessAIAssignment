@@ -1,53 +1,36 @@
+Buggar
+	- När svart börjar efter edit visas inte första draget. Andra buggar?
+	 
+Evaluation
+	- 50 move rule. Resetta vid bondedrag eller capture.
+	- Två löpare
+	- Bad bishops
+	- Kung skyddad i början	
 
-Edit article
-	* Feb 10, 2017 - Version
-		- New Edit board function.
-		- Pimped the UI just a litlebit.
-			Thanks to Daniela Di Lena, for the free graphics.
-	
+UI
+	- Move tostring anorlunda för svart.
+	- Tagna pjäser
 
-Testa material efter edit.
 
-Move tostring anorlunda för svart.
+Kodkvallité
+	- Läsa igenom all kod för att se om något kan göras mer pedagogiskt.
+	- Tester för GetCaptures
+	- Refaktorisera testfallen så de blir mer läsbara. StringMoves.
 
-När svart börjar efter edit blir det ofta problem.
-
-50 move rule. Resetta vid bondedrag eller capture.
 
 Spela mot dator på chess.com.
 	Nivå 5: 1-0
 	Nivå:6: 0-0
 	Nivå 7: 0-1
 	
-Läsa igenom all kod för att se om något kan göras mer pedagogiskt.
-
-Lägga till bad bishops igen och testa.
-
-Tester för GetCaptures
-
-Testa hela cpu-cpu-matcher för att få fram fel.
-
-todo´s
-
-Hash av Castlings. Hash av en passants? //det behövs kanske inte, får ju inga kollisioner.
 
 Prestanda, testa.
+	- Move stack istället för lista.
+	- Try refactor Move
 	http://www.chessbin.com/post/Some-Performance-Optimization-Advice
-			
+	- Bitboards
+	- Book
 
-Refaktorisera testfallen så de blir mer läsbara. StringMoves.
-
-Move stack istället för lista.
-
-Try refactor Move
-
-Coverage
-
-Ui
-	- Tagna pjäser i ui
-		
-Book
-
-Promotion to optional.
-
-Offer draw.
+Övrigt
+	- Promotion to optional.
+	- Hash av Castlings. Hash av en passants? //det behövs kanske inte, får ju inga kollisioner.

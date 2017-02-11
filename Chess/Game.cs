@@ -32,8 +32,7 @@ namespace Chess
         //50 moves rule
         private int MovesSinceLastCaptureOrPawnMove = 0;
 
-        public void New()
-        {
+        public void New() {
             PositionsDatabase.Instance.Reset();
             Board = new Board();
             WhitePlayer = new Player(Color.White);
@@ -76,15 +75,13 @@ namespace Chess
             HashHistory.Push(Hash);
         }
 
-        public void Load(GameFile gameFile)
-        {
+        public void Load(GameFile gameFile) {
             Reset();
             InitialPosition = gameFile.InitialPosition;
             var positionItem = gameFile.InitialPosition.Split(',').ToList();
             Debug.Assert(positionItem.First() == "Start");
             var i = 0;
-            while (true)
-            {
+            while (true) {
                 i++;
                 if (positionItem[i] == "White" || positionItem[i] == "Black")
                     break;
@@ -92,14 +89,12 @@ namespace Chess
             }
             if (positionItem[i] == "White")
                 CurrentPlayer = WhitePlayer;
-            else
-            {
+            else {
                 Debug.Assert(positionItem[i] == "Black");
-                CurrentPlayer = WhitePlayer;
+                CurrentPlayer = BlackPlayer;
             }
             i++;
-            for (int j = i; j < positionItem.Count; j++)
-            {
+            for (int j = i; j < positionItem.Count; j++) {
                 if (positionItem[j] == "WCK")
                     WhitePlayer.HasCastledKingSide = true;
                 if (positionItem[j] == "WCQ")
@@ -108,37 +103,32 @@ namespace Chess
                     BlackPlayer.HasCastledQueenSide = true;
                 if (positionItem[j] == "BCQ")
                     BlackPlayer.HasCastledQueenSide = true;
-                SetPieceFastAccess();
-                if (positionItem[j].StartsWith("ENP:"))
-                {
+                if (positionItem[j].StartsWith("ENP:")) {
                     var split = positionItem[j].Split(':');
                     EnPassantFile = (File)Enum.Parse(typeof(File), split[1]);
                 }
             }
+            SetPieceFastAccess();
 
             PositionsDatabase.Instance.SetStartHash(this);
             InitialMaterial(WhitePlayer);
             InitialMaterial(BlackPlayer);
-            foreach (var moveCommand in gameFile.MoveCommands)
-            {
+            foreach (var moveCommand in gameFile.MoveCommands) {
                 if (!TryPossibleMoveCommand(moveCommand))
                     throw new ApplicationException("Invalid game file");
             }
         }
 
-        public void Save(string fileName)
-        {
+        public void Save(string fileName) {
             var gameFile = new GameFile(this);
             gameFile.Save(fileName);
         }
 
-        public IEnumerable<Move> GetLegalUiMoves()
-        {
+        public IEnumerable<Move> GetLegalUiMoves() {
             return Copy().GetLegalNextMoves(0);
         }
 
-        public bool TryPossibleMoveCommand(MoveCommand moveCommand)
-        {
+        public bool TryPossibleMoveCommand(MoveCommand moveCommand) {
             if (Ended)
                 return false;
 
@@ -165,17 +155,13 @@ namespace Chess
                 return true;
 
             var nextMoves = GetLegalNextMoves(0);
-            if (!nextMoves.Any())
-            {
+            if (!nextMoves.Any()) {
                 Ended = true;
-                if (CurrentPlayer.IsChecked)
-                {
+                if (CurrentPlayer.IsChecked) {
                     move.ScoreInfo |= ScoreInfo.Mate;
                     CurrentPlayer.Mated = true;
                     Winner = OtherPlayer;
-                }
-                else
-                {
+                } else {
                     move.ScoreInfo |= ScoreInfo.StaleMate;
                     IsStaleMate = true;
                     Ended = true;
@@ -184,8 +170,7 @@ namespace Chess
             return true;
         }
 
-        public void UndoLastMove()
-        {
+        public void UndoLastMove() {
             var move = OtherPlayer.Moves.LastOrDefault();
             if (move == null)
                 return;
@@ -197,24 +182,21 @@ namespace Chess
             Undo(move);
         }
 
-        public void PerformLegalMove(Move move)
-        {
+        public void PerformLegalMove(Move move) {
             MoveCount++;
             move.Piece.MoveCount++;
             move.FromSquare.Piece = null; //use from square to remove piece
             var playColor = move.Piece.Color;
 
             var capture = move.Capture;
-            if (capture != null)
-            {
+            if (capture != null) {
                 OtherPlayer.Material -= capture.Value * 100;
                 OtherPlayer.Pieces.Remove(capture);
             }
 
             move.ToSquare.SetPiece(move.Piece);
 
-            if (move.IsPromotion)
-            {
+            if (move.IsPromotion) {
                 move.Piece.Square = null;
                 move.PromotedPawn = (Pawn)move.Piece;
                 var queen = new Queen(playColor);
@@ -222,18 +204,14 @@ namespace Chess
                 move.Piece = queen; //todo: test without it.
                 CurrentPlayer.Material += 800; //add queen, remove pawn
                 CurrentPlayer.Pieces.Remove(move.PromotedPawn);
-            }
-            else if (move.IsCastling)
-            {
+            } else if (move.IsCastling) {
                 Castle(move);
-            }
-            else if (move.IsEnpassant)
-            {
+            } else if (move.IsEnpassant) {
                 move.CapturedFrom.Piece = null;
                 move.Capture.Square = null;
             }
 
-            move.NumberInGame = (byte)(CurrentPlayer.Moves.Count + 1);
+            move.NumberInGame = (byte)(OtherPlayer.Moves.Count + 1);
 
             CurrentPlayer.Moves.Add(move); //If it is found later that this is a illegal move it is removed in the undo - function
 
@@ -247,8 +225,7 @@ namespace Chess
 
             move.PreviousEnPassant = EnPassantFile;
             EnPassantFile = null;
-            if (move.Piece is Pawn && move.Piece.MoveCount == 1)
-            {
+            if (move.Piece is Pawn && move.Piece.MoveCount == 1) {
                 var dist = move.ToSquare.Rank - move.FromSquare.Rank;
                 if (Math.Abs(dist) == 2)
                     EnPassantFile = move.FromSquare.File;
@@ -263,8 +240,7 @@ namespace Chess
             PositionsDatabase.Instance.UpdateHash(this, move);
         }
 
-        public IEnumerable<Move> GetLegalNextMoves(int recursions, bool justCaptures = false)
-        {
+        public IEnumerable<Move> GetLegalNextMoves(int recursions, bool justCaptures = false) {
             var moves = justCaptures ? GetPossibleCaptureMoves() : GetPossibleMoves();
             foreach (var move in moves)
                 TryPerform(move, recursions);
@@ -272,8 +248,7 @@ namespace Chess
             return moves.Where(m => m.IsLegal.HasValue && m.IsLegal.Value);
         }
 
-        public Game Copy()
-        {
+        public Game Copy() {
             var gameCopy = new Game { Board = new Board() };
 
             gameCopy.WhitePlayer = WhitePlayer.Copy();
@@ -299,8 +274,7 @@ namespace Chess
             return gameCopy;
         }
 
-        public void EditClearPieces()
-        {
+        public void EditClearPieces() {
             WhitePlayer.Pieces.Clear();
             BlackPlayer.Pieces.Clear();
             Board.ClearPieces();
@@ -308,20 +282,18 @@ namespace Chess
             WhitePlayer.King = (King)WhitePlayer.Pieces.Single(x => x is King);
             AddPiece(File.E, Rank._8, new King(Color.Black));
             BlackPlayer.King = (King)BlackPlayer.Pieces.Single(x => x is King);
-            
+
 
         }
 
         internal byte CommandCount { get; private set; }
 
-        internal bool TryStringMove(string command)
-        {
+        internal bool TryStringMove(string command) {
             var cmd = MoveCommand.Parse(command);
             return TryPossibleMoveCommand(cmd);
         }
 
-        internal void AddPiece(File file, Rank rank, Piece piece)
-        {
+        internal void AddPiece(File file, Rank rank, Piece piece) {
             Board.Square(file, rank).SetPiece(piece);
             if (piece.Color == Color.Black)
                 BlackPlayer.Pieces.Add(piece);
@@ -329,8 +301,7 @@ namespace Chess
                 WhitePlayer.Pieces.Add(piece);
         }
 
-        internal IList<Move> GetPossibleMoves()
-        {
+        internal IList<Move> GetPossibleMoves() {
             var moves = new List<Move>();
             foreach (var piece in CurrentPlayer.Pieces)
                 piece.AddPossibleMoves(this, moves);
@@ -339,8 +310,7 @@ namespace Chess
             return moves;
         }
 
-        internal void Reset()
-        {
+        internal void Reset() {
             WhitePlayer.HasCastledKingSide = false;
             WhitePlayer.HasCastledQueenSide = false;
             BlackPlayer.HasCastledKingSide = false;
@@ -356,11 +326,12 @@ namespace Chess
             Board.ClearPieces();
             HashHistory.Clear();
             CommandCount = 0;
+            BlackPlayer.Moves.Clear();
+            WhitePlayer.Moves.Clear();
             PositionsDatabase.Instance.Reset();
         }
 
-        internal bool MakeRandomMove(Random rnd)
-        {
+        internal bool MakeRandomMove(Random rnd) {
             var moves = GetLegalNextMoves(0).ToArray();
             if (!moves.Any())
                 return false;
@@ -370,8 +341,7 @@ namespace Chess
             return true;
         }
 
-        public void SetInitials()
-        {
+        public void SetInitials() {
             PositionsDatabase.Instance.SetStartHash(this);
             InitialPosition = GetPosition();
             SetPieceFastAccess();
@@ -379,15 +349,13 @@ namespace Chess
             InitialMaterial(BlackPlayer);
         }
 
-        private void InitialMaterial(Player player)
-        {
+        private void InitialMaterial(Player player) {
             player.Material = 0;
             foreach (var piece in player.Pieces)
                 player.Material += piece.Value * 100;
         }
 
-        private IList<Move> GetPossibleCaptureMoves()
-        {
+        private IList<Move> GetPossibleCaptureMoves() {
 
             var moves = new List<Move>();
             foreach (var piece in CurrentPlayer.Pieces)
@@ -396,8 +364,7 @@ namespace Chess
             return moves;
         }
 
-        private void AddCastling(List<Move> moves)
-        {
+        private void AddCastling(List<Move> moves) {
             var king = (King)CurrentPlayer.Pieces.Single(x => x is King);
             if (king.MoveCount > 0)
                 return;
@@ -406,8 +373,7 @@ namespace Chess
                 return;
 
             var rooks = CurrentPlayer.Pieces.Where(x => x is Rook).ToArray();
-            if (rooks.Any())
-            {
+            if (rooks.Any()) {
                 var firstRook = rooks.First();
                 if (firstRook.MoveCount == 0 && !CurrentPlayer.HasCastledKingSide && !CurrentPlayer.HasCastledQueenSide) //has not moved
                 {
@@ -419,8 +385,7 @@ namespace Chess
                         moves.Add(new Move(king, toSquare, isCastling: true, castleRook: firstRook));
                 }
 
-                if (rooks.Length > 1)
-                {
+                if (rooks.Length > 1) {
                     var secondRook = rooks[1];
                     if (secondRook.MoveCount == 0 && !CurrentPlayer.HasCastledKingSide && !CurrentPlayer.HasCastledQueenSide) //has not moved
                     {
@@ -435,16 +400,14 @@ namespace Chess
             }
         }
 
-        private bool CastlingBlocked(King king, Square toSquare)
-        {
+        private bool CastlingBlocked(King king, Square toSquare) {
             var dir = 1;
             if (king.Square.File > toSquare.File)
                 dir = -1;
             var sqr = king.Square;
             var file = 0;
             var list = new List<Square>(10);
-            if (dir == -1)
-            {
+            if (dir == -1) {
                 var s = king.GetSquare(0, -3, this); //The b-file square.
                 if (s.Piece != null)
                     return true;
@@ -452,8 +415,7 @@ namespace Chess
             }
 
             //Checks the two squares closest to king. As in king side castling.
-            while (sqr != toSquare)
-            {
+            while (sqr != toSquare) {
                 file += dir;
                 sqr = king.GetSquare(0, file, this);
                 if (sqr.Piece != null)
@@ -469,14 +431,12 @@ namespace Chess
             return false;
         }
 
-        private void SetScore(Move move)
-        {
+        private void SetScore(Move move) {
             if (move.ScoreAfterMove.HasValue)
                 return;
 
             //It is only interesting to check for insufficient material if the material has decreased.
-            if (move.Capture != null && InsufficientMaterial())
-            {
+            if (move.Capture != null && InsufficientMaterial()) {
                 move.ScoreInfo |= ScoreInfo.InsufficienMaterial;
                 move.ScoreAfterMove = 0;
                 return;
@@ -490,8 +450,7 @@ namespace Chess
             var white = WhitePlayer.Pieces.Select(x => x.PositionValue(this)).Sum() +
                 DoublePawns(WhitePlayer);
 
-            if (CommandCount > 20)
-            {
+            if (CommandCount > 20) {
                 black += OpeningScore(BlackPlayer);
                 white += OpeningScore(WhitePlayer);
             }
@@ -506,8 +465,7 @@ namespace Chess
             move.ScoreAfterMove = value;
         }
 
-        private int EndGameScore(Player player)
-        {
+        private int EndGameScore(Player player) {
             //Distance from center
             var kingRank = player.King.Square.Rank;
             var kingFile = player.King.Square.File;
@@ -519,20 +477,17 @@ namespace Chess
             return (kingCloseBorder ? -10 : 0) + (kingOnBorder ? -20 : 0) - pawnPromotionDist * 2;
         }
 
-        private int DoublePawns(Player player)
-        {
+        private int DoublePawns(Player player) {
             var score = 0;
             var pawns = player.Pawns;
-            for (int i = 0; i < pawns.Length - 1; i++)
-            {
+            for (int i = 0; i < pawns.Length - 1; i++) {
                 if (pawns[i].Square != null && pawns[i].Square.File == pawns[i + 1].Square?.File)
                     score -= 2;
             }
             return score;
         }
 
-        private int OpeningScore(Player player)
-        {
+        private int OpeningScore(Player player) {
 
             //It is bad if queen moves in the opening.
             var queenScore = player.Queen?.MoveCount ?? 0 * -10;
@@ -553,8 +508,7 @@ namespace Chess
         /// <param name="move"></param>
         /// <param name="recursions"></param>
         /// <returns></returns>
-        private void TryPerform(Move move, int recursions)
-        {
+        private void TryPerform(Move move, int recursions) {
             Debug.Assert(!move.IsLegal.HasValue);
 
             //Actually performs a possible move.
@@ -573,32 +527,27 @@ namespace Chess
                     return;
                 }
                 move.IsCheck = KingChecked(CurrentPlayer);
-            }
-            else if (!move.IsLegal.Value)
-            { //Position is already know not to be legal.
+            } else if (!move.IsLegal.Value) { //Position is already know not to be legal.
                 UndoLastMove();
                 return;
             }
             move.IsLegal = true;
 
-            if (HashHistory.Count(x => x == Hash) >= 2)
-            {
+            if (HashHistory.Count(x => x == Hash) >= 2) {
                 move.ScoreInfo |= ScoreInfo.DrawByRepetion;
                 move.ScoreAfterMove = 0;
                 UndoLastMove();
                 return;
             }
 
-            if (!move.ScoreAfterMove.HasValue)
-            { //Score can be null if we are on a deeper search, 
+            if (!move.ScoreAfterMove.HasValue) { //Score can be null if we are on a deeper search, 
                 SetScore(move);
                 PositionsDatabase.Instance.Store(this, move, recursions);
             }
             UndoLastMove();
         }
 
-        private bool InsufficientMaterial()
-        {
+        private bool InsufficientMaterial() {
             var count = WhitePlayer.Pieces.Count() + BlackPlayer.Pieces.Count();
             if (count < 3) //King king
                 return true;
@@ -608,13 +557,11 @@ namespace Chess
 
         }
 
-        private bool KingChecked(Player checkedPlayer)
-        {
+        private bool KingChecked(Player checkedPlayer) {
 
             var kingSquare = checkedPlayer.King.Square;
             var otherPlayer = checkedPlayer == WhitePlayer ? BlackPlayer : WhitePlayer;
-            foreach (var piece in otherPlayer.Pieces)
-            {
+            foreach (var piece in otherPlayer.Pieces) {
                 if (piece.Attacks(kingSquare, Board))
                     return true;
             }
@@ -628,18 +575,15 @@ namespace Chess
 
         public bool EditMode { get; set; }
 
-        private void Castle(Move move)
-        {
+        private void Castle(Move move) {
             var king = (King)move.Piece;
             Square fromRookSquare = null, toRookSquare = null;
-            if (king.Square.File == File.G)
-            {
+            if (king.Square.File == File.G) {
                 fromRookSquare = Board.Square(File.H, king.Square.Rank);
                 toRookSquare = Board.Square(File.F, king.Square.Rank);
                 CurrentPlayer.HasCastledKingSide = true;
             }
-            if (king.Square.File == File.C)
-            {
+            if (king.Square.File == File.C) {
                 fromRookSquare = Board.Square(0, king.Square.Rank);
                 toRookSquare = Board.Square(File.D, king.Square.Rank);
                 CurrentPlayer.HasCastledQueenSide = true;
@@ -651,8 +595,7 @@ namespace Chess
             king.HasCastled = true;
         }
 
-        private void Undo(Move move)
-        {
+        private void Undo(Move move) {
             PositionsDatabase.Instance.UpdateHash(this, move); //xoring back to previous hash 
             Debug.Assert(move.PreviousHash == Hash, "Previous hash differs from hash after undo");
             SwitchPlayer();
@@ -662,8 +605,7 @@ namespace Chess
             move.ToSquare.Piece = null;
 
             var capture = move.Capture;
-            if (capture != null)
-            {
+            if (capture != null) {
                 move.CapturedFrom.Piece = capture;
                 capture.Square = move.CapturedFrom;
                 OtherPlayer.Material += capture.Value * 100;
@@ -676,8 +618,7 @@ namespace Chess
             if (move.IsCastling)
                 UnCastle(move);
 
-            if (move.IsPromotion)
-            {
+            if (move.IsPromotion) {
                 var queen = (Queen)move.FromSquare.Piece;
                 CurrentPlayer.Pieces.Remove(queen);
                 queen.Square.Piece = null;
@@ -696,20 +637,17 @@ namespace Chess
             CurrentPlayer.Moves.Remove(move);
         }
 
-        private void UnCastle(Move move)
-        {
+        private void UnCastle(Move move) {
             //The king is moved back.
             //Placing the rook on the corner square.
             var king = (King)move.Piece;
             Square fromRookSquare = null, toRookSquare = null;
-            if (move.ToSquare.File == File.G)
-            {
+            if (move.ToSquare.File == File.G) {
                 fromRookSquare = Board.Square(File.H, king.Square.Rank);
                 toRookSquare = Board.Square(File.F, king.Square.Rank);
                 CurrentPlayer.HasCastledKingSide = false;
             }
-            if (move.ToSquare.File == File.C)
-            {
+            if (move.ToSquare.File == File.C) {
                 fromRookSquare = Board.Square(0, king.Square.Rank);
                 toRookSquare = Board.Square(File.D, king.Square.Rank);
                 CurrentPlayer.HasCastledQueenSide = false;
@@ -721,15 +659,12 @@ namespace Chess
             king.HasCastled = false;
         }
 
-        private void SwitchPlayer()
-        {
+        private void SwitchPlayer() {
             CurrentPlayer = CurrentPlayer == WhitePlayer ? BlackPlayer : WhitePlayer;
         }
 
-        private void CopyPieces(Player player, Game gameCopy)
-        {
-            foreach (var piece in player.Pieces)
-            {
+        private void CopyPieces(Player player, Game gameCopy) {
+            foreach (var piece in player.Pieces) {
                 var pieceCopy = piece.Copy(gameCopy.Board.Squares);
                 if (pieceCopy.Square != null)
                     gameCopy.AddPiece(piece.Square.File, piece.Square.Rank, pieceCopy);
@@ -738,12 +673,10 @@ namespace Chess
             }
         }
 
-        private string GetPosition()
-        {
+        private string GetPosition() {
             var stringBuildder = new StringBuilder();
             stringBuildder.Append("Start,");
-            foreach (var square in Board.Squares)
-            {
+            foreach (var square in Board.Squares) {
                 if (square.Piece != null)
                     stringBuildder.Append(square.Piece.ToPositionString() + ",");
             }
@@ -761,8 +694,7 @@ namespace Chess
             return stringBuildder.ToString();
         }
 
-        private void SetPieceFastAccess()
-        {
+        private void SetPieceFastAccess() {
             WhitePlayer.King = WhitePlayer.Pieces.OfType<King>().Single();
             BlackPlayer.King = BlackPlayer.Pieces.OfType<King>().Single();
 
@@ -776,8 +708,7 @@ namespace Chess
             BlackPlayer.KnightsBishops = BlackPlayer.Pieces.Where(x => x.Value == 3).ToArray();
         }
 
-        public void MakeEditMove(Square fromSquare, Square toSquare)
-        {
+        public void MakeEditMove(Square fromSquare, Square toSquare) {
             var piece = fromSquare.Piece;
             if (piece == null)
                 return;
@@ -788,13 +719,10 @@ namespace Chess
             piece.Square = null;
             fromSquare.Piece = null;
 
-            if (toSquare != null)
-            {
+            if (toSquare != null) {
                 toSquare.Piece = piece;
                 piece.Square = toSquare;
-            }
-            else
-            {
+            } else {
                 if (piece.Color == Color.White)
                     WhitePlayer.Pieces.Remove(piece);
                 else
@@ -802,8 +730,7 @@ namespace Chess
             }
         }
 
-        public void EnterEditMode()
-        {
+        public void EnterEditMode() {
             EditMode = true;
             WhitePlayer.Moves.Clear();
             BlackPlayer.Moves.Clear();
@@ -812,8 +739,7 @@ namespace Chess
             PositionsDatabase.Instance.Reset();
         }
 
-        public bool OtherKingAttacked()
-        {
+        public bool OtherKingAttacked() {
             return KingChecked(OtherPlayer);
         }
     }
@@ -825,8 +751,7 @@ namespace Chess
         /// </summary>
         /// <param name="game"></param>
         /// <param name="pieceString"></param>
-        public static Game AddPiece(this Game game, string pieceString)
-        {
+        public static Game AddPiece(this Game game, string pieceString) {
             var file = (File)Enum.Parse(typeof(File), pieceString.Substring(0, 1).ToUpper());
             var rank = (Rank)Enum.Parse(typeof(Rank), "_" + pieceString.Substring(1, 1));
             var colorChar = pieceString.Substring(2, 1);
@@ -851,11 +776,9 @@ namespace Chess
             return game;
         }
 
-        public static void AddPiece(this Game game, Square square, PieceType type)
-        {
+        public static void AddPiece(this Game game, Square square, PieceType type) {
             Piece piece = null;
-            switch (type)
-            {
+            switch (type) {
                 case PieceType.NoPiece:
                     break;
                 case PieceType.WhiteKing:

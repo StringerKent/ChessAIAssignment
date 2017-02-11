@@ -28,7 +28,7 @@ namespace ChessUi
             get { return _colorTheme; }
             set {
                 _colorTheme = value;
-                DarkBrush = new SolidBrush(Hsv.HsvToColor(_colorTheme, 1, 0.5));
+                DarkBrush = new SolidBrush(Hsv.HsvToColor(_colorTheme, 1, 0.6));
                 LightBrush = new SolidBrush(Hsv.HsvToColor(_colorTheme, 0.3, 1));
                 BorderBrush = new SolidBrush(Hsv.HsvToColor(_colorTheme, 1, 0.35));
             }

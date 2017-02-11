@@ -16,13 +16,12 @@ namespace Chess
 
         public GameFile(Game game)
         {
-            for (int i = 0; i < game.WhitePlayer.Moves.Count; i++)
-            {
-                MoveCommands.Add(new MoveCommand(game.WhitePlayer.Moves[i]));
-                if (i > game.BlackPlayer.Moves.Count - 1)
-                    continue;
-                MoveCommands.Add(new MoveCommand(game.BlackPlayer.Moves[i]));
-            }
+            var allMoves = new List<Move>();
+            allMoves.AddRange(game.WhitePlayer.Moves);
+            allMoves.AddRange(game.BlackPlayer.Moves);
+            allMoves = allMoves.OrderBy(move => move.NumberInGame).ThenBy(move => move.Piece.Color).ToList();
+            foreach (var move in allMoves)
+                MoveCommands.Add(new MoveCommand(move));
             InitialPosition = game.InitialPosition;
         }
 

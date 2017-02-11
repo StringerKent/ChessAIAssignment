@@ -105,7 +105,7 @@ namespace Chess
         public void TestPerformance()
         {
             var watch = Stopwatch.StartNew();
-            var loadCount = 1000000;
+            var loadCount = 2000000;
             var gameCount = 0;
             var rnd = new Random(40);
             var startHash = Game.Hash;

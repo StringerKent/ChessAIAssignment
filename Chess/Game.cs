@@ -196,7 +196,7 @@ namespace Chess
 
             var capture = move.Capture;
             if (capture != null) {
-                OtherPlayer.Material -= capture.Value * 100;
+                OtherPlayer.Material -= capture.Value;
                 OtherPlayer.Pieces.Remove(capture);
             }
 
@@ -355,7 +355,7 @@ namespace Chess
         private void InitialMaterial(Player player) {
             player.Material = 0;
             foreach (var piece in player.Pieces)
-                player.Material += piece.Value * 100;
+                player.Material += piece.Value;
         }
 
         private IList<Move> GetPossibleCaptureMoves() {
@@ -435,9 +435,6 @@ namespace Chess
         }
 
         private void SetScore(Move move) {
-            if (move.ScoreAfterMove.HasValue)
-                return;
-
             //It is only interesting to check for insufficient material if the material has decreased.
             if (move.Capture != null && InsufficientMaterial()) {
                 move.ScoreInfo |= ScoreInfo.InsufficientMaterial;
@@ -555,8 +552,8 @@ namespace Chess
             if (count < 3) //King king
                 return true;
             return count <= 3 &&
-                    (WhitePlayer.Pieces.Any(p => p.Value == 3) ||
-                     BlackPlayer.Pieces.Any(p => p.Value == 3));
+                    (WhitePlayer.Pieces.Any(p => p.Value == 300) ||
+                     BlackPlayer.Pieces.Any(p => p.Value == 300));
 
         }
 
@@ -611,7 +608,7 @@ namespace Chess
             if (capture != null) {
                 move.CapturedFrom.Piece = capture;
                 capture.Square = move.CapturedFrom;
-                OtherPlayer.Material += capture.Value * 100;
+                OtherPlayer.Material += capture.Value;
                 OtherPlayer.Pieces.Add(capture);
             }
 
@@ -707,8 +704,8 @@ namespace Chess
             WhitePlayer.Pawns = WhitePlayer.Pieces.OfType<Pawn>().ToArray();
             BlackPlayer.Pawns = BlackPlayer.Pieces.OfType<Pawn>().ToArray();
 
-            WhitePlayer.KnightsBishops = WhitePlayer.Pieces.Where(x => x.Value == 3).ToArray();
-            BlackPlayer.KnightsBishops = BlackPlayer.Pieces.Where(x => x.Value == 3).ToArray();
+            WhitePlayer.KnightsBishops = WhitePlayer.Pieces.Where(x => x.Value == 300).ToArray();
+            BlackPlayer.KnightsBishops = BlackPlayer.Pieces.Where(x => x.Value == 300).ToArray();
         }
 
         public void MakeEditMove(Square fromSquare, Square toSquare) {
@@ -822,7 +819,6 @@ namespace Chess
                     break;
                 default:
                     throw new NotImplementedException();
-                    break;
             }
             game.AddPiece(square.File, square.Rank, piece);
         }

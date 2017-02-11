@@ -13,7 +13,7 @@ namespace Chess
         public abstract char ImageChar { get; }
         public abstract char Char { get; }
         public Square Square { get; set; }
-        public abstract byte Value { get; }
+        public abstract int Value { get; }
         public byte Type { get; protected set; }
         public int MoveCount { get; set; }
 
@@ -115,7 +115,7 @@ namespace Chess
         }
         public override char ImageChar => Color == Color.White ? '♔' : '♚';
         public override char Char => 'K';
-        public override byte Value => 0;
+        public override int Value => 0;
 
         public override void AddPossibleMoves(Game game, List<Move> moves) {
             var possibilities = new[]
@@ -192,7 +192,7 @@ namespace Chess
         }
         public override char ImageChar => Color == Color.White ? '♕' : '♛';
         public override char Char => 'Q';
-        public override byte Value => 9;
+        public override int Value => 900;
 
         public override void AddPossibleMoves(Game game, List<Move> moves) {
 
@@ -244,7 +244,7 @@ namespace Chess
         public override char ImageChar => Color == Color.White ? '♖' : '♜';
         public override char Char => 'R';
 
-        public override byte Value => 5;
+        public override int Value => 500;
 
         public override void AddPossibleMoves(Game game, List<Move> moves) {
             AddMoves(1, 0, game, moves);
@@ -323,7 +323,7 @@ namespace Chess
         public override char ImageChar => Color == Color.White ? '♗' : '♝';
         public override char Char => 'B';
 
-        public override byte Value => 3;
+        public override int Value => 300;
 
         public override void AddPossibleMoves(Game game, List<Move> moves) {
             AddMoves(1, 1, game, moves);
@@ -397,7 +397,7 @@ namespace Chess
         public override char ImageChar => Color == Color.White ? '♘' : '♞';
         public override char Char => 'N';
 
-        public override byte Value => 3;
+        public override int Value => 300;
 
         public override void AddPossibleMoves(Game game, List<Move> moves) {
             var possibilities = new[]
@@ -488,7 +488,7 @@ namespace Chess
         public override char ImageChar => Color == Color.White ? '♙' : '♟';
         public override char Char => 'P';
 
-        public override byte Value => 1;
+        public override int Value => 100;
 
         public override void AddPossibleMoves(Game game, List<Move> moves) {
             var pawnMoves = new List<Move>();

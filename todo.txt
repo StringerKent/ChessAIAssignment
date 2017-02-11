@@ -1,9 +1,6 @@
-Bug
-	Öppna fil som sparats med ett par drag tillbaka
-
 
 Evaluation
-	- Flytta matt och stale, till set score
+	- Flytta matt och stale, till setscore
 	- 50 move rule. Resetta vid bondedrag eller capture.
 	- Två löpare
 	- Bad bishops
@@ -12,6 +9,7 @@ Evaluation
 UI
 	- Move tostring anorlunda för svart.
 	- Tagna pjäser
+	- Ljud
 
 
 Kodkvallité

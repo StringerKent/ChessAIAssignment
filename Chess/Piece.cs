@@ -578,7 +578,7 @@ namespace Chess
             return CopySquare(squares, p);
         }
 
-        private void SetPromotions(IEnumerable<Move> moves) {
+        private void SetPromotions(List<Move> moves) {
             var rank = Rank._7;
             if (Color == Color.Black)
                 rank = Rank._2;

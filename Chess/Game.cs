@@ -490,13 +490,13 @@ namespace Chess
         private int OpeningScore(Player player) {
 
             //It is bad if queen moves in the opening.
-            var queenScore = player.Queen?.MoveCount ?? 0 * -10;
+            var queenScore = (player.Queen?.MoveCount ?? 0) * -11;
 
             //Better if one knight or bishop has moved exactly one time during opening.
             var kbsMovedToMuch = player.KnightsBishops.Count(x => x.MoveCount > 1);
             var kbsMovedOnce = player.KnightsBishops.Count(x => x.MoveCount == 1);
 
-            var kbs = kbsMovedOnce * 2 - kbsMovedToMuch * -2; //knights and bishops score
+            var kbs = kbsMovedOnce * 3 - kbsMovedToMuch * -3; //knights and bishops score
 
             return kbs + queenScore;
         }
@@ -549,8 +549,9 @@ namespace Chess
 
         private bool InsufficientMaterial() {
             var count = WhitePlayer.Pieces.Count() + BlackPlayer.Pieces.Count();
-            if (count < 3) //King king
+            if (count == 2) //King and King
                 return true;
+            //At least one player has more pieces than just one knight or bishop
             return count <= 3 &&
                     (WhitePlayer.Pieces.Any(p => p.Value == 300) ||
                      BlackPlayer.Pieces.Any(p => p.Value == 300));
@@ -596,7 +597,7 @@ namespace Chess
         }
 
         private void Undo(Move move) {
-            PositionsDatabase.Instance.UpdateHash(this, move); //xoring back to previous hash 
+            PositionsDatabase.Instance.UpdateHash(this, move); //Xor-ing back to previous hash 
             Debug.Assert(move.PreviousHash == Hash, "Previous hash differs from hash after undo");
             SwitchPlayer();
             move.Piece.MoveCount--;
@@ -668,7 +669,7 @@ namespace Chess
                 var pieceCopy = piece.Copy(gameCopy.Board.Squares);
                 if (pieceCopy.Square != null)
                     gameCopy.AddPiece(piece.Square.File, piece.Square.Rank, pieceCopy);
-                //else: The piece was captured and is connected to the game through the move.
+                //else: The piece was captured and connected to the game through the move.
                 //But since CopyPosition does not copy moves we forget about the piece
             }
         }

@@ -1,32 +1,27 @@
-Bug, ny match efter lång match hänger sig. Rensas databasen och max command?
-Alldeles för högt värde för damflytt.
 
+Testa djupare quiet
 
 Evaluation
-	- Flytta matt och stale, till setscore
-	- 50 move rule. Resetta vid bondedrag eller capture.
+	- 50 move rule. Re-setta vid bondedrag eller capture.
 	- Två löpare
 	- Bad bishops
-	- Kung på kanten i början	
+	- Kung på kanten i börja	
 
 UI
 	- Move tostring anorlunda för svart.
 	- Tagna pjäser
 	- Ljud
-
-
+	
 Kodkvallité
 	- Läsa igenom all kod för att se om något kan göras mer pedagogiskt.
 	- Tester för GetCaptures
 	- Refaktorisera testfallen så de blir mer läsbara. StringMoves.
-
-
+	
 Spela mot dator på chess.com.
 	Nivå 5: 1-0
 	Nivå:6: 0-0
 	Nivå 7: 0-1
 	
-
 Prestanda, testa.
 	- Move stack istället för lista.
 	- Try refactor Move

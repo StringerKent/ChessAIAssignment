@@ -289,7 +289,7 @@ namespace Chess
 
         }
 
-        internal byte CommandCount { get; private set; }
+        internal byte CommandCount { get; private set;} 
 
         internal bool TryStringMove(string command) {
             var cmd = MoveCommand.Parse(command);
@@ -345,6 +345,7 @@ namespace Chess
         }
 
         public void SetInitials() {
+            CommandCount = 0;
             PositionsDatabase.Instance.SetStartHash(this);
             InitialPosition = GetPosition();
             SetPieceFastAccess();

@@ -41,24 +41,21 @@ namespace Chess
             var legal = true;
             var check = true;
             var score = (short)8100;
-            var recursions = (byte)31;
             var scorInfo = ScoreInfo.Mate | ScoreInfo.InsufficientMaterial;
-            var build = PositionsDatabase.Pack(commandNo, legal, check, score, recursions, scorInfo);
+            var build = PositionsDatabase.Pack(commandNo, legal, check, score, scorInfo);
 
             byte oCommandNo;
             bool oLegal;
             bool oCheck;
             ScoreInfo oScoreInfo;
             int oScore;
-            byte oRecursions;
 
-            PositionsDatabase.Unpack(build, out oCommandNo, out oLegal, out oCheck, out oScoreInfo, out oScore, out oRecursions);
+            PositionsDatabase.Unpack(build, out oCommandNo, out oLegal, out oCheck, out oScoreInfo, out oScore);
 
             Assert.AreEqual(oCommandNo, commandNo);
             Assert.AreEqual(oLegal, legal);
             Assert.AreEqual(check, oCheck);
             Assert.AreEqual(oScore, score);
-            Assert.AreEqual(oRecursions, recursions);
             Assert.AreEqual(oScoreInfo, scorInfo);
         }
 
@@ -70,22 +67,20 @@ namespace Chess
             var score = 0;
             var recursions = (byte)0;
             var scoreInfo = (ScoreInfo)0;//ScoreInfo.DrawByRepetion | ScoreInfo.StaleMate;
-            var build = PositionsDatabase.Pack(commandNo, legal, check ,score, recursions, scoreInfo);
+            var build = PositionsDatabase.Pack(commandNo, legal, check ,score, scoreInfo);
 
             byte oCommandNo;
             bool oLegal;
             bool oCheck;
             ScoreInfo oScoreInfo;
             int oScore;
-            byte oRecursions;
 
-            PositionsDatabase.Unpack(build, out oCommandNo, out oLegal, out oCheck, out oScoreInfo, out oScore, out oRecursions);
+            PositionsDatabase.Unpack(build, out oCommandNo, out oLegal, out oCheck, out oScoreInfo, out oScore);
 
             Assert.AreEqual(commandNo, oCommandNo);
             Assert.AreEqual(legal, oLegal);
             Assert.AreEqual(check, oCheck);
             Assert.AreEqual(score, oScore);
-            Assert.AreEqual(recursions, oRecursions);
             Assert.AreEqual(scoreInfo, oScoreInfo);
         }
 
@@ -97,21 +92,19 @@ namespace Chess
             var score = -1000;
             var recursions = (byte)4;
             var scoreInfo = ScoreInfo.DrawByRepetion | ScoreInfo.StaleMate;
-            var build = PositionsDatabase.Pack(commandNo, legal, check, score, recursions, scoreInfo);
+            var build = PositionsDatabase.Pack(commandNo, legal, check, score, scoreInfo);
 
             byte oCommandNo;
             bool oLegal;
             bool oCheck;
             ScoreInfo oScoreInfo;
             int oScore;
-            byte oRecursions;
 
-            PositionsDatabase.Unpack(build, out oCommandNo, out oLegal, out oCheck, out oScoreInfo, out oScore, out oRecursions);
+            PositionsDatabase.Unpack(build, out oCommandNo, out oLegal, out oCheck, out oScoreInfo, out oScore);
 
             Assert.AreEqual(commandNo, oCommandNo);
             Assert.AreEqual(legal, oLegal);
             Assert.AreEqual(score, oScore);
-            Assert.AreEqual(recursions, oRecursions);
             Assert.AreEqual(scoreInfo, oScoreInfo);
         }
 
@@ -125,7 +118,7 @@ namespace Chess
             var score = 8190;
             var recursions = (byte)31;
             var scoreInfo = ScoreInfo.DrawByRepetion | ScoreInfo.StaleMate | ScoreInfo.Mate | ScoreInfo.InsufficientMaterial;
-            var build = PositionsDatabase.Pack(commandNo, legal, check, score, recursions, scoreInfo);
+            var build = PositionsDatabase.Pack(commandNo, legal, check, score, scoreInfo);
 
             byte oCommandNo;
             bool oLegal;
@@ -134,13 +127,12 @@ namespace Chess
             int oScore;
             byte oRecursions;
 
-            PositionsDatabase.Unpack(build, out oCommandNo, out oLegal, out oCheck ,out oScoreInfo, out oScore, out oRecursions);
+            PositionsDatabase.Unpack(build, out oCommandNo, out oLegal, out oCheck ,out oScoreInfo, out oScore);
 
             Assert.AreEqual(commandNo, oCommandNo);
             Assert.AreEqual(legal, oLegal);
             Assert.AreEqual(check, oCheck);
             Assert.AreEqual(score, oScore);
-            Assert.AreEqual(recursions, oRecursions);
             Assert.AreEqual(scoreInfo, oScoreInfo);
         }
 

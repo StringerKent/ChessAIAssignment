@@ -54,7 +54,7 @@ namespace Chess
         internal void UpdateHash(Game game, Move move) {
             var fs = move.FromSquare;
             var ts = move.ToSquare;
-            
+
             var piece = (int)move.Piece.Type;
 
             if (!move.IsPromotion) {
@@ -82,7 +82,7 @@ namespace Chess
             game.Hash ^= Side[(int)move.Piece.Color];
         }
 
-        internal void GetValue(Game game, Move move, int recursions) {
+        internal void GetValue(Game game, Move move) {
             int eval;
             if (Dictionary.TryGetValue(game.Hash, out eval)) {
                 //It is nice not to have to evaluate illegal moves all the time.
@@ -91,56 +91,43 @@ namespace Chess
                 bool legal;
                 bool check;
                 ScoreInfo scoreInfo;
-                int scor;
-                byte recurs;
-                Unpack(eval, out commandCount, out legal, out check, out scoreInfo, out scor, out recurs);
+                int score;
+                Unpack(eval, out commandCount, out legal, out check, out scoreInfo, out score);
                 if (!legal) {
                     move.IsLegal = false;
                     return;
                 }
                 move.IsLegal = true;
                 move.IsCheck = check;
-
-                var score = scor;
-
-                //Scores calculated at greater depth are prioritized. Is that good?
-                //unless it is mate.
-                if (scoreInfo.HasFlag(ScoreInfo.Mate) || recursions >= recurs) {
-                    move.ScoreAfterMove = score;
-                    move.ScoreInfo = scoreInfo;
-                    Matches++;
-                }
+                move.ScoreAfterMove = score;
+                move.ScoreInfo = scoreInfo;
+                Matches++;
             }
         }
 
         private readonly object _lockObject = new object();
-        internal void Store(Game game, Move move, int recursions) {
+        internal void Store(Game game, Move move) {
             Debug.Assert(move.IsLegal.HasValue);
             var score = move.ScoreAfterMove ?? 0;
             var chk = move.IsCheck ?? false;
-            var eval = Pack(game.CommandCount, move.IsLegal.Value, chk, score, recursions, move.ScoreInfo);
+            var eval = Pack(game.CommandCount, move.IsLegal.Value, chk, score, move.ScoreInfo);
             //eval.PositionString = game.GetPosition();
 
             lock (_lockObject) {
                 if (Dictionary.ContainsKey(game.Hash)) {
-                    //store values with recursion that are higher than existing
-                    var dbEval = Dictionary[game.Hash];
-                    byte commandCount;
-                    bool legal;
-                    bool check;
-                    ScoreInfo scoreInfo;
-                    int scor;
-                    byte dbRecurs;
-                    //todo: it should be faster just to unpack the recursions field.
-                    Unpack(dbEval, out commandCount, out legal, out check, out scoreInfo, out scor, out dbRecurs);
+                    //var dbEval = Dictionary[game.Hash];
+                    //byte commandCount;
+                    //bool legal;
+                    //bool check;
+                    //ScoreInfo scoreInfo;
+                    //int score;
+                    //byte dbRecurs;
+                    //Unpack(dbEval, out commandCount, out legal, out check, out scoreInfo, out score, out dbRecurs);
 
                     //if (dbEval.PositionString != eval.PositionString) {
                     //    Collisions++;
                     //}
-
-                    //Score found at greater depth replaces current score
-                    if (dbRecurs <= recursions)
-                        Dictionary[game.Hash] = eval;
+                    Dictionary[game.Hash] = eval;
                 } else {
                     Dictionary.Add(game.Hash, eval);
                 }
@@ -160,20 +147,19 @@ namespace Chess
             OldestCommands = 0;
         }
 
-        internal void ResetMatches()
-        {
+        internal void ResetMatches() {
             Matches = 0;
         }
 
         internal static void Unpack(int build, out byte oCommandNo, out bool oLegal, out bool check,
-            out ScoreInfo oScoreInfo, out int oScore, out byte oRecursions) {
+            out ScoreInfo oScoreInfo, out int oScore) {
             oCommandNo = (byte)((build >> 25) & 0x7F); //7 bits
             oLegal = ((build >> 24) & 1) == 1;
             check = ((build >> 23) & 1) == 1;
             var negScore = ((build >> 22) & 1) == 1;
             oScore = (build >> 9) & 0x1FFF; //13bits
             oScore = negScore ? oScore * -1 : oScore;
-            oRecursions = (byte)((build >> 4) & 0x1F); //5bits
+            var freeBytes = (byte)((build >> 4) & 0x1F); //5bits
             oScoreInfo = (ScoreInfo)(build & 0xF); //4 bits
         }
 
@@ -184,10 +170,10 @@ namespace Chess
         /// <param name="legal">1 bit</param>
         /// <param name="check">1 bit</param>
         /// <param name="score">1 bit for negative, 13 bits max 8191</param>
-        /// <param name="recursions">5 bit, max 31 (Will the engine ever be this fast? ☺ )</param>
         /// <param name="scorInfo">4 bit</param>
         /// <returns></returns>
-        internal static int Pack(byte commandNo, bool legal, bool check, int score, int recursions, ScoreInfo scorInfo) {
+        internal static int Pack(byte commandNo, bool legal, bool check, int score, ScoreInfo scorInfo) {
+            var freeBits = 5;
             var build = (int)commandNo;
             build <<= 1;
             build |= (legal ? 1 : 0);
@@ -202,7 +188,7 @@ namespace Chess
             build |= Math.Abs(score);
 
             build <<= 5;
-            build |= recursions;
+            build |= freeBits;
 
             build <<= 4;
             build |= (byte)scorInfo;

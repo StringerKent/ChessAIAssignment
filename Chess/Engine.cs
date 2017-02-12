@@ -192,7 +192,7 @@ namespace Chess
                 var childern = gameCopy.GetLegalNextMoves(recursion).OrderFor(Color.Black);
                 if (!childern.Any()) {
                     bestVal = NoChildrenEval(gameCopy, node, true);
-                    PositionsDatabase.Instance.Store(gameCopy, node, recursion);
+                    PositionsDatabase.Instance.Store(gameCopy, node);
                 } else
                     foreach (var move in childern) {
                         gameCopy.PerformLegalMove(move);
@@ -211,7 +211,7 @@ namespace Chess
                 var childern = gameCopy.GetLegalNextMoves(recursion).OrderFor(Color.White);
                 if (!childern.Any()) {
                     bestVal = NoChildrenEval(gameCopy, node, false);
-                    PositionsDatabase.Instance.Store(gameCopy, node, recursion);
+                    PositionsDatabase.Instance.Store(gameCopy, node);
                 } else
                     foreach (var move in childern) {
                         gameCopy.PerformLegalMove(move);

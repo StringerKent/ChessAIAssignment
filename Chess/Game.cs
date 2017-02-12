@@ -515,14 +515,14 @@ namespace Chess
             PerformLegalMove(move);
 
             //Check in db if position is legal.
-            PositionsDatabase.Instance.GetValue(this, move, recursions);
+            PositionsDatabase.Instance.GetValue(this, move);
 
             if (!move.IsLegal.HasValue) //Not known, we have to spend time investigating.
             {
                 if (KingChecked(OtherPlayer)) //Players are switched, so this is actually own king in check.
                 {
                     move.IsLegal = false;
-                    PositionsDatabase.Instance.Store(this, move, recursions); //Store it, so we don't have to check again.
+                    PositionsDatabase.Instance.Store(this, move); //Store it, so we don't have to check again.
                     UndoLastMove();
                     return;
                 }
@@ -542,7 +542,7 @@ namespace Chess
 
             if (!move.ScoreAfterMove.HasValue) { //Score can be null if we are on a deeper search, 
                 SetScore(move);
-                PositionsDatabase.Instance.Store(this, move, recursions);
+                PositionsDatabase.Instance.Store(this, move);
             }
             UndoLastMove();
         }

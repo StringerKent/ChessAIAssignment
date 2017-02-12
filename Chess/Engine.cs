@@ -63,7 +63,7 @@ namespace Chess
             SearchFor = time;
             var playerColor = game.CurrentPlayer.Color;
             ThinkingFor = playerColor;
-            var childMoves = game.GetLegalNextMoves(0).OrderFor(game.CurrentPlayer.Color).ToArray();
+            var childMoves = game.GetLegalNextMoves(0).OrderFor(game.CurrentPlayer.Color);
             var evaluatedMoves = childMoves.Select(x => new Evaluation { CmdsString = x.ToCommandString(), Move = x }).ToArray();
             var maximizing = playerColor == Color.Black;
             var bestEvaluation = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
@@ -355,10 +355,10 @@ namespace Chess
 
     static class Extension
     {
-        public static IOrderedEnumerable<Move> OrderFor(this IEnumerable<Move> moves, Color color) {
+        public static Move[] OrderFor(this Move[] moves, Color color) {
             if (color == Color.White)
-                return moves.OrderBy(x => x.ScoreAfterMove.Value);
-            return moves.OrderByDescending(x => x.ScoreAfterMove.Value);
+                return moves.OrderBy(x => x.ScoreAfterMove.Value).ToArray();
+            return moves.OrderByDescending(x => x.ScoreAfterMove.Value).ToArray();
         }
     }
     

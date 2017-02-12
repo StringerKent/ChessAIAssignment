@@ -490,13 +490,13 @@ namespace Chess
         private int OpeningScore(Player player) {
 
             //It is bad if queen moves in the opening.
-            var queenScore = (player.Queen?.MoveCount ?? 0) * -11;
+            var queenScore = (player.Queen?.MoveCount ?? 0) * -2;
 
             //Better if one knight or bishop has moved exactly one time during opening.
             var kbsMovedToMuch = player.KnightsBishops.Count(x => x.MoveCount > 1);
             var kbsMovedOnce = player.KnightsBishops.Count(x => x.MoveCount == 1);
 
-            var kbs = kbsMovedOnce * 3 - kbsMovedToMuch * -3; //knights and bishops score
+            var kbs = kbsMovedOnce * 3 - kbsMovedToMuch * -2; //knights and bishops score
 
             return kbs + queenScore;
         }

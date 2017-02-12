@@ -1,3 +1,6 @@
+Bug, ny match efter lång match hänger sig. Rensas databasen och max command?
+Alldeles för högt värde för damflytt.
+
 
 Evaluation
 	- Flytta matt och stale, till setscore

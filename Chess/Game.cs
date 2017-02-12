@@ -124,7 +124,7 @@ namespace Chess
             gameFile.Save(fileName);
         }
 
-        public Move[] GetLegalUiMoves() {
+        public IEnumerable<Move> GetLegalUiMoves() {
             return Copy().GetLegalNextMoves(0);
         }
 
@@ -243,12 +243,12 @@ namespace Chess
             PositionsDatabase.Instance.UpdateHash(this, move);
         }
 
-        public Move[] GetLegalNextMoves(int recursions, bool justCaptures = false) {
+        public IEnumerable<Move> GetLegalNextMoves(int recursions, bool justCaptures = false) {
             var moves = justCaptures ? GetPossibleCaptureMoves() : GetPossibleMoves();
             foreach (var move in moves)
                 TryPerform(move, recursions);
 
-            return moves.Where(m => m.IsLegal.HasValue && m.IsLegal.Value).ToArray();
+            return moves.Where(m => m.IsLegal.HasValue && m.IsLegal.Value);
         }
 
         public Game Copy() {
@@ -335,7 +335,7 @@ namespace Chess
         }
 
         internal bool MakeRandomMove(Random rnd) {
-            var moves = GetLegalNextMoves(0);
+            var moves = GetLegalNextMoves(0).ToArray();
             if (!moves.Any())
                 return false;
             Assert.IsTrue(moves.Any());

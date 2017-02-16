@@ -120,7 +120,8 @@ namespace Chess
             Parallel.ForEach(commands,
                 new ParallelOptions { MaxDegreeOfParallelism = parallelism },
                 (command) => {
-                    if (!mateFound) {
+                    if (!mateFound)
+                    {
                         var gameCopy = game.Copy();
                         //Each thread needs its own Game and moves not to collide with other threads.
                         var copyMoves = gameCopy.GetLegalNextMoves(0).OrderFor(gameCopy.CurrentPlayer.Color);
@@ -132,7 +133,7 @@ namespace Chess
                         
                         var eval = localEvals.Single(x => x.Move.ToCommandString() == command);
                         eval.Value = v;
-                        mateFound = (maximizing && v == 8000) || (!maximizing && v == -8000);
+                        mateFound = (maximizing && v > 7900) || (!maximizing && v < -7900);
                         eval.BestLine = copyMove.BestLine();
                         eval.Move.ScoreInfo = copyMove.ScoreInfo;
                         eval.Move.IsCheck = copyMove.IsCheck;
@@ -184,19 +185,19 @@ namespace Chess
                 if (node.Capture != null) {
                     bestVal = AlphaBetaQuite(gameCopy, node, alpha, beta, maximizingPlayer, 1, ref canceled, recursion + 1);
                 } else { //No capture. No worries for horizon effect.
-                    bestVal = node.ScoreAfterMove.Value; //nodes must always have value. The reason is actually performance and move ordering and cutoffs. Theory and also my experience states this.
+                    bestVal = node.ScoreAfterMove.Value + (maximizingPlayer ? 1 : -1);
+                    //nodes must always have value. The reason is actually performance and move ordering and cutoffs. Theory and also my experience states this.
                     LeafVisits++;
                 }
             } else if (maximizingPlayer) {
                 bestVal = alpha;
                 var childern = gameCopy.GetLegalNextMoves(recursion).OrderFor(Color.Black);
                 if (!childern.Any()) {
-                    bestVal = NoChildrenEval(gameCopy, node, true);
-                    PositionsDatabase.Instance.Store(gameCopy, node);
+                    bestVal = -NoChildrenEval(gameCopy, node, recursion);
                 } else
                     foreach (var move in childern) {
                         gameCopy.PerformLegalMove(move);
-                        var childValue = AlphaBeta(gameCopy, move, bestVal, beta, false, depth - 1, ref canceled, recursion);
+                        var childValue = AlphaBeta(gameCopy, move, bestVal, beta, false, depth - 1, ref canceled, recursion + 1);
                         gameCopy.UndoLastMove();
                         if (childValue > bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
@@ -210,12 +211,11 @@ namespace Chess
                 bestVal = beta;
                 var childern = gameCopy.GetLegalNextMoves(recursion).OrderFor(Color.White);
                 if (!childern.Any()) {
-                    bestVal = NoChildrenEval(gameCopy, node, false);
-                    PositionsDatabase.Instance.Store(gameCopy, node);
+                    bestVal = NoChildrenEval(gameCopy, node, recursion);
                 } else
                     foreach (var move in childern) {
                         gameCopy.PerformLegalMove(move);
-                        var childValue = AlphaBeta(gameCopy, move, alpha, bestVal, true, depth - 1, ref canceled, recursion);
+                        var childValue = AlphaBeta(gameCopy, move, alpha, bestVal, true, depth - 1, ref canceled, recursion + 1);
                         gameCopy.UndoLastMove();
                         if (childValue < bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
@@ -238,7 +238,7 @@ namespace Chess
             QuiteSearchNodes++;
             int bestVal;
             if (depth == 0 || gameCopy.Ended) {
-                bestVal = node.ScoreAfterMove.Value;
+                bestVal = node.ScoreAfterMove.Value + (maximizingPlayer ? 1 : -1);
                 LeafVisits++;
             } else if (maximizingPlayer) {
                 bestVal = alpha;
@@ -248,7 +248,7 @@ namespace Chess
                 } else
                     foreach (var move in childern) {
                         gameCopy.PerformLegalMove(move);
-                        var childValue = AlphaBetaQuite(gameCopy, move, bestVal, beta, false, depth - 1, ref canceled, recursion);
+                        var childValue = AlphaBetaQuite(gameCopy, move, bestVal, beta, false, depth - 1, ref canceled, recursion + 1);
                         gameCopy.UndoLastMove();
                         if (childValue > bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
@@ -266,7 +266,7 @@ namespace Chess
                 } else
                     foreach (var move in childern) {
                         gameCopy.PerformLegalMove(move);
-                        var childValue = AlphaBetaQuite(gameCopy, move, alpha, bestVal, true, depth - 1, ref canceled, recursion);
+                        var childValue = AlphaBetaQuite(gameCopy, move, alpha, bestVal, true, depth - 1, ref canceled, recursion + 1);
                         gameCopy.UndoLastMove();
                         if (childValue < bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
@@ -287,16 +287,17 @@ namespace Chess
         /// <param name="node"></param>
         /// <param name="maximizingPlayer"></param>
         /// <returns></returns>
-        private int NoChildrenEval(Game gameCopy, Move node, bool maximizingPlayer) {
+        private int NoChildrenEval(Game gameCopy, Move node, int recursion) {
             if (gameCopy.CurrentPlayer.IsChecked) {
                 node.ScoreInfo |= ScoreInfo.Mate;
-                node.ScoreAfterMove = maximizingPlayer ? -8000 : 8000;
+                node.ScoreAfterMove = 8000 - recursion; //maximizing variable is used to negate value by calling function.
                 gameCopy.Winner = gameCopy.OtherPlayer;
             } else {
                 node.ScoreInfo |= ScoreInfo.StaleMate;
                 node.ScoreAfterMove = 0;
             }
             gameCopy.Ended = true;
+            PositionsDatabase.Instance.Store(gameCopy, node);
             return node.ScoreAfterMove.Value;
         }
 

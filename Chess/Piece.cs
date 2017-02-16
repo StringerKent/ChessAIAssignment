@@ -94,7 +94,7 @@ namespace Chess
 
         protected Piece CopySquare(Square[] squares, Piece p) {
             if (Square != null) {
-                p.Square = squares.Single(x => x.File == Square.File && x.Rank == Square.Rank);
+                p.Square = squares.Single(x => x.File == Square.File && x.Rank== Square.Rank);
                 p.Square.Piece = p;
             }
 

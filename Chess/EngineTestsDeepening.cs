@@ -21,7 +21,7 @@ namespace Chess
         public void TestBestMoveStart()
         {
             var engine = new Engine();
-            var move = engine.BestMoveDeepeningSearch(Game, TimeSpan.FromSeconds(5));
+            var move = engine.BestMoveDeepeningSearch(Game, TimeSpan.FromSeconds(30));
             Console.WriteLine(move);
             //Assert.AreEqual("Nc3", move.ToString());
         }

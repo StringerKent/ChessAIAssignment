@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,13 +18,14 @@ namespace BitChess
        " 8  9 10 11 12 13 14 15" +
        " 0  1  2  3  4  5  6  7"
     */
-    
+
     public class BitBoard
     {
         public BitBoard()
         {
+            var firstBit = (ulong)1 << 63;
             for (int i = 0; i < 64; i++)
-                SquareBits[i] = (ulong)1 << i;
+                SquareBits[i] = firstBit >> i;
         }
 
         public ulong[] SquareBits { get; set; } = new ulong[64];
@@ -31,15 +33,17 @@ namespace BitChess
 
         public void SetStartPos()
         {
-            ulong whitePawns = 0xFF; //now on first rank
-            whitePawns <<= 8; //shift them up on second
+            ulong whitePawns = 0;
+            for (int i = 8; i < 16; i++)
+                whitePawns |= SquareBits[i];
             PieceBoards[(int)PieceType.WhitePawn] = whitePawns;
 
-            ulong blackPawns = 0xFF;
-            blackPawns <<= 48; //7th rank
+            ulong blackPawns = 0;
+            for (int i = 48; i < 56; i++)
+                blackPawns |= SquareBits[i];
             PieceBoards[(int)PieceType.BlackPawn] = blackPawns;
 
-            
+
             PieceBoards[(int)PieceType.WhiteKnight] = SquareBits[1] | SquareBits[6];
             PieceBoards[(int)PieceType.BlackKnight] = SquareBits[57] | SquareBits[62];
 
@@ -58,9 +62,17 @@ namespace BitChess
 
         internal string DebugPattern(PieceType pieceType)
         {
-            return Convert.ToString((long)PieceBoards[(int)pieceType], 2);
+            var stringBuider = new StringBuilder();
+            var temp = Convert.ToString((long)PieceBoards[(int)pieceType], 2).PadLeft(64, '0');
+            stringBuider.Append(temp.Substring(56, 8));
+            stringBuider.Append(temp.Substring(48, 8));
+            stringBuider.Append(temp.Substring(40, 8));
+            stringBuider.Append(temp.Substring(32, 8));
+            stringBuider.Append(temp.Substring(24, 8));
+            stringBuider.Append(temp.Substring(16, 8));
+            stringBuider.Append(temp.Substring(8, 8));
+            stringBuider.Append(temp.Substring(0, 8));
+            return stringBuider.ToString();
         }
     }
-
-   
 }

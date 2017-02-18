@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 namespace BitChess
 {
     [TestFixture]
-    public class TestBitBoard
+    public class TestBitBoardSetup
     {
-        private void AssertBoardPattern(string expected, string actual)
+        internal static void AssertBoardPattern(string expected, string actual)
         {
             expected = expected.Replace(" ", "");
             actual = actual.PadLeft(64, '0');
@@ -126,7 +126,7 @@ namespace BitChess
         }
 
         [Test]
-        public void TestWhiteRooka()
+        public void TestWhiteRook()
         {
             var bitBoard = new BitBoard();
             bitBoard.SetStartPos();

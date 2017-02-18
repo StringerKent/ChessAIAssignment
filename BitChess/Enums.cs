@@ -21,4 +21,17 @@ namespace BitChess
         BlackQueen,
         BlackKing
     }
+
+    public enum MovePattern
+    {
+        King,
+        Knight,
+        WhitePawn,
+        WhitePawnAttacks,
+        BlackPawn,
+        BlackPawnAttacks,
+        Rook,
+        Bishop,
+        Queen
+    }
 }

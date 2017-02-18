@@ -48,6 +48,7 @@
     <Compile Include="BitBoardStartupTests.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestMovePatterns.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

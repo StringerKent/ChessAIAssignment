@@ -211,6 +211,46 @@ namespace BitChess
         }
 
         [Test]
+        public void TestWhitePawnAttacsMovePattern()
+        {
+            var bitBoard = new BitBoard();
+            var moveBits = bitBoard.WhiteAttacsMovePatternOfSquareIndex(11);
+
+            var expected =
+                "0 0 0 0 0 0 0 0" +
+                "0 0 0 0 0 0 0 0" +
+                "0 0 0 0 0 0 0 0" +
+                "0 0 0 0 0 0 0 0" +
+                "0 0 0 0 0 0 0 0" +
+                "0 0 1 0 1 0 0 0" +
+                "0 0 0 0 0 0 0 0" +
+                "0 0 0 0 0 0 0 0";
+
+            var actualPattern = bitBoard.DebugPattern(moveBits);
+            TestBitBoardSetup.AssertBoardPattern(expected, actualPattern);
+        }
+
+        [Test]
+        public void TestBlackPawnAttacsMovePattern()
+        {
+            var bitBoard = new BitBoard();
+            var moveBits = bitBoard.BlackAttacsMovePatternOfSquareIndex(51);
+
+            var expected =
+                "0 0 0 0 0 0 0 0" +
+                "0 0 0 0 0 0 0 0" +
+                "0 0 1 0 1 0 0 0" +
+                "0 0 0 0 0 0 0 0" +
+                "0 0 0 0 0 0 0 0" +
+                "0 0 0 0 0 0 0 0" +
+                "0 0 0 0 0 0 0 0" +
+                "0 0 0 0 0 0 0 0";
+
+            var actualPattern = bitBoard.DebugPattern(moveBits);
+            TestBitBoardSetup.AssertBoardPattern(expected, actualPattern);
+        }
+
+        [Test]
         public void TestConvertSquareIndexToFileAndRank()
         {
             var squareIndex = 44;

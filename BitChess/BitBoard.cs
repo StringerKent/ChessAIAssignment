@@ -28,34 +28,56 @@ namespace BitChess
                 SquareBits[i] = firstBit >> i;
 
             MovePatterns[(int)MovePattern.King] = new ulong[64];
-            for (int i = 0; i < 64; i++)
-            {
-                var moves = CalcKingMoves(i);
-                MovePatterns[(int)MovePattern.King][i] = moves;
-            }
-
             MovePatterns[(int)MovePattern.Knight] = new ulong[64];
-            for (int i = 0; i < 64; i++)
-            {
-                var moves = CalcKnightMoves(i);
-                MovePatterns[(int)MovePattern.Knight][i] = moves;
-            }
-
             MovePatterns[(int)MovePattern.WhitePawn] = new ulong[64];
-            for (int i = 0; i < 64; i++)
-            {
-                var moves = CalcWhitePawnMoves(i);
-                MovePatterns[(int)MovePattern.WhitePawn][i] = moves;
-            }
-
             MovePatterns[(int)MovePattern.BlackPawn] = new ulong[64];
+            MovePatterns[(int)MovePattern.WhitePawnAttacks] = new ulong[64];
+            MovePatterns[(int)MovePattern.BlackPawnAttacks] = new ulong[64];
+            
             for (int i = 0; i < 64; i++)
             {
-                var moves = CalcBlackPawnMoves(i);
-                MovePatterns[(int)MovePattern.BlackPawn][i] = moves;
-            }
+                MovePatterns[(int)MovePattern.King][i] = CalcKingMoves(i);
+                MovePatterns[(int)MovePattern.Knight][i] = CalcKnightMoves(i);
+                MovePatterns[(int)MovePattern.WhitePawn][i] = CalcWhitePawnMoves(i);
+                MovePatterns[(int)MovePattern.BlackPawn][i] = CalcBlackPawnMoves(i);
+                MovePatterns[(int)MovePattern.WhitePawnAttacks][i] = CalcWhitePawnAttacs(i);
+                MovePatterns[(int)MovePattern.BlackPawnAttacks][i] = CalcBlackPawnAttacs(i);
+            }            
         }
-               
+
+        private ulong CalcWhitePawnAttacs(int squareIndex)
+        {
+            var rank = squareIndex / 8;
+            var file = squareIndex % 8;
+
+            var list = new List<int?>();
+
+            list.Add(ToSquareIndex(rank + 1, file - 1));
+            list.Add(ToSquareIndex(rank + 1, file + 1));
+
+            ulong moves = 0;
+            foreach (var item in list.Where(x => x.HasValue))
+                moves |= SquareBits[item.Value];
+
+            return moves;
+        }
+
+        private ulong CalcBlackPawnAttacs(int squareIndex)
+        {
+            var rank = squareIndex / 8;
+            var file = squareIndex % 8;
+
+            var list = new List<int?>();
+
+            list.Add(ToSquareIndex(rank - 1, file - 1));
+            list.Add(ToSquareIndex(rank - 1, file + 1));
+
+            ulong moves = 0;
+            foreach (var item in list.Where(x => x.HasValue))
+                moves |= SquareBits[item.Value];
+
+            return moves;
+        }
 
         public ulong[] SquareBits { get; set; } = new ulong[64];
         public ulong[] PieceBoards { get; set; } = new ulong[12];
@@ -190,6 +212,7 @@ namespace BitChess
 
             return moves;
         }
+               
 
         private ulong CalcBlackPawnMoves(int squareIndex)
         {
@@ -207,6 +230,7 @@ namespace BitChess
 
             return moves;
         }
+               
 
         internal ulong KingMovePatternOfSquareIndex(int squareIndex)
         {
@@ -227,5 +251,15 @@ namespace BitChess
         {
             return MovePatterns[(int)MovePattern.BlackPawn][squareIndex];
         }
+        internal ulong WhiteAttacsMovePatternOfSquareIndex(int squareIndex)
+        {
+            return MovePatterns[(int)MovePattern.WhitePawnAttacks][squareIndex];
+        }
+
+        internal ulong BlackAttacsMovePatternOfSquareIndex(int squareIndex)
+        {
+            return MovePatterns[(int)MovePattern.BlackPawnAttacks][squareIndex];
+        }
+
     }
 }

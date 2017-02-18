@@ -79,10 +79,10 @@ namespace BitChess
             return moves;
         }
 
-        public ulong[] SquareBits { get; set; } = new ulong[64];
-        public ulong[] PieceBoards { get; set; } = new ulong[12];
+        private ulong[] SquareBits { get; set; } = new ulong[64];
+        private ulong[] PieceBoards { get; set; } = new ulong[12];
 
-        public ulong[][] MovePatterns { get; set; } = new ulong[12][];
+        private ulong[][] MovePatterns { get; set; } = new ulong[12][];
 
         public void SetStartPos()
         {

@@ -125,7 +125,7 @@ namespace Chess
         }
 
         public IEnumerable<Move> GetLegalUiMoves() {
-            return Copy().GetLegalNextMoves(0);
+            return Copy().GetLegalNextMoves();
         }
 
         public bool TryPossibleMoveCommand(MoveCommand moveCommand) {
@@ -139,7 +139,7 @@ namespace Chess
             var move = possibleMoves.SingleOrDefault(x => x.Piece == piece && x.ToSquare == toSquare);
             if (move == null)
                 return false;
-            TryPerform(move, 0);
+            TryPerform(move);
             if (!move.IsLegal.Value)
                 return false;
             
@@ -160,7 +160,7 @@ namespace Chess
             if (Ended)
                 return true;
 
-            var nextMoves = GetLegalNextMoves(0);
+            var nextMoves = GetLegalNextMoves();
             if (!nextMoves.Any()) {
                 Ended = true;
                 if (CurrentPlayer.IsChecked) {
@@ -243,10 +243,10 @@ namespace Chess
             PositionsDatabase.Instance.UpdateHash(this, move);
         }
 
-        public IEnumerable<Move> GetLegalNextMoves(int recursions, bool justCaptures = false) {
+        public IEnumerable<Move> GetLegalNextMoves(bool justCaptures = false) {
             var moves = justCaptures ? GetPossibleCaptureMoves() : GetPossibleMoves();
             foreach (var move in moves)
-                TryPerform(move, recursions);
+                TryPerform(move);
 
             return moves.Where(m => m.IsLegal.HasValue && m.IsLegal.Value);
         }
@@ -335,7 +335,7 @@ namespace Chess
         }
 
         internal bool MakeRandomMove(Random rnd) {
-            var moves = GetLegalNextMoves(0).ToArray();
+            var moves = GetLegalNextMoves().ToArray();
             if (!moves.Any())
                 return false;
             Assert.IsTrue(moves.Any());
@@ -509,7 +509,7 @@ namespace Chess
         /// <param name="move"></param>
         /// <param name="recursions"></param>
         /// <returns></returns>
-        private void TryPerform(Move move, int recursions) {
+        private void TryPerform(Move move) {
             Debug.Assert(!move.IsLegal.HasValue);
 
             //Actually performs a possible move.

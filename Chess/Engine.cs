@@ -63,7 +63,7 @@ namespace Chess
             SearchFor = time;
             var playerColor = game.CurrentPlayer.Color;
             ThinkingFor = playerColor;
-            var childMoves = game.GetLegalNextMoves(0).OrderFor(game.CurrentPlayer.Color).ToArray();
+            var childMoves = game.GetLegalNextMoves().OrderFor(game.CurrentPlayer.Color).ToArray();
             var evaluatedMoves = childMoves.Select(x => new Evaluation { CmdsString = x.ToCommandString(), Move = x }).ToArray();
             var maximizing = playerColor == Color.Black;
             var bestEvaluation = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
@@ -124,7 +124,7 @@ namespace Chess
                     {
                         var gameCopy = game.Copy();
                         //Each thread needs its own Game and moves not to collide with other threads.
-                        var copyMoves = gameCopy.GetLegalNextMoves(0).OrderFor(gameCopy.CurrentPlayer.Color);
+                        var copyMoves = gameCopy.GetLegalNextMoves().OrderFor(gameCopy.CurrentPlayer.Color);
                         var copyMove = copyMoves.Single(cm => cm.ToCommandString() == command);
                         gameCopy.PerformLegalMove(copyMove);
                         var v = AlphaBeta(gameCopy, copyMove, alpha, beta, !maximizing, depth, ref canceled, 1); //Switched Player!
@@ -166,7 +166,7 @@ namespace Chess
             Reset();
             var playerColor = game.CurrentPlayer.Color;
             ThinkingFor = playerColor;
-            var childMoves = game.GetLegalNextMoves(0).OrderFor(playerColor).ToArray();
+            var childMoves = game.GetLegalNextMoves().OrderFor(playerColor).ToArray();
             var evaluations = childMoves.Select(x => new Evaluation { CmdsString = x.ToCommandString(), Move = x }).ToArray();
             var bestEvaluatedMove = BestCommandAtDepth(game, evaluations, depth);
             ThinkingFor = null;
@@ -191,7 +191,7 @@ namespace Chess
                 }
             } else if (maximizingPlayer) {
                 bestVal = alpha;
-                var childern = gameCopy.GetLegalNextMoves(recursion).OrderFor(Color.Black);
+                var childern = gameCopy.GetLegalNextMoves().OrderFor(Color.Black);
                 if (!childern.Any()) {
                     bestVal = -NoChildrenEval(gameCopy, node, recursion);
                 } else
@@ -209,7 +209,7 @@ namespace Chess
                     }
             } else { //white player
                 bestVal = beta;
-                var childern = gameCopy.GetLegalNextMoves(recursion).OrderFor(Color.White);
+                var childern = gameCopy.GetLegalNextMoves().OrderFor(Color.White);
                 if (!childern.Any()) {
                     bestVal = NoChildrenEval(gameCopy, node, recursion);
                 } else
@@ -242,7 +242,7 @@ namespace Chess
                 LeafVisits++;
             } else if (maximizingPlayer) {
                 bestVal = alpha;
-                var childern = gameCopy.GetLegalNextMoves(recursion, justCaptures: true).OrderFor(Color.Black);
+                var childern = gameCopy.GetLegalNextMoves(justCaptures: true).OrderFor(Color.Black);
                 if (!childern.Any()) {
                     bestVal = node.ScoreAfterMove.Value;
                 } else
@@ -260,7 +260,7 @@ namespace Chess
                     }
             } else { //white player
                 bestVal = beta;
-                var childern = gameCopy.GetLegalNextMoves(recursion, justCaptures: true).OrderFor(Color.White);
+                var childern = gameCopy.GetLegalNextMoves(justCaptures: true).OrderFor(Color.White);
                 if (!childern.Any()) {
                     bestVal = node.ScoreAfterMove.Value;
                 } else

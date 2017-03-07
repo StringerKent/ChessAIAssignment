@@ -138,7 +138,6 @@ namespace Chess
 //            Assert.IsTrue(moveSpeed > expectedSpeed);
             
         }
-
-
+        
     }
 }

@@ -17,7 +17,7 @@ namespace Chess
         public byte Type { get; protected set; }
         public int MoveCount { get; set; }
 
-        public abstract void AddPossibleMoves(Game game, List<Move> moves);
+        public abstract void AddPseudoLegalMoves(Game game, List<Move> moves);
         public abstract void AddCaptures(Game game, List<Move> moves);
 
         public abstract int PositionValue(Game game);
@@ -117,7 +117,7 @@ namespace Chess
         public override char Char => 'K';
         public override int Value => 0;
 
-        public override void AddPossibleMoves(Game game, List<Move> moves) {
+        public override void AddPseudoLegalMoves(Game game, List<Move> moves) {
             var possibilities = new[]
             {
                 GetSquareSafe(-1, -1, game),
@@ -194,7 +194,7 @@ namespace Chess
         public override char Char => 'Q';
         public override int Value => 900;
 
-        public override void AddPossibleMoves(Game game, List<Move> moves) {
+        public override void AddPseudoLegalMoves(Game game, List<Move> moves) {
 
             AddMoves(-1, 1, game, moves);
             AddMoves(1, 1, game, moves);
@@ -246,7 +246,7 @@ namespace Chess
 
         public override int Value => 500;
 
-        public override void AddPossibleMoves(Game game, List<Move> moves) {
+        public override void AddPseudoLegalMoves(Game game, List<Move> moves) {
             AddMoves(1, 0, game, moves);
             AddMoves(-1, 0, game, moves);
             AddMoves(0, -1, game, moves);
@@ -325,7 +325,7 @@ namespace Chess
 
         public override int Value => 300;
 
-        public override void AddPossibleMoves(Game game, List<Move> moves) {
+        public override void AddPseudoLegalMoves(Game game, List<Move> moves) {
             AddMoves(1, 1, game, moves);
             AddMoves(-1, 1, game, moves);
             AddMoves(1, -1, game, moves);
@@ -399,7 +399,7 @@ namespace Chess
 
         public override int Value => 300;
 
-        public override void AddPossibleMoves(Game game, List<Move> moves) {
+        public override void AddPseudoLegalMoves(Game game, List<Move> moves) {
             var possibilities = new[]
             {
                 GetSquareSafe(-2, -1, game),
@@ -490,7 +490,7 @@ namespace Chess
 
         public override int Value => 100;
 
-        public override void AddPossibleMoves(Game game, List<Move> moves) {
+        public override void AddPseudoLegalMoves(Game game, List<Move> moves) {
             var pawnMoves = new List<Move>();
             var rankDiff = 1;
             if (Color == Color.Black)

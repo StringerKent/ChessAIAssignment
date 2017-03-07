@@ -134,7 +134,7 @@ namespace Chess
 
             var fromSquare = Board.Square(moveCommand.FromFile, moveCommand.FromRank);
             var toSquare = Board.Square(moveCommand.ToFile, moveCommand.ToRank);
-            var possibleMoves = GetPossibleMoves();
+            var possibleMoves = GetPseudoLegalMoves();
             var piece = fromSquare?.Piece;
             var move = possibleMoves.SingleOrDefault(x => x.Piece == piece && x.ToSquare == toSquare);
             if (move == null)
@@ -244,7 +244,7 @@ namespace Chess
         }
 
         public IEnumerable<Move> GetLegalNextMoves(int recursions, bool justCaptures = false) {
-            var moves = justCaptures ? GetPossibleCaptureMoves() : GetPossibleMoves();
+            var moves = justCaptures ? GetPossibleCaptureMoves() : GetPseudoLegalMoves();
             foreach (var move in moves)
                 TryPerform(move, recursions);
 
@@ -304,10 +304,10 @@ namespace Chess
                 WhitePlayer.Pieces.Add(piece);
         }
 
-        internal List<Move> GetPossibleMoves() {
+        internal List<Move> GetPseudoLegalMoves() {
             var moves = new List<Move>();
             foreach (var piece in CurrentPlayer.Pieces)
-                piece.AddPossibleMoves(this, moves);
+                piece.AddPseudoLegalMoves(this, moves);
 
             AddCastling(moves);
             return moves;

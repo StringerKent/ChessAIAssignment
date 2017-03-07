@@ -85,7 +85,7 @@ namespace Chess
             game.AddPiece(File.F, Rank._2, new Pawn(Color.White)); //Blocks own King
 
 
-            var moves = game.GetPossibleMoves();
+            var moves = game.GetPseudoLegalMoves();
             var kingMoves = moves.Where(x => x.Piece is King).ToArray();
             Assert.AreEqual(4, kingMoves.Length);
 
@@ -111,7 +111,7 @@ namespace Chess
 
             game.AddPiece(File.E, Rank._2, new Rook(Color.White));
 
-            var moves = game.GetPossibleMoves();
+            var moves = game.GetPseudoLegalMoves();
             var rookMoves = moves.Where(x => x.Piece is Rook && x.Piece.Color == Color.White);
 
             var squares = rookMoves.Select(x => x.ToSquare.ToString()).ToArray();
@@ -144,7 +144,7 @@ namespace Chess
             game.AddPiece(File.F, Rank._3, new Pawn(Color.White));
             game.AddPiece(File.D, Rank._3, new Pawn(Color.Black));
 
-            var moves = game.GetPossibleMoves();
+            var moves = game.GetPseudoLegalMoves();
             var bishopMoves = moves.Where(x => x.Piece is Bishop && x.Piece.Color == Color.White);
             var squares = bishopMoves.Select(x => x.ToSquare.ToString()).ToArray();
             Assert.AreEqual(8, squares.Length);
@@ -171,7 +171,7 @@ namespace Chess
 
             game.AddPiece(File.D, Rank._6, new Pawn(Color.White));
 
-            var moves = game.GetPossibleMoves();
+            var moves = game.GetPseudoLegalMoves();
             var knightMoves = moves.Where(x => x.Piece is Knight && x.Piece.Color == Color.White);
             var squares = knightMoves.Select(x => x.ToSquare.ToString()).ToArray();
             Assert.AreEqual(7, squares.Length);
@@ -195,7 +195,7 @@ namespace Chess
             game.AddPiece(File.E, Rank._8, new King(Color.Black));
             game.AddPiece(File.E, Rank._2, new Pawn(Color.White));
 
-            var moves = game.GetPossibleMoves();
+            var moves = game.GetPseudoLegalMoves();
             var pawnMoves =
                 moves.Where(x => x.Piece is Pawn && x.Piece.Color == Color.White)
                     .Select(x => x.ToSquare.ToString())
@@ -205,7 +205,7 @@ namespace Chess
             Assert.IsTrue(pawnMoves.Contains("e4"));
 
             game.AddPiece(File.F, Rank._3, new Pawn(Color.Black));
-            moves = game.GetPossibleMoves();
+            moves = game.GetPseudoLegalMoves();
             pawnMoves =
                 moves.Where(x => x.Piece is Pawn && x.Piece.Color == Color.White)
                     .Select(x => x.ToSquare.ToString())
@@ -226,7 +226,7 @@ namespace Chess
             game.AddPiece(File.E, Rank._7, new Pawn(Color.Black));
             game.CurrentPlayer = game.BlackPlayer;
 
-            var moves = game.GetPossibleMoves();
+            var moves = game.GetPseudoLegalMoves();
             var pawnMoves =
                 moves.Where(x => x.Piece is Pawn && x.Piece.Color == Color.Black)
                     .Select(x => x.ToSquare.ToString())
@@ -236,7 +236,7 @@ namespace Chess
             Assert.IsTrue(pawnMoves.Contains("e5"));
 
             game.AddPiece(File.F, Rank._6, new Pawn(Color.White));
-            moves = game.GetPossibleMoves();
+            moves = game.GetPseudoLegalMoves();
             pawnMoves =
                 moves.Where(x => x.Piece is Pawn && x.Piece.Color == Color.Black)
                     .Select(x => x.ToSquare.ToString())
@@ -268,7 +268,7 @@ namespace Chess
             game.AddPiece(File.A, Rank._1, new Rook(Color.White));
             game.AddPiece(File.H, Rank._1, new Rook(Color.White));
             game.SetInitials();
-            var moves = game.GetPossibleMoves();
+            var moves = game.GetPseudoLegalMoves();
             var kingMoves =
                 moves.Where(x => x.Piece is King && x.Piece.Color == Color.White).Select(x => x.ToString()).ToArray();
             Assert.IsTrue(kingMoves.Contains("0-0"));
@@ -307,7 +307,7 @@ namespace Chess
             Assert.IsFalse(game.WhitePlayer.IsChecked);
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.E, Rank._3, File.E, Rank._4)));
             Assert.AreSame(game.CurrentPlayer, game.WhitePlayer);
-            var moves = game.GetPossibleMoves();
+            var moves = game.GetPseudoLegalMoves();
             var kingMoves =
                 moves.Where(x => x.Piece is King && x.Piece.Color == Color.White).Select(x => x.ToString()).ToArray();
             Assert.IsTrue(kingMoves.Contains("0-0"));
@@ -331,7 +331,7 @@ namespace Chess
             game.AddPiece(File.G, Rank._5, new Rook(Color.Black)); //should block king side
             game.AddPiece(File.D, Rank._1, new Knight(Color.White)); //should block queen side
 
-            var moves = game.GetPossibleMoves();
+            var moves = game.GetPseudoLegalMoves();
             var kingMoves =
                 moves.Where(x => x.Piece is King && x.Piece.Color == Color.White).Select(x => x.ToString()).ToArray();
             Assert.IsFalse(kingMoves.Contains("0-0"));
@@ -366,7 +366,7 @@ namespace Chess
             var game = new Game();
             game.New();
 
-            Assert.AreEqual(20, game.GetPossibleMoves().Count);
+            Assert.AreEqual(20, game.GetPseudoLegalMoves().Count);
 
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.E, Rank._2, File.E, Rank._4))); //e4
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.E, Rank._7, File.E, Rank._5))); //e5
@@ -401,7 +401,7 @@ namespace Chess
                 game.UndoLastMove();
             }
 
-            Assert.AreEqual(20, game.GetPossibleMoves().Count);
+            Assert.AreEqual(20, game.GetPseudoLegalMoves().Count);
 
         }
 
@@ -456,7 +456,7 @@ namespace Chess
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.D, Rank._4, File.D, Rank._5)));
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.E, Rank._7, File.E, Rank._5)));
 
-            var moves = game.GetPossibleMoves();
+            var moves = game.GetPseudoLegalMoves();
             var passant = moves.Single(x => x.IsEnpassant);
 
             Assert.IsTrue(passant.FromSquare.File == File.D && passant.FromSquare.Rank == Rank._5);
@@ -480,7 +480,7 @@ namespace Chess
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.D, Rank._4, File.D, Rank._5)));
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.C, Rank._7, File.C, Rank._5)));
 
-            var moves = game.GetPossibleMoves();
+            var moves = game.GetPseudoLegalMoves();
             var passant = moves.Single(x => x.IsEnpassant);
 
             Assert.IsTrue(passant.FromSquare.File == File.D && passant.FromSquare.Rank == Rank._5);
@@ -503,7 +503,7 @@ namespace Chess
 
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.E, Rank._2, File.E, Rank._4)));
 
-            var moves = game.GetPossibleMoves();
+            var moves = game.GetPseudoLegalMoves();
             var passant = moves.Single(x => x.IsEnpassant);
 
             Assert.IsTrue(passant.FromSquare.File == File.D && passant.FromSquare.Rank == Rank._4);
@@ -526,7 +526,7 @@ namespace Chess
 
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.C, Rank._2, File.C, Rank._4)));
 
-            var moves = game.GetPossibleMoves();
+            var moves = game.GetPseudoLegalMoves();
             var passant = moves.Single(x => x.IsEnpassant);
 
             Assert.IsTrue(passant.FromSquare.File == File.D && passant.FromSquare.Rank == Rank._4);
@@ -554,7 +554,7 @@ namespace Chess
             Assert.IsTrue(game.TryStringMove("e8-f8"));//Black King moves between
             Assert.IsTrue(game.TryStringMove("e1-f1"));//then white queen
 
-            var moves = game.GetPossibleMoves();
+            var moves = game.GetPseudoLegalMoves();
             Assert.IsFalse(moves.Any(x => x.IsEnpassant));
             
         }

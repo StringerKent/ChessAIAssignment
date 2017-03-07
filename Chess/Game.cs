@@ -243,7 +243,7 @@ namespace Chess
             PositionsDatabase.Instance.UpdateHash(this, move);
         }
 
-        public IEnumerable<Move> GetLegalNextMoves(int recursions, bool justCaptures = false) {
+        public IEnumerable<Move> GetLegalNextMoves(bool justCaptures = false) {
             var moves = justCaptures ? GetPossibleCaptureMoves() : GetPseudoLegalMoves();
             foreach (var move in moves)
                 TryPerform(move);

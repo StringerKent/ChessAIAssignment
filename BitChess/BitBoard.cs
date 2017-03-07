@@ -33,7 +33,9 @@ namespace BitChess
             MovePatterns[(int)MovePattern.BlackPawn] = new ulong[64];
             MovePatterns[(int)MovePattern.WhitePawnAttacks] = new ulong[64];
             MovePatterns[(int)MovePattern.BlackPawnAttacks] = new ulong[64];
-            
+            MovePatterns[(int)MovePattern.Rook] = new ulong[64];
+            MovePatterns[(int)MovePattern.Bishop] = new ulong[64];
+
             for (int i = 0; i < 64; i++)
             {
                 MovePatterns[(int)MovePattern.King][i] = CalcKingMoves(i);
@@ -42,9 +44,11 @@ namespace BitChess
                 MovePatterns[(int)MovePattern.BlackPawn][i] = CalcBlackPawnMoves(i);
                 MovePatterns[(int)MovePattern.WhitePawnAttacks][i] = CalcWhitePawnAttacs(i);
                 MovePatterns[(int)MovePattern.BlackPawnAttacks][i] = CalcBlackPawnAttacs(i);
+                MovePatterns[(int)MovePattern.Rook][i] = CalcRookMoves(i);
+                MovePatterns[(int)MovePattern.Bishop][i] = CalcBishopMoves(i);
             }            
         }
-
+        
         private ulong CalcWhitePawnAttacs(int squareIndex)
         {
             var rank = squareIndex / 8;
@@ -79,10 +83,117 @@ namespace BitChess
             return moves;
         }
 
-        private ulong[] SquareBits { get; set; } = new ulong[64];
-        private ulong[] PieceBoards { get; set; } = new ulong[12];
+        private ulong CalcRookMoves(int squareIndex)
+        {
+            var rank = squareIndex / 8;
+            var file = squareIndex % 8;
+            var list = new List<int?>();
+            var r = rank;
+            var f = file;
+            while (true) {
+                r++;
+                var si = ToSquareIndex(r, f);
+                if (!si.HasValue)
+                    break;
+                list.Add(si);
+            }
+            r = rank;
+            f = file;
+            while (true) {
+                r--;
+                var si = ToSquareIndex(r, f);
+                if (!si.HasValue)
+                    break;
+                list.Add(si);
+            }
+            r = rank;
+            f = file;
+            while (true) {
+                f++;
+                var si = ToSquareIndex(r, f);
+                if (!si.HasValue)
+                    break;
+                list.Add(si);
+            }
+            r = rank;
+            f = file;
+            while (true)
+            {
+                f--;
+                var si = ToSquareIndex(r, f);
+                if (!si.HasValue)
+                    break;
+                list.Add(si);
+            }
 
-        private ulong[][] MovePatterns { get; set; } = new ulong[12][];
+            ulong moves = 0;
+            foreach (var item in list)
+                moves |= SquareBits[item.Value];
+
+            return moves;
+        }
+
+        private ulong CalcBishopMoves(int squareIndex)
+        {
+            var rank = squareIndex / 8;
+            var file = squareIndex % 8;
+            var list = new List<int?>();
+            var r = rank;
+            var f = file;
+            while (true)
+            {
+                r++;
+                f++;
+                var si = ToSquareIndex(r, f);
+                if (!si.HasValue)
+                    break;
+                list.Add(si);
+            }
+            r = rank;
+            f = file;
+            while (true)
+            {
+                r--;
+                f--;
+                var si = ToSquareIndex(r, f);
+                if (!si.HasValue)
+                    break;
+                list.Add(si);
+            }
+            r = rank;
+            f = file;
+            while (true)
+            {
+                f++;
+                r--;
+                var si = ToSquareIndex(r, f);
+                if (!si.HasValue)
+                    break;
+                list.Add(si);
+            }
+            r = rank;
+            f = file;
+            while (true)
+            {
+                f--;
+                r++;
+                var si = ToSquareIndex(r, f);
+                if (!si.HasValue)
+                    break;
+                list.Add(si);
+            }
+
+            ulong moves = 0;
+            foreach (var item in list)
+                moves |= SquareBits[item.Value];
+
+            return moves;
+        }
+
+        public ulong[] SquareBits { get; set; } = new ulong[64];
+        public ulong[] PieceBoards { get; set; } = new ulong[12];
+
+        public ulong[][] MovePatterns { get; set; } = new ulong[8][];
 
         public void SetStartPos()
         {
@@ -112,9 +223,7 @@ namespace BitChess
             PieceBoards[(int)PieceType.WhiteKing] = SquareBits[4];
             PieceBoards[(int)PieceType.BlackKing] = SquareBits[60];
         }
-
-
-
+        
         internal static int? ToSquareIndex(int rank, int file)
         {
             if (file < 0 || file > 7)
@@ -212,7 +321,7 @@ namespace BitChess
 
             return moves;
         }
-               
+             
 
         private ulong CalcBlackPawnMoves(int squareIndex)
         {
@@ -240,6 +349,16 @@ namespace BitChess
         internal ulong KnightMovePatternOfSquareIndex(int squareIndex)
         {
             return MovePatterns[(int)MovePattern.Knight][squareIndex];
+        }
+
+        internal ulong RookMovePatternOfSquareIndex(int squareIndex)
+        {
+            return MovePatterns[(int)MovePattern.Rook][squareIndex];
+        }
+
+        internal ulong BishopMovePatternOfSquareIndex(int squareIndex)
+        {
+            return MovePatterns[(int)MovePattern.Bishop][squareIndex];
         }
 
         internal ulong WhiteMovePatternOfSquareIndex(int squareIndex)

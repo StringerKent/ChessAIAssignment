@@ -211,7 +211,7 @@ namespace BitChess
         }
 
         [Test]
-        public void TestWhitePawnAttacsMovePattern()
+        public void TestWhitePawnAttacksMovePattern()
         {
             var bitBoard = new BitBoard();
             var moveBits = bitBoard.WhiteAttacsMovePatternOfSquareIndex(11);
@@ -244,6 +244,47 @@ namespace BitChess
                 "0 0 0 0 0 0 0 0" +
                 "0 0 0 0 0 0 0 0" +
                 "0 0 0 0 0 0 0 0" +
+                "0 0 0 0 0 0 0 0";
+
+            var actualPattern = bitBoard.DebugPattern(moveBits);
+            TestBitBoardSetup.AssertBoardPattern(expected, actualPattern);
+        }
+
+
+        [Test]
+        public void TestRookMovePattern()
+        {
+            var bitBoard = new BitBoard();
+            var moveBits = bitBoard.RookMovePatternOfSquareIndex(43);
+
+            var expected =
+                "0 0 0 1 0 0 0 0" +
+                "0 0 0 1 0 0 0 0" +
+                "1 1 1 0 1 1 1 1" +
+                "0 0 0 1 0 0 0 0" +
+                "0 0 0 1 0 0 0 0" +
+                "0 0 0 1 0 0 0 0" +
+                "0 0 0 1 0 0 0 0" +
+                "0 0 0 1 0 0 0 0";
+
+            var actualPattern = bitBoard.DebugPattern(moveBits);
+            TestBitBoardSetup.AssertBoardPattern(expected, actualPattern);
+        }
+
+        [Test]
+        public void TestBishopMovePattern()
+        {
+            var bitBoard = new BitBoard();
+            var moveBits = bitBoard.BishopMovePatternOfSquareIndex(43);
+
+            var expected =
+                "0 1 0 0 0 1 0 0" +
+                "0 0 1 0 1 0 0 0" +
+                "0 0 0 0 0 0 0 0" +
+                "0 0 1 0 1 0 0 0" +
+                "0 1 0 0 0 1 0 0" +
+                "1 0 0 0 0 0 1 0" +
+                "0 0 0 0 0 0 0 1" +
                 "0 0 0 0 0 0 0 0";
 
             var actualPattern = bitBoard.DebugPattern(moveBits);

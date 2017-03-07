@@ -65,7 +65,6 @@ namespace Chess
             var legal = false;
             var check = false;
             var score = 0;
-            var recursions = (byte)0;
             var scoreInfo = (ScoreInfo)0;//ScoreInfo.DrawByRepetion | ScoreInfo.StaleMate;
             var build = PositionsDatabase.Pack(commandNo, legal, check ,score, scoreInfo);
 
@@ -90,7 +89,6 @@ namespace Chess
             var legal = false;
             var check = false;
             var score = -1000;
-            var recursions = (byte)4;
             var scoreInfo = ScoreInfo.DrawByRepetion | ScoreInfo.StaleMate;
             var build = PositionsDatabase.Pack(commandNo, legal, check, score, scoreInfo);
 
@@ -116,7 +114,6 @@ namespace Chess
             var legal = true;
             bool check = true;
             var score = 8190;
-            var recursions = (byte)31;
             var scoreInfo = ScoreInfo.DrawByRepetion | ScoreInfo.StaleMate | ScoreInfo.Mate | ScoreInfo.InsufficientMaterial;
             var build = PositionsDatabase.Pack(commandNo, legal, check, score, scoreInfo);
 
@@ -125,7 +122,6 @@ namespace Chess
             bool oCheck;
             ScoreInfo oScoreInfo;
             int oScore;
-            byte oRecursions;
 
             PositionsDatabase.Unpack(build, out oCommandNo, out oLegal, out oCheck ,out oScoreInfo, out oScore);
 

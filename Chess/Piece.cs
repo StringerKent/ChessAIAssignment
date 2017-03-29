@@ -9,6 +9,10 @@ namespace Chess
 {
     public abstract class Piece
     {
+        public static void NewPatterns()
+        {
+            Knight.SetPatterns();
+        }
         public Color Color { get; set; }
         public abstract char ImageChar { get; }
         public abstract char Char { get; }
@@ -44,6 +48,26 @@ namespace Chess
                 return null;
 
             return game.Board.Squares[(int)file + (int)rank * 8];
+        }
+
+        protected static void AddSquareIndex(int squareIndex, int rankDiff, int fileDiff, List<int> list)
+        {
+            var rank = squareIndex / 8;
+            var file = squareIndex % 8;
+
+            var toRank = rank + rankDiff;
+            var toFile = file + fileDiff;
+            if (toRank > 7)
+                return;
+            if (toRank < 0)
+                return;
+
+            if (toFile > 7)
+                return;
+            if (toFile < 0)
+                return;
+
+            list.Add(toRank * 8 + toFile);
         }
 
         protected void AddMoves(int dirR, int dirF, Game game, List<Move> list) {
@@ -399,22 +423,36 @@ namespace Chess
 
         public override int Value => 300;
 
-        public override void AddPseudoLegalMoves(Game game, List<Move> moves) {
-            var possibilities = new[]
-            {
-                GetSquareSafe(-2, -1, game),
-                GetSquareSafe(2, -1, game),
-                GetSquareSafe(-2, 1, game),
-                GetSquareSafe(2, 1, game),
-                GetSquareSafe(-1, -2, game),
-                GetSquareSafe(1, -2, game),
-                GetSquareSafe(-1, 2, game),
-                GetSquareSafe(1, 2, game)
-            };
+        private static int[][] Patterns;
+        internal static void SetPatterns()
+        {
+            Patterns = new int[64][];
+            for (int i = 0; i < 64; i++)
+                Patterns[i] = GetPattern(i);
+        }
 
-            foreach (var toSqr in possibilities.Where(x => x != null)) {
-                if (toSqr.Piece == null || toSqr.Piece.Color != Color)
-                    moves.Add(new Move(this, toSqr));
+        private static int[] GetPattern(int squareIndex)
+        {
+            var list = new List<int>();
+            AddSquareIndex(squareIndex, -2, -1, list);
+            AddSquareIndex(squareIndex, 2, -1, list);
+            AddSquareIndex(squareIndex, -2, 1, list);
+            AddSquareIndex(squareIndex, 2, 1, list);
+            AddSquareIndex(squareIndex, -1, -2, list);
+            AddSquareIndex(squareIndex, 1, -2, list);
+            AddSquareIndex(squareIndex, -1, 2, list);
+            AddSquareIndex(squareIndex, 1, 2, list);
+
+            return list.ToArray();            
+        }
+        
+        public override void AddPseudoLegalMoves(Game game, List<Move> moves) {
+            var possibilities = Knight.Patterns[Square.Index];
+            var squares = game.Board.Squares;
+            foreach (var squareIndex in possibilities) {
+                var toSquare = squares[squareIndex];
+                if (toSquare.Piece == null || toSquare.Piece.Color != Color)
+                    moves.Add(new Move(this, toSquare));
             }
         }
 

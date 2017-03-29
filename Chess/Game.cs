@@ -35,6 +35,7 @@ namespace Chess
         public void New() {
             PositionsDatabase.Instance.Reset();
             Board = new Board();
+            Piece.NewPatterns();
             WhitePlayer = new Player(Color.White);
             BlackPlayer = new Player(Color.Black);
 
@@ -437,7 +438,8 @@ namespace Chess
 
         private void SetScore(Move move) {
             //It is only interesting to check for insufficient material if the material has decreased.
-            if (move.Capture != null && InsufficientMaterial()) {
+            if (move.Capture != null && InsufficientMaterial())
+            {
                 move.ScoreInfo |= ScoreInfo.InsufficientMaterial;
                 move.ScoreAfterMove = 0;
                 return;

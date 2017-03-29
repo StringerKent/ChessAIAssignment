@@ -280,6 +280,21 @@ namespace Chess
             return bestVal;
         }
 
+        internal ulong Perft(Game game, int depth)
+        {
+            if (depth == 0)
+                return 1;
+            ulong nodes = 0;
+            var moves = game.GetLegalNextMoves();
+            foreach (var move in moves)
+            {
+                game.PerformLegalMove(move);
+                nodes += Perft(game, depth - 1);
+                game.UndoLastMove();
+            }
+            return nodes;
+        }
+
         /// <summary>
         /// This evaluates the position when the opponent has no legal move. It is either mate or stale mate.
         /// </summary>

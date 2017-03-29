@@ -263,5 +263,14 @@ namespace Chess
             Console.WriteLine(move.ToString());
             Assert.AreEqual("Rg3+", move.Move.ToString());
         }
+
+        [TestMethod]
+        public void Perft()
+        {
+            Game.New();
+            var engine = new Engine();
+            var nodes = engine.Perft(Game, 5);
+            Console.WriteLine(nodes);
+        }
     }
 }

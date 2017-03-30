@@ -26,7 +26,8 @@ namespace ChessConsole
             var testClass = new EngineTests();
             try {
                 testClass.Setup();
-                testClass.TestGamePerformance();
+                //testClass.TestGamePerformance();
+                testClass.Perft();
             } catch (Exception ex) {
                 Console.WriteLine(ex);
             }

@@ -369,14 +369,14 @@ namespace Chess
         }
 
         private void AddCastling(List<Move> moves) {
-            var king = (King)CurrentPlayer.Pieces.Single(x => x is King);
+            var king = CurrentPlayer.King;
             if (king.MoveCount > 0)
                 return;
 
             if (CurrentPlayer.IsChecked)
                 return;
 
-            var rooks = CurrentPlayer.Pieces.Where(x => x is Rook).ToArray();
+            var rooks = CurrentPlayer.Pieces.OfType<Rook>().ToArray();
             if (rooks.Any()) {
                 var firstRook = rooks.First();
                 if (firstRook.MoveCount == 0 && !CurrentPlayer.HasCastledKingSide && !CurrentPlayer.HasCastledQueenSide) //has not moved

@@ -23,7 +23,7 @@ Spela mot dator på chess.com.
 	Nivå 7: 0-1
 	
 Prestanda, testa.
-	- Move stack istället för lista.
+    - Ordering i alpha-beta kanske inte så viktigt.
 	- Try refactor Move
 	http://www.chessbin.com/post/Some-Performance-Optimization-Advice
 	- Bitboards

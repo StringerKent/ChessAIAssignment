@@ -9,10 +9,6 @@ namespace Chess
 {
     public abstract class Piece
     {
-        public static void NewPatterns()
-        {
-            Knight.SetPatterns();
-        }
         public Color Color { get; set; }
         public abstract char ImageChar { get; }
         public abstract char Char { get; }
@@ -422,16 +418,8 @@ namespace Chess
         public override char Char => 'N';
 
         public override int Value => 300;
-
-        private static int[][] Patterns;
-        internal static void SetPatterns()
-        {
-            Patterns = new int[64][];
-            for (int i = 0; i < 64; i++)
-                Patterns[i] = GetPattern(i);
-        }
-
-        private static int[] GetPattern(int squareIndex)
+        
+        internal static int[] GetPattern(int squareIndex)
         {
             var list = new List<int>();
             AddSquareIndex(squareIndex, -2, -1, list);
@@ -447,10 +435,9 @@ namespace Chess
         }
         
         public override void AddPseudoLegalMoves(Game game, List<Move> moves) {
-            var possibilities = Knight.Patterns[Square.Index];
+            var possibilities = game.Board.KnightPatterns[Square.Index];
             var squares = game.Board.Squares;
-            foreach (var squareIndex in possibilities) {
-                var toSquare = squares[squareIndex];
+            foreach (var toSquare in possibilities) {
                 if (toSquare.Piece == null || toSquare.Piece.Color != Color)
                     moves.Add(new Move(this, toSquare));
             }

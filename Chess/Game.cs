@@ -35,7 +35,6 @@ namespace Chess
         public void New() {
             PositionsDatabase.Instance.Reset();
             Board = new Board();
-            Piece.NewPatterns();
             WhitePlayer = new Player(Color.White);
             BlackPlayer = new Player(Color.Black);
 

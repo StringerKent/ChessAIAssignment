@@ -20,6 +20,7 @@ namespace Chess
                 }
                 color = color == Color.Black ? Color.White : Color.Black;
             }
+            SetPatterns();
         }
 
         public Square[] Squares { get; private set; }
@@ -36,6 +37,20 @@ namespace Chess
                 if (square.Piece != null)
                     square.Piece.Square = null;
                 square.Piece = null;
+            }
+        }
+
+
+        internal Square[][] KnightPatterns;
+        private void SetPatterns()
+        {
+            KnightPatterns = new Square[64][];
+            for (int i = 0; i < 64; i++)
+            {
+                var pattern = Knight.GetPattern(i);
+                KnightPatterns[i] = new Square[pattern.Length];
+                for (int j = 0; j < pattern.Length; j++)
+                    KnightPatterns[i][j] = Squares[pattern[j]];
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace Chess
                 Capture = capturedEnPassant;
                 CapturedFrom = capturedEnPassant.Square;
             }
-            
+
             CastleRook = castleRook;
         }
 
@@ -39,15 +40,15 @@ namespace Chess
         public Square FromSquare { get; private set; }
 
         public Piece Capture { get; private set; }
-        
+
         public bool IsEnpassant { get; private set; }
 
         public bool IsPromotion { get; set; }
-        
+
         public Square CapturedFrom { get; private set; }
 
         public int? ScoreAfterMove { get; set; }
-        
+
         public int NumberInGame { get; set; }
 
         public override string ToString() {
@@ -73,7 +74,7 @@ namespace Chess
 
             return $"{piece}{cap}{ToSquare}{checkormate}";
         }
-        
+
         public ScoreInfo ScoreInfo { get; set; }
 
         public bool? IsCheck { get; set; }
@@ -84,7 +85,7 @@ namespace Chess
         public bool? IsLegal { get; set; }
         public ulong PreviousHash { get; set; }
         internal File? PreviousEnPassant { get; set; }
-        
+
         public string ToCommandString() {
             return FromSquare + "-" + ToSquare;
         }
@@ -104,4 +105,6 @@ namespace Chess
         StaleMate = 4,
         Mate = 8
     }
+
+    
 }

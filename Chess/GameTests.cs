@@ -110,7 +110,7 @@ namespace Chess
             game.AddPiece(File.E, Rank._6, new Pawn(Color.Black));
 
             game.AddPiece(File.E, Rank._2, new Rook(Color.White));
-
+            game.SetInitials();
             var moves = game.GetPseudoLegalMoves();
             var rookMoves = moves.Where(x => x.Piece is Rook && x.Piece.Color == Color.White);
 
@@ -330,7 +330,7 @@ namespace Chess
             game.AddPiece(File.H, Rank._1, new Rook(Color.White));
             game.AddPiece(File.G, Rank._5, new Rook(Color.Black)); //should block king side
             game.AddPiece(File.D, Rank._1, new Knight(Color.White)); //should block queen side
-
+            game.SetInitials();
             var moves = game.GetPseudoLegalMoves();
             var kingMoves =
                 moves.Where(x => x.Piece is King && x.Piece.Color == Color.White).Select(x => x.ToString()).ToArray();

@@ -26,8 +26,10 @@ namespace ChessConsole
             var testClass = new EngineTests();
             try {
                 testClass.Setup();
+                var watch = Stopwatch.StartNew();
                 //testClass.TestGamePerformance();
                 testClass.Perft();
+                Console.WriteLine(watch.ElapsedMilliseconds);
             } catch (Exception ex) {
                 Console.WriteLine(ex);
             }

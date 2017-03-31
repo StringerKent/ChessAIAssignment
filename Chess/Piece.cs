@@ -100,19 +100,13 @@ namespace Chess
             }
         }
 
-        protected void AddCaptures(int dirR, int dirF, Game game, List<Move> list) {
-            var r = 0;
-            var f = 0;
-
-            while (true) {
-                r += dirR;
-                f += dirF;
-                var toSqr = GetSquareSafe(r, f, game);
-                if (toSqr == null)
-                    break;
-
-                if (toSqr.Piece != null) {
-                    if (toSqr.Piece.Color != Color) {
+        protected void AddCaptures(Square[] squareRay, List<Move> list) {
+            foreach (var toSqr in squareRay)
+            {
+                if (toSqr.Piece != null)
+                {
+                    if (toSqr.Piece.Color != Color)
+                    {
                         list.Add(new Move(this, toSqr));
                     }
                     break;
@@ -161,19 +155,8 @@ namespace Chess
         }
 
         public override void AddCaptures(Game game, List<Move> moves) {
-            var possibilities = new[]
-            {
-                GetSquareSafe(-1, -1, game),
-                GetSquareSafe(-1, 0, game),
-                GetSquareSafe(-1, 1, game),
-                GetSquareSafe(0, -1, game),
-                GetSquareSafe(0, 1, game),
-                GetSquareSafe(1, -1, game),
-                GetSquareSafe(1, 0, game),
-                GetSquareSafe(1, 1, game)
-            };
-
-            foreach (var toSqr in possibilities.Where(x => x != null)) {
+            var possibilities = game.Board.KingPatterns[Square.Index];
+            foreach (var toSqr in possibilities) {
                 if (toSqr.Piece != null && toSqr.Piece.Color != Color)
                     moves.Add(new Move(this, toSqr));
             }
@@ -248,15 +231,15 @@ namespace Chess
         }
 
         public override void AddCaptures(Game game, List<Move> moves) {
-            AddCaptures(-1, 1, game, moves);
-            AddCaptures(1, 1, game, moves);
-            AddCaptures(1, -1, game, moves);
-            AddCaptures(-1, -1, game, moves);
-
-            AddCaptures(1, 0, game, moves);
-            AddCaptures(-1, 0, game, moves);
-            AddCaptures(0, -1, game, moves);
-            AddCaptures(0, 1, game, moves);
+            var board = game.Board;
+            AddCaptures(board.NorthRayPatterns[Square.Index], moves);
+            AddCaptures(board.NorthEastRayPatterns[Square.Index], moves);
+            AddCaptures(board.EastRayPatterns[Square.Index], moves);
+            AddCaptures(board.SouthEastRayPatterns[Square.Index], moves);
+            AddCaptures(board.SouthRayPatterns[Square.Index], moves);
+            AddCaptures(board.SouthWestPatterns[Square.Index], moves);
+            AddCaptures(board.WestPatterns[Square.Index], moves);
+            AddCaptures(board.NorthWestPatterns[Square.Index], moves);
         }
 
         public override int PositionValue(Game game) {
@@ -295,10 +278,11 @@ namespace Chess
         }
 
         public override void AddCaptures(Game game, List<Move> moves) {
-            AddCaptures(1, 0, game, moves);
-            AddCaptures(-1, 0, game, moves);
-            AddCaptures(0, -1, game, moves);
-            AddCaptures(0, 1, game, moves);
+            var board = game.Board;
+            AddCaptures(board.NorthRayPatterns[Square.Index], moves);
+            AddCaptures(board.EastRayPatterns[Square.Index], moves);
+            AddCaptures(board.SouthRayPatterns[Square.Index], moves);
+            AddCaptures(board.WestPatterns[Square.Index], moves);
         }
 
         public override int PositionValue(Game game) {
@@ -375,10 +359,11 @@ namespace Chess
         }
 
         public override void AddCaptures(Game game, List<Move> moves) {
-            AddCaptures(1, 1, game, moves);
-            AddCaptures(-1, 1, game, moves);
-            AddCaptures(1, -1, game, moves);
-            AddCaptures(-1, -1, game, moves);
+            var board = game.Board;
+            AddCaptures(board.NorthEastRayPatterns[Square.Index], moves);
+            AddCaptures(board.SouthEastRayPatterns[Square.Index], moves);
+            AddCaptures(board.SouthWestPatterns[Square.Index], moves);
+            AddCaptures(board.NorthWestPatterns[Square.Index], moves);
         }
 
         public override int PositionValue(Game game) {
@@ -463,19 +448,8 @@ namespace Chess
         }
 
         public override void AddCaptures(Game game, List<Move> moves) {
-            var possibilities = new[]
-            {
-                GetSquareSafe(-2, -1, game),
-                GetSquareSafe(2, -1, game),
-                GetSquareSafe(-2, 1, game),
-                GetSquareSafe(2, 1, game),
-                GetSquareSafe(-1, -2, game),
-                GetSquareSafe(1, -2, game),
-                GetSquareSafe(-1, 2, game),
-                GetSquareSafe(1, 2, game)
-            };
-
-            foreach (var toSqr in possibilities.Where(x => x != null)) {
+            var possibilities = game.Board.KnightPatterns[Square.Index];
+            foreach (var toSqr in possibilities) {
                 if (toSqr.Piece != null && toSqr.Piece.Color != Color)
                     moves.Add(new Move(this, toSqr));
             }

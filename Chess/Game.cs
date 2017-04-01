@@ -125,7 +125,7 @@ namespace Chess
         }
 
         public IEnumerable<Move> GetLegalUiMoves() {
-            return Copy().GetLegalNextMoves();
+            return Copy().GetLegalNextMoves(CurrentPlayer.Color);
         }
 
         public bool TryPossibleMoveCommand(MoveCommand moveCommand) {
@@ -160,7 +160,7 @@ namespace Chess
             if (Ended)
                 return true;
 
-            var nextMoves = GetLegalNextMoves();
+            var nextMoves = GetLegalNextMoves(CurrentPlayer.Color);
             if (!nextMoves.Any()) {
                 Ended = true;
                 if (CurrentPlayer.IsChecked) {
@@ -243,12 +243,26 @@ namespace Chess
             PositionsDatabase.Instance.UpdateHash(this, move);
         }
 
-        public IEnumerable<Move> GetLegalNextMoves(bool justCaptures = false) {
-            var moves = justCaptures ? GetPossibleCaptureMoves() : GetPseudoLegalMoves();
+        public IEnumerable<Move> GetLegalNextMoves(Color color) {
+            var moves = GetPseudoLegalMoves();
             foreach (var move in moves)
                 TryPerform(move);
 
-            return moves.Where(m => m.IsLegal.HasValue && m.IsLegal.Value);
+            if (color == Color.White)
+                return moves.Where(m => m.IsLegal.Value).OrderBy(x => x.ScoreAfterMove.Value);
+            return moves.Where(m => m.IsLegal.Value).OrderByDescending(x => x.ScoreAfterMove.Value);
+
+        }
+
+        public IEnumerable<Move> GetLegalCaptureMoves(Color color)
+        {
+            var moves = GetPseudoLegalCaptureMoves();
+            foreach (var move in moves)
+                TryPerform(move);
+
+            if (color == Color.White)
+                return moves.Where(m => m.IsLegal.Value).OrderBy(x => x.ScoreAfterMove.Value);
+            return moves.Where(m => m.IsLegal.Value).OrderByDescending(x => x.ScoreAfterMove.Value);
         }
 
         public Game Copy() {
@@ -335,7 +349,7 @@ namespace Chess
         }
 
         internal bool MakeRandomMove(Random rnd) {
-            var moves = GetLegalNextMoves().ToArray();
+            var moves = GetLegalNextMoves(CurrentPlayer.Color).ToArray();
             if (!moves.Any())
                 return false;
             Assert.IsTrue(moves.Any());
@@ -359,7 +373,7 @@ namespace Chess
                 player.Material += piece.Value;
         }
 
-        private List<Move> GetPossibleCaptureMoves() {
+        private List<Move> GetPseudoLegalCaptureMoves() {
 
             var moves = new List<Move>();
             foreach (var piece in CurrentPlayer.Pieces)

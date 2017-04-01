@@ -63,7 +63,7 @@ namespace Chess
             SearchFor = time;
             var playerColor = game.CurrentPlayer.Color;
             ThinkingFor = playerColor;
-            var childMoves = game.GetLegalNextMoves().OrderFor(game.CurrentPlayer.Color).ToArray();
+            var childMoves = game.GetLegalNextMoves(playerColor).ToArray();
             var evaluatedMoves = childMoves.Select(x => new Evaluation { CmdsString = x.ToCommandString(), Move = x }).ToArray();
             var maximizing = playerColor == Color.Black;
             var bestEvaluation = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
@@ -85,6 +85,9 @@ namespace Chess
                     break;
                 }
                 bestEvaluation = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
+                bestEvaluation.Depth = depth;
+                bestEvaluation.Seconds = Stopwatch.Elapsed.TotalSeconds;
+
                 Debug.WriteLine($"End depth {depth} ({Stopwatch.Elapsed.TotalSeconds.ToString("F")})");
                 Debug.WriteLine($"Best evaluation at depth{depth}:\r\n{bestEvaluation}");
                 if (bestEvaluation.MateFound)
@@ -124,7 +127,7 @@ namespace Chess
                     {
                         var gameCopy = game.Copy();
                         //Each thread needs its own Game and moves not to collide with other threads.
-                        var copyMoves = gameCopy.GetLegalNextMoves().OrderFor(gameCopy.CurrentPlayer.Color);
+                        var copyMoves = gameCopy.GetLegalNextMoves(playerColor);
                         var copyMove = copyMoves.Single(cm => cm.ToCommandString() == command);
                         gameCopy.PerformLegalMove(copyMove);
                         var v = AlphaBeta(gameCopy, copyMove, alpha, beta, !maximizing, depth, ref canceled, 1); //Switched Player!
@@ -166,7 +169,7 @@ namespace Chess
             Reset();
             var playerColor = game.CurrentPlayer.Color;
             ThinkingFor = playerColor;
-            var childMoves = game.GetLegalNextMoves().OrderFor(playerColor).ToArray();
+            var childMoves = game.GetLegalNextMoves(playerColor).ToArray();
             var evaluations = childMoves.Select(x => new Evaluation { CmdsString = x.ToCommandString(), Move = x }).ToArray();
             var bestEvaluatedMove = BestCommandAtDepth(game, evaluations, depth);
             ThinkingFor = null;
@@ -191,7 +194,7 @@ namespace Chess
                 }
             } else if (maximizingPlayer) {
                 bestVal = alpha;
-                var childern = gameCopy.GetLegalNextMoves().OrderFor(Color.Black);
+                var childern = gameCopy.GetLegalNextMoves(Color.Black);
                 if (!childern.Any()) {
                     bestVal = -NoChildrenEval(gameCopy, node, recursion);
                 } else
@@ -209,7 +212,7 @@ namespace Chess
                     }
             } else { //white player
                 bestVal = beta;
-                var childern = gameCopy.GetLegalNextMoves().OrderFor(Color.White);
+                var childern = gameCopy.GetLegalNextMoves(Color.White);
                 if (!childern.Any()) {
                     bestVal = NoChildrenEval(gameCopy, node, recursion);
                 } else
@@ -242,7 +245,7 @@ namespace Chess
                 LeafVisits++;
             } else if (maximizingPlayer) {
                 bestVal = alpha;
-                var childern = gameCopy.GetLegalNextMoves(justCaptures: true).OrderFor(Color.Black);
+                var childern = gameCopy.GetLegalCaptureMoves(Color.Black);
                 if (!childern.Any()) {
                     bestVal = node.ScoreAfterMove.Value;
                 } else
@@ -260,7 +263,7 @@ namespace Chess
                     }
             } else { //white player
                 bestVal = beta;
-                var childern = gameCopy.GetLegalNextMoves(justCaptures: true).OrderFor(Color.White);
+                var childern = gameCopy.GetLegalCaptureMoves(Color.White);
                 if (!childern.Any()) {
                     bestVal = node.ScoreAfterMove.Value;
                 } else
@@ -285,7 +288,7 @@ namespace Chess
             if (depth == 0)
                 return 1;
             ulong nodes = 0;
-            var moves = game.GetLegalNextMoves();
+            var moves = game.GetLegalNextMoves(game.CurrentPlayer.Color);
             foreach (var move in moves)
             {
                 game.PerformLegalMove(move);
@@ -368,16 +371,7 @@ namespace Chess
         //    }
 
     }
-
-    static class Extension
-    {
-        public static IOrderedEnumerable<Move> OrderFor(this IEnumerable<Move> moves, Color color) {
-            if (color == Color.White)
-                return moves.OrderBy(x => x.ScoreAfterMove.Value);
-            return moves.OrderByDescending(x => x.ScoreAfterMove.Value);
-        }
-    }
-    
+        
     /// <summary>
     /// This is like a wrapper for the best move found by engine. It also has a few nice data about the engines move.
     /// </summary>
@@ -394,10 +388,16 @@ namespace Chess
         public string DatabaseStats { get; set; }
         public int QuiteSearchNodes { get; set; }
         public bool MateFound { get; set; }
-        
+        public int Depth { get; internal set; }
+        public double Seconds { get; internal set; }
 
         public override string ToString() {
-            return $"{Move} ({Value})\r\nBest line: {BestLine}\r\nNodes: {Nodes.KiloNumber()}\r\nLeafs: {LeafVisits.KiloNumber()}\r\nQuite search nodes: {QuiteSearchNodes.KiloNumber()}\r\nBetaCuts: {BetaCutoff.KiloNumber()}\r\nAlphaCuts: {AlphaCutoff.KiloNumber()}\r\n\r\nPosition DB:\r\n{DatabaseStats}";
+            return $"{Move} ({Value})\r\nBest line: {BestLine}\r\n" +
+                $"Depth: {Depth} in {Seconds.ToString("F")} sec\r\n" +
+                $"Nodes: {Nodes.KiloNumber()}\r\n" +
+                $"Leafs: {LeafVisits.KiloNumber()}\r\nQuite search nodes: {QuiteSearchNodes.KiloNumber()}\r\n" +
+                $"BetaCuts: {BetaCutoff.KiloNumber()}\r\nAlphaCuts: {AlphaCutoff.KiloNumber()}\r\n\r\n" +
+                $"Position DB:\r\n{DatabaseStats}";
         }
     }
 

@@ -21,11 +21,11 @@ namespace Chess
             //    Console.WriteLine("Number Of Physical Processors: {0} ", item["NumberOfProcessors"]);
             //}
 
-            int coreCount = 0;
-            foreach (var item in new ManagementObjectSearcher("Select * from Win32_Processor").Get()) {
-                coreCount += int.Parse(item["NumberOfCores"].ToString());
-            }
-            CoreCount = coreCount;
+            //int coreCount = 0;
+            //foreach (var item in new ManagementObjectSearcher("Select * from Win32_Processor").Get()) {
+            //    coreCount += int.Parse(item["NumberOfCores"].ToString());
+            //}
+            CoreCount = Environment.ProcessorCount;
 
             //Console.WriteLine("Number Of Cores: {0}", coreCount);
             //Console.WriteLine("Number Of Logical Processors: {0}", Environment.ProcessorCount);
@@ -58,7 +58,7 @@ namespace Chess
         internal Evaluation BestMoveDeepeningSearch(Game game, TimeSpan time) {
             Reset();
             //PositionsDatabase.Instance.Reset();
-            var maxDepth = 200; //We will break long before due to timeout.
+            var maxDepth = 50; //We will break long before due to timeout.
             Stopwatch = Stopwatch.StartNew();
             SearchFor = time;
             var playerColor = game.CurrentPlayer.Color;
@@ -177,7 +177,7 @@ namespace Chess
         }
 
         private int AlphaBeta(Game gameCopy, Move node, int alpha, int beta, bool maximizingPlayer, int depth, ref bool canceled, int recursion) {
-            if ((SearchFor > TimeSpan.Zero && Stopwatch.Elapsed > SearchFor) || Aborted) {
+            if (( SearchFor > TimeSpan.Zero && Stopwatch.Elapsed > SearchFor) || Aborted) {
                 canceled = true;
                 return 0;
             }
@@ -299,7 +299,7 @@ namespace Chess
         }
 
         /// <summary>
-        /// This evaluates the position when the opponent has no legal move. It is either mate or stale mate.
+        /// This evaluates the position when the opponent has no legal moves. It is either mate or stale mate.
         /// </summary>
         /// <param name="gameCopy"></param>
         /// <param name="node"></param>

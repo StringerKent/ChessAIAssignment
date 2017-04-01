@@ -1,7 +1,6 @@
 
-Testa djupare quiet
-
 Evaluation
+	- Varför spelar svart ofta dam tidigt i spelet?
 	- 50 move rule. Re-setta vid bondedrag eller capture.
 	- Två löpare
 	- Bad bishops
@@ -23,7 +22,6 @@ Spela mot dator på chess.com.
 	Nivå 7: 0-1
 	
 Prestanda, testa.
-    - Ordering i alpha-beta kanske inte så viktigt.
 	- Try refactor Move
 	http://www.chessbin.com/post/Some-Performance-Optimization-Advice
 	- Bitboards

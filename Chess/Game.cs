@@ -258,7 +258,7 @@ namespace Chess
         {
             var moves = GetPseudoLegalCaptureMoves();
             foreach (var move in moves)
-                TryPerform(move);
+                TryPerform(move, true);
 
             if (color == Color.White)
                 return moves.Where(m => m.IsLegal.Value).OrderBy(x => x.ScoreAfterMove.Value);
@@ -466,7 +466,7 @@ namespace Chess
             var white = WhitePlayer.Pieces.Select(x => x.PositionValue(this)).Sum() +
                 DoublePawns(WhitePlayer);
 
-            if (CommandCount > 20) {
+            if (CommandCount < 20) {
                 black += OpeningScore(BlackPlayer);
                 white += OpeningScore(WhitePlayer);
             }
@@ -506,7 +506,7 @@ namespace Chess
         private int OpeningScore(Player player) {
 
             //It is bad if queen moves in the opening.
-            var queenScore = (player.Queen?.MoveCount ?? 0) * -2;
+            var queenScore = (player.Queen?.MoveCount ?? 0) * -6;
 
             //Better if one knight or bishop has moved exactly one time during opening.
             var kbsMovedToMuch = player.KnightsBishops.Count(x => x.MoveCount > 1);
@@ -524,7 +524,7 @@ namespace Chess
         /// <param name="move"></param>
         /// <param name="recursions"></param>
         /// <returns></returns>
-        private void TryPerform(Move move) {
+        private void TryPerform(Move move, bool quiteSearch = false) {
             Debug.Assert(!move.IsLegal.HasValue);
 
             //Actually performs a possible move.
@@ -557,8 +557,13 @@ namespace Chess
             }
 
             if (!move.ScoreAfterMove.HasValue) { //Score can be null if we are on a deeper search, 
-                SetScore(move);
-                PositionsDatabase.Instance.Store(this, move);
+                if (quiteSearch)
+                    move.ScoreAfterMove = Material;
+                else
+                {
+                    SetScore(move);
+                    PositionsDatabase.Instance.Store(this, move);
+                }
             }
             UndoLastMove();
         }

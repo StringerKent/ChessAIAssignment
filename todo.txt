@@ -1,3 +1,5 @@
+Förklara TDD förkortning
+FEN, PNG - format
 
 Evaluation
 	- Varför spelar svart ofta dam tidigt i spelet?

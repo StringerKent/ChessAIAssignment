@@ -105,6 +105,7 @@ namespace Chess
         private int NodeVisit { get; set; }
         private int BetaCutOffCount { get; set; }
         private int QuiteSearchNodes { get; set; }
+        private int QuiteLeafVisits { get; set; }
         private int AlphaCutOffCount { get; set; }
         private bool Aborted { get; set; }
         private Stopwatch Stopwatch { get; set; } = new Stopwatch();
@@ -158,6 +159,7 @@ namespace Chess
             var bestEvaluation = maximizing ? localEvals.OrderBy(x => x.Value).Last() : localEvals.OrderBy(x => x.Value).First();
             bestEvaluation.Nodes = NodeVisit;
             bestEvaluation.QuiteSearchNodes = QuiteSearchNodes;
+            bestEvaluation.QuiteLeafVisits = QuiteLeafVisits;
             bestEvaluation.LeafVisits = LeafVisits;
             bestEvaluation.AlphaCutoff = AlphaCutOffCount;
             bestEvaluation.BetaCutoff = BetaCutOffCount;
@@ -240,10 +242,11 @@ namespace Chess
 
             QuiteSearchNodes++;
             int bestVal;
-            if (depth == 0 || gameCopy.Ended) {
+            if (node.Capture == null || gameCopy.Ended || depth == 0)
+            {
                 bestVal = node.ScoreAfterMove.Value + (maximizingPlayer ? 1 : -1);
-                LeafVisits++;
-            } else if (maximizingPlayer) {
+                QuiteLeafVisits++;
+            }  else if (maximizingPlayer) {
                 bestVal = alpha;
                 var childern = gameCopy.GetLegalCaptureMoves(Color.Black);
                 if (!childern.Any()) {
@@ -326,6 +329,7 @@ namespace Chess
             NodeVisit = 0;
             LeafVisits = 0;
             QuiteSearchNodes = 0;
+            QuiteLeafVisits = 0;
             PositionsDatabase.Instance.ResetMatches();            
         }
 
@@ -387,6 +391,8 @@ namespace Chess
         public int AlphaCutoff { get; set; }
         public string DatabaseStats { get; set; }
         public int QuiteSearchNodes { get; set; }
+        public int QuiteLeafVisits { get; set; }
+
         public bool MateFound { get; set; }
         public int Depth { get; internal set; }
         public double Seconds { get; internal set; }
@@ -395,7 +401,8 @@ namespace Chess
             return $"{Move} ({Value})\r\nBest line: {BestLine}\r\n" +
                 $"Depth: {Depth} in {Seconds.ToString("F")} sec\r\n" +
                 $"Nodes: {Nodes.KiloNumber()}\r\n" +
-                $"Leafs: {LeafVisits.KiloNumber()}\r\nQuite search nodes: {QuiteSearchNodes.KiloNumber()}\r\n" +
+                $"Leafs: {LeafVisits.KiloNumber()}\r\nQuite nodes: {QuiteSearchNodes.KiloNumber()}\r\n" +
+                $"Quite leafs: {QuiteLeafVisits.KiloNumber()}\r\n" + 
                 $"BetaCuts: {BetaCutoff.KiloNumber()}\r\nAlphaCuts: {AlphaCutoff.KiloNumber()}\r\n\r\n" +
                 $"Position DB:\r\n{DatabaseStats}";
         }

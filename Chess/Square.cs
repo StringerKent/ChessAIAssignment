@@ -58,6 +58,33 @@ namespace Chess
             return File.ToString().ToLower() + Rank.ToString().Replace("_", "");
         }
         
+        internal Square[] NorthRayPatterns;
+
+        internal Square[] NorthEastRayPatterns;
+        
+        internal Square[] EastRayPatterns;
+        
+        internal Square[] SouthEastRayPatterns;
+        
+        internal Square[] SouthRayPatterns;
+
+        internal Square[] SouthWestPatterns;
+
+        internal Square[] WestPatterns;
+
+        internal Square[] NorthWestPatterns;
+        
+        internal Square[] KnightPatterns;
+
+        internal Square[] KingPatterns;
+
+        internal Square[] WhitePawnPatterns;
+
+        internal Square[] BlackPawnPatterns;
+
+        internal Square[] WhitePawnCapturePatterns;
+
+        internal Square[] BlackPawnCapturePatterns;        
     }
 
     public enum File

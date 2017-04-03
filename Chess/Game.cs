@@ -190,9 +190,10 @@ namespace Chess
 
         public void PerformLegalMove(Move move) {
             MoveCount++;
-            move.Piece.MoveCount++;
+            var piece = move.Piece;
+            piece.MoveCount++;
             move.FromSquare.Piece = null; //use from square to remove piece
-            var playColor = move.Piece.Color;
+            var playColor = piece.Color;
 
             var capture = move.Capture;
             if (capture != null) {
@@ -200,11 +201,11 @@ namespace Chess
                 OtherPlayer.Pieces.Remove(capture);
             }
 
-            move.ToSquare.SetPiece(move.Piece);
+            move.ToSquare.SetPiece(piece);
 
             if (move.IsPromotion) {
-                move.Piece.Square = null;
-                move.PromotedPawn = (Pawn)move.Piece;
+                piece.Square = null;
+                move.PromotedPawn = (Pawn)piece;
                 var queen = new Queen(playColor);
                 AddPiece(move.ToSquare.File, move.ToSquare.Rank, queen);
                 move.Piece = queen; //todo: test without it.
@@ -216,7 +217,7 @@ namespace Chess
                 move.CapturedFrom.Piece = null;
                 move.Capture.Square = null;
             }
-            CurrentPlayer.Moves.Push(move); //If it is found later that this is a illegal move it is removed in the undo - function
+            CurrentPlayer.Moves.Push(move); //If it is found later that this is an illegal move it is removed in the undo - function
 
             move.WhiteWasChecked = WhitePlayer.IsChecked;
             move.BlackWasChecked = BlackPlayer.IsChecked;
@@ -228,7 +229,7 @@ namespace Chess
 
             move.PreviousEnPassant = EnPassantFile;
             EnPassantFile = null;
-            if (move.Piece is Pawn && move.Piece.MoveCount == 1) {
+            if (piece is Pawn && piece.MoveCount == 1) {
                 var dist = move.ToSquare.Rank - move.FromSquare.Rank;
                 if (Math.Abs(dist) == 2)
                     EnPassantFile = move.FromSquare.File;
@@ -559,8 +560,7 @@ namespace Chess
             if (!move.ScoreAfterMove.HasValue) { //Score can be null if we are on a deeper search, 
                 if (quiteSearch)
                     move.ScoreAfterMove = Material;
-                else
-                {
+                else {
                     SetScore(move);
                     PositionsDatabase.Instance.Store(this, move);
                 }

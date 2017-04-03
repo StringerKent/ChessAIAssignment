@@ -7,14 +7,11 @@ namespace Chess
 {
     public class Board
     {
-        public Board()
-        {
+        public Board() {
             Squares = new Square[64];
             var color = Color.Black;
-            for (var f = File.A; f <= File.H; f++)
-            {
-                for (var r = Rank._1; r <= Rank._8; r++)
-                {
+            for (var f = File.A; f <= File.H; f++) {
+                for (var r = Rank._1; r <= Rank._8; r++) {
                     Squares[(int)f + (int)r * 8] = new Square(f, r) { Color = color };
                     color = color == Color.Black ? Color.White : Color.Black;
                 }
@@ -25,15 +22,12 @@ namespace Chess
 
         public Square[] Squares { get; private set; }
 
-        public Square Square(File file, Rank rank)
-        {
+        public Square Square(File file, Rank rank) {
             return Squares[(int)file + (int)rank * 8];
         }
-        
-        internal void ClearPieces()
-        {
-            foreach (var square in Squares)
-            {
+
+        internal void ClearPieces() {
+            foreach (var square in Squares) {
                 if (square.Piece != null)
                     square.Piece.Square = null;
                 square.Piece = null;
@@ -41,130 +35,87 @@ namespace Chess
         }
 
 
-        private void SetPatterns()
-        {
+        private void SetPatterns() {
             SetKnightPatterns();
             SetKingPatterns();
             SetWhitePawnPatterns();
             SetBlackPawnPatterns();
             SetWhitePawnCapturePatterns();
             SetBlackPawnCapturePatterns();
-            
-            NorthRayPatterns = SetRayPatterns(1, 0);
-            NorthEastRayPatterns = SetRayPatterns(1, 1);
-            EastRayPatterns = SetRayPatterns(0, 1);
-            SouthEastRayPatterns = SetRayPatterns(-1, 1);
-            SouthRayPatterns = SetRayPatterns(-1, 0);
-            SouthWestPatterns = SetRayPatterns(-1, -1);
-            WestPatterns = SetRayPatterns(0, -1);
-            NorthWestPatterns = SetRayPatterns(1, -1);            
+
+            foreach (var square in Squares) {
+                square.NorthRayPatterns = SetRayPatterns(square, 1, 0);
+                square.NorthEastRayPatterns = SetRayPatterns(square, 1, 1);
+                square.EastRayPatterns = SetRayPatterns(square, 0, 1);
+                square.SouthEastRayPatterns = SetRayPatterns(square, -1, 1);
+                square.SouthRayPatterns = SetRayPatterns(square, -1, 0);
+                square.SouthWestPatterns = SetRayPatterns(square, -1, -1);
+                square.WestPatterns = SetRayPatterns(square, 0, -1);
+                square.NorthWestPatterns = SetRayPatterns(square, 1, -1);
+            }
         }
 
-        internal Square[][] KnightPatterns;
-        private void SetKnightPatterns()
-        {
-            KnightPatterns = new Square[64][];
-            for (int i = 0; i < 64; i++)
-            {
+        private void SetKnightPatterns() {
+            for (int i = 0; i < 64; i++) {
                 var pattern = Knight.GetPattern(i);
-                KnightPatterns[i] = new Square[pattern.Length];
+                Squares[i].KnightPatterns = new Square[pattern.Length];
                 for (int j = 0; j < pattern.Length; j++)
-                    KnightPatterns[i][j] = Squares[pattern[j]];
+                    Squares[i].KnightPatterns[j] = Squares[pattern[j]];
             }
         }
 
-        internal Square[][] KingPatterns;
-        private void SetKingPatterns()
-        {
-            KingPatterns = new Square[64][];
-            for (int i = 0; i < 64; i++)
-            {
+        private void SetKingPatterns() {
+            for (int i = 0; i < 64; i++) {
                 var pattern = King.GetPattern(i);
-                KingPatterns[i] = new Square[pattern.Length];
+                Squares[i].KingPatterns = new Square[pattern.Length];
                 for (int j = 0; j < pattern.Length; j++)
-                    KingPatterns[i][j] = Squares[pattern[j]];
+                    Squares[i].KingPatterns[j] = Squares[pattern[j]];
             }
         }
 
-        internal Square[][] WhitePawnPatterns;
-        private void SetWhitePawnPatterns()
-        {
-            WhitePawnPatterns = new Square[64][];
-            for (int i = 0; i < 64; i++)
-            {
+        private void SetWhitePawnPatterns() {
+            for (int i = 0; i < 64; i++) {
                 var pattern = Pawn.GetWhitePattern(i);
-                WhitePawnPatterns[i] = new Square[pattern.Length];
+                Squares[i].WhitePawnPatterns = new Square[pattern.Length];
                 for (int j = 0; j < pattern.Length; j++)
-                    WhitePawnPatterns[i][j] = Squares[pattern[j]];
+                    Squares[i].WhitePawnPatterns[j] = Squares[pattern[j]];
             }
         }
 
-        internal Square[][] BlackPawnPatterns;
-        private void SetBlackPawnPatterns()
-        {
-            BlackPawnPatterns = new Square[64][];
-            for (int i = 0; i < 64; i++)
-            {
+        private void SetBlackPawnPatterns() {
+            for (int i = 0; i < 64; i++) {
                 var pattern = Pawn.GetBlackPattern(i);
-                BlackPawnPatterns[i] = new Square[pattern.Length];
+                Squares[i].BlackPawnPatterns = new Square[pattern.Length];
                 for (int j = 0; j < pattern.Length; j++)
-                    BlackPawnPatterns[i][j] = Squares[pattern[j]];
+                    Squares[i].BlackPawnPatterns[j] = Squares[pattern[j]];
             }
         }
 
-        internal Square[][] WhitePawnCapturePatterns;
-        private void SetWhitePawnCapturePatterns()
-        {
-            WhitePawnCapturePatterns = new Square[64][];
-            for (int i = 0; i < 64; i++)
-            {
+        private void SetWhitePawnCapturePatterns() {
+            for (int i = 0; i < 64; i++) {
                 var pattern = Pawn.GetWhiteCapturePattern(i);
-                WhitePawnCapturePatterns[i] = new Square[pattern.Length];
+                Squares[i].WhitePawnCapturePatterns = new Square[pattern.Length];
                 for (int j = 0; j < pattern.Length; j++)
-                    WhitePawnCapturePatterns[i][j] = Squares[pattern[j]];
+                    Squares[i].WhitePawnCapturePatterns[j] = Squares[pattern[j]];
             }
         }
 
-        internal Square[][] BlackPawnCapturePatterns;
-        private void SetBlackPawnCapturePatterns()
-        {
-            BlackPawnCapturePatterns = new Square[64][];
-            for (int i = 0; i < 64; i++)
-            {
+        private void SetBlackPawnCapturePatterns() {
+            for (int i = 0; i < 64; i++) {
                 var pattern = Pawn.GetBlackCapturePattern(i);
-                BlackPawnCapturePatterns[i] = new Square[pattern.Length];
+                Squares[i].BlackPawnCapturePatterns = new Square[pattern.Length];
                 for (int j = 0; j < pattern.Length; j++)
-                    BlackPawnCapturePatterns[i][j] = Squares[pattern[j]];
+                    Squares[i].BlackPawnCapturePatterns[j] = Squares[pattern[j]];
             }
         }
 
-        internal Square[][] NorthRayPatterns;
 
-        internal Square[][] NorthEastRayPatterns;
-        
-        internal Square[][] EastRayPatterns;
-        
-        internal Square[][] SouthEastRayPatterns;
-        
-        internal Square[][] SouthRayPatterns;
+        private Square[] SetRayPatterns(Square square, int rankDiff, int fileDiff) {
 
-        internal Square[][] SouthWestPatterns;
-
-        internal Square[][] WestPatterns;
-
-        internal Square[][] NorthWestPatterns;
-
-        
-        private Square[][] SetRayPatterns(int rankDiff, int fileDiff)
-        {
-            var squares = new Square[64][];
-            for (int i = 0; i < 64; i++)
-            {
-                var pattern = Piece.GetSquareRayIndexes(i, rankDiff, fileDiff);
-                squares[i] = new Square[pattern.Length];
-                for (int j = 0; j < pattern.Length; j++)
-                    squares[i][j] = Squares[pattern[j]];
-            }
+            var pattern = Piece.GetSquareRayIndexes(square.Index, rankDiff, fileDiff);
+            var squares = new Square[pattern.Length];
+            for (int j = 0; j < pattern.Length; j++)
+                squares[j] = Squares[pattern[j]];
             return squares;
         }
     }

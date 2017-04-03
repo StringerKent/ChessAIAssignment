@@ -1,6 +1,8 @@
 Förklara TDD förkortning
 FEN, PNG - format
 
+Spara patterns på Square
+
 Evaluation
 	- Varför spelar svart ofta dam tidigt i spelet?
 	- 50 move rule. Re-setta vid bondedrag eller capture.

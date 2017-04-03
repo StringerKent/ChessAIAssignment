@@ -30,7 +30,7 @@ namespace Chess
         public Player Winner { get; set; }
         private readonly Stack<ulong> HashHistory = new Stack<ulong>();
         //50 moves rule
-        private int MovesSinceLastCaptureOrPawnMove = 0;
+        //private int MovesSinceLastCaptureOrPawnMove = 0;
 
         public void New() {
             PositionsDatabase.Instance.Reset();
@@ -243,26 +243,31 @@ namespace Chess
             PositionsDatabase.Instance.UpdateHash(this, move);
         }
 
-        public IEnumerable<Move> GetLegalNextMoves(Color color) {
+        public Move[] GetLegalNextMoves(Color color) {
             var moves = GetPseudoLegalMoves();
+            if (!moves.Any())
+                return new Move[0];
             foreach (var move in moves)
                 TryPerform(move);
 
             if (color == Color.White)
-                return moves.Where(m => m.IsLegal.Value).OrderBy(x => x.ScoreAfterMove.Value);
-            return moves.Where(m => m.IsLegal.Value).OrderByDescending(x => x.ScoreAfterMove.Value);
+                return moves.Where(m => m.IsLegal.Value).OrderBy(x => x.ScoreAfterMove.Value).ToArray();
+            return moves.Where(m => m.IsLegal.Value).OrderByDescending(x => x.ScoreAfterMove.Value).ToArray();
 
         }
 
-        public IEnumerable<Move> GetLegalCaptureMoves(Color color)
+        public Move[] GetLegalCaptureMoves(Color color)
         {
             var moves = GetPseudoLegalCaptureMoves();
+            if (!moves.Any())
+                return new Move[0];
             foreach (var move in moves)
                 TryPerform(move, true);
+            
 
             if (color == Color.White)
-                return moves.Where(m => m.IsLegal.Value).OrderBy(x => x.ScoreAfterMove.Value);
-            return moves.Where(m => m.IsLegal.Value).OrderByDescending(x => x.ScoreAfterMove.Value);
+                return moves.Where(m => m.IsLegal.Value).OrderBy(x => x.ScoreAfterMove.Value).ToArray();
+            return moves.Where(m => m.IsLegal.Value).OrderByDescending(x => x.ScoreAfterMove.Value).ToArray();
         }
 
         public Game Copy() {

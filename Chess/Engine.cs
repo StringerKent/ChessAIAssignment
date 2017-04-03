@@ -15,7 +15,8 @@ namespace Chess
 {
     public class Engine
     {
-        public Engine() {
+        public Engine()
+        {
             //foreach (var item in new ManagementObjectSearcher("Select * from Win32_ComputerSystem").Get())
             //{
             //    Console.WriteLine("Number Of Physical Processors: {0} ", item["NumberOfProcessors"]);
@@ -39,23 +40,29 @@ namespace Chess
 
         public Color? ThinkingFor { get; set; }
 
-        public async Task<Evaluation> AsyncBestMoveDeepeningSearch(Game game, TimeSpan time) {
+        public async Task<Evaluation> AsyncBestMoveDeepeningSearch(Game game, TimeSpan time)
+        {
 
             var t = Task.Run(() => BestMoveDeepeningSearch(game, time));
-            try {
+            try
+            {
                 await t;
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 throw;
             }
             PositionsDatabase.Instance.CleanUpOldPositions();
             return t.Result;
         }
 
-        public void Abort() {
+        public void Abort()
+        {
             Aborted = true;
         }
 
-        internal Evaluation BestMoveDeepeningSearch(Game game, TimeSpan time) {
+        internal Evaluation BestMoveDeepeningSearch(Game game, TimeSpan time)
+        {
             Reset();
             //PositionsDatabase.Instance.Reset();
             var maxDepth = 50; //We will break long before due to timeout.
@@ -68,7 +75,8 @@ namespace Chess
             var maximizing = playerColor == Color.Black;
             var bestEvaluation = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
 
-            for (var depth = 1; depth < maxDepth; depth++) {
+            for (var depth = 1; depth < maxDepth; depth++)
+            {
                 Debug.WriteLine($"\r\n==========\r\nStart Depth {depth}");
                 var evaluation = BestCommandAtDepth(game, evaluatedMoves, depth);
                 evaluatedMoves = playerColor == Color.White
@@ -77,7 +85,8 @@ namespace Chess
 
                 if (evaluation == null) //canceled
                 {
-                    if (Aborted) {
+                    if (Aborted)
+                    {
                         ThinkingFor = null;
                         return null;
                     }
@@ -92,7 +101,7 @@ namespace Chess
                 Debug.WriteLine($"Best evaluation at depth{depth}:\r\n{bestEvaluation}");
                 if (bestEvaluation.MateFound)
                     break;
-                
+
             }
             Debug.WriteLine($"Selected evaluation:\r\n{bestEvaluation}");
 
@@ -109,7 +118,8 @@ namespace Chess
         private int AlphaCutOffCount { get; set; }
         private bool Aborted { get; set; }
         private Stopwatch Stopwatch { get; set; } = new Stopwatch();
-        private Evaluation BestCommandAtDepth(Game game, Evaluation[] evaluations, int depth) {
+        private Evaluation BestCommandAtDepth(Game game, Evaluation[] evaluations, int depth)
+        {
             var playerColor = game.CurrentPlayer.Color;
             var parallelism = CoreCount;
 
@@ -118,12 +128,13 @@ namespace Chess
             var beta = 8000;
             var canceled = false;
             var mateFound = false;
-            var localEvals = evaluations.Select(x => new Evaluation {CmdsString = x.CmdsString, Value = x.Value, Move = x.Move }).ToArray();                                    
+            var localEvals = evaluations.Select(x => new Evaluation { CmdsString = x.CmdsString, Value = x.Value, Move = x.Move }).ToArray();
             var commands = evaluations.Select(e => e.CmdsString);
-            
+
             Parallel.ForEach(commands,
                 new ParallelOptions { MaxDegreeOfParallelism = parallelism },
-                (command) => {
+                (command) =>
+                {
                     if (!mateFound)
                     {
                         var gameCopy = game.Copy();
@@ -134,7 +145,7 @@ namespace Chess
                         var v = AlphaBeta(gameCopy, copyMove, alpha, beta, !maximizing, depth, ref canceled, 1); //Switched Player!
                         gameCopy.UndoLastMove();
 
-                        
+
                         var eval = localEvals.Single(x => x.Move.ToCommandString() == command);
                         eval.Value = v;
                         mateFound = (maximizing && v > 7900) || (!maximizing && v < -7900);
@@ -145,13 +156,15 @@ namespace Chess
                     }
                 });
 
-            
-            if (canceled) {
+
+            if (canceled)
+            {
                 Debug.WriteLine($"\r\nDepth: {depth}\r\n Canceled");
                 return null;
             }
 
-            for (int i = 0; i < evaluations.Length; i++) {
+            for (int i = 0; i < evaluations.Length; i++)
+            {
                 evaluations[i] = localEvals[i];
             }
             //Console.WriteLine($"\r\nDepth: {depth}\r\nCut off {CutOffCount} times.\r\nVisited {NodeVisit} nodes.\r\nLeaf Visits:{LeafVisits}\r\nBest Move {bestCommand.Move.ToString()} ({bestCommand.Value})\r\n{bestCommand.Move.BestLine()}");
@@ -167,7 +180,8 @@ namespace Chess
             return evaluations.Single(x => x.CmdsString == bestEvaluation.CmdsString);
         }
 
-        internal Evaluation BestAlphaBetaMove(Game game, int depth) {
+        internal Evaluation BestAlphaBetaMove(Game game, int depth)
+        {
             Reset();
             var playerColor = game.CurrentPlayer.Color;
             ThinkingFor = playerColor;
@@ -178,54 +192,72 @@ namespace Chess
             return bestEvaluatedMove;// childMoves.Single(x => x.ToCommandString() == bestEvaluatedMove.CmdsString);
         }
 
-        private int AlphaBeta(Game gameCopy, Move node, int alpha, int beta, bool maximizingPlayer, int depth, ref bool canceled, int recursion) {
-            if (( SearchFor > TimeSpan.Zero && Stopwatch.Elapsed > SearchFor) || Aborted) {
+        private int AlphaBeta(Game gameCopy, Move node, int alpha, int beta, bool maximizingPlayer, int depth, ref bool canceled, int recursion)
+        {
+            if ((SearchFor > TimeSpan.Zero && Stopwatch.Elapsed > SearchFor) || Aborted)
+            {
                 canceled = true;
                 return 0;
             }
 
             NodeVisit++;
             int bestVal;// = maximizingPlayer ? alpha : beta;
-            if (depth <= 0 || gameCopy.Ended) {
-                if (node.Capture != null) {
+            if (depth <= 0 || gameCopy.Ended)
+            {
+                if (node.Capture != null)
                     bestVal = AlphaBetaQuite(gameCopy, node, alpha, beta, maximizingPlayer, 1, ref canceled, recursion + 1);
-                } else { //No capture. No worries for horizon effect.
+                else
+                { //No capture. No worries for horizon effect.
                     bestVal = node.ScoreAfterMove.Value + (maximizingPlayer ? 1 : -1);
                     //nodes must always have value. The reason is actually performance and move ordering and cutoffs. Theory and also my experience states this.
                     LeafVisits++;
                 }
-            } else if (maximizingPlayer) {
+            }
+            else if (maximizingPlayer)
+            {
                 bestVal = alpha;
                 var childern = gameCopy.GetLegalNextMoves(Color.Black);
-                if (!childern.Any()) {
+                if (!childern.Any())
+                {
                     bestVal = -NoChildrenEval(gameCopy, node, recursion);
-                } else
-                    foreach (var move in childern) {
+                }
+                else
+                    for (int i = 0; i < childern.Length; i++)
+                    {
+                        var move = childern[i];
                         gameCopy.PerformLegalMove(move);
                         var childValue = AlphaBeta(gameCopy, move, bestVal, beta, false, depth - 1, ref canceled, recursion + 1);
                         gameCopy.UndoLastMove();
                         if (childValue > bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
                         bestVal = Math.Max(bestVal, childValue);
-                        if (beta <= bestVal) {
+                        if (beta <= bestVal)
+                        {
                             BetaCutOffCount++;
                             break;
                         }
                     }
-            } else { //white player
+            }
+            else
+            { //white player
                 bestVal = beta;
                 var childern = gameCopy.GetLegalNextMoves(Color.White);
-                if (!childern.Any()) {
+                if (!childern.Any())
+                {
                     bestVal = NoChildrenEval(gameCopy, node, recursion);
-                } else
-                    foreach (var move in childern) {
+                }
+                else
+                    for (int i = 0; i < childern.Length; i++)
+                    {
+                        var move = childern[i];
                         gameCopy.PerformLegalMove(move);
                         var childValue = AlphaBeta(gameCopy, move, alpha, bestVal, true, depth - 1, ref canceled, recursion + 1);
                         gameCopy.UndoLastMove();
                         if (childValue < bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
                         bestVal = Math.Min(bestVal, childValue);
-                        if (bestVal <= alpha) {
+                        if (bestVal <= alpha)
+                        {
                             AlphaCutOffCount++;
                             break;
                         }
@@ -234,50 +266,65 @@ namespace Chess
             return bestVal;
         }
 
-        private int AlphaBetaQuite(Game gameCopy, Move node, int alpha, int beta, bool maximizingPlayer, int depth, ref bool canceled, int recursion) {
-            if ((SearchFor > TimeSpan.Zero && Stopwatch.Elapsed > SearchFor) || Aborted) {
+        private int AlphaBetaQuite(Game gameCopy, Move node, int alpha, int beta, bool maximizingPlayer, int depth, ref bool canceled, int recursion)
+        {
+            if ((SearchFor > TimeSpan.Zero && Stopwatch.Elapsed > SearchFor) || Aborted)
+            {
                 canceled = true;
                 return 0;
             }
-
             QuiteSearchNodes++;
             int bestVal;
             if (node.Capture == null || gameCopy.Ended || depth == 0)
             {
                 bestVal = node.ScoreAfterMove.Value + (maximizingPlayer ? 1 : -1);
                 QuiteLeafVisits++;
-            }  else if (maximizingPlayer) {
+            }
+            else if (maximizingPlayer)
+            {
                 bestVal = alpha;
                 var childern = gameCopy.GetLegalCaptureMoves(Color.Black);
-                if (!childern.Any()) {
+                if (!childern.Any())
+                {
                     bestVal = node.ScoreAfterMove.Value;
-                } else
-                    foreach (var move in childern) {
+                }
+                else
+                    for (int i = 0; i < childern.Length; i++)
+                    {
+                        var move = childern[i];
                         gameCopy.PerformLegalMove(move);
                         var childValue = AlphaBetaQuite(gameCopy, move, bestVal, beta, false, depth - 1, ref canceled, recursion + 1);
                         gameCopy.UndoLastMove();
                         if (childValue > bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
                         bestVal = Math.Max(bestVal, childValue);
-                        if (beta <= bestVal) {
+                        if (beta <= bestVal)
+                        {
                             BetaCutOffCount++;
                             break;
                         }
                     }
-            } else { //white player
+            }
+            else
+            { //white player
                 bestVal = beta;
                 var childern = gameCopy.GetLegalCaptureMoves(Color.White);
-                if (!childern.Any()) {
+                if (!childern.Any())
+                {
                     bestVal = node.ScoreAfterMove.Value;
-                } else
-                    foreach (var move in childern) {
+                }
+                else
+                    for (int i = 0; i < childern.Length; i++)
+                    {
+                        var move = childern[i];
                         gameCopy.PerformLegalMove(move);
                         var childValue = AlphaBetaQuite(gameCopy, move, alpha, bestVal, true, depth - 1, ref canceled, recursion + 1);
                         gameCopy.UndoLastMove();
                         if (childValue < bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
                         bestVal = Math.Min(bestVal, childValue);
-                        if (bestVal <= alpha) {
+                        if (bestVal <= alpha)
+                        {
                             AlphaCutOffCount++;
                             break;
                         }
@@ -308,12 +355,16 @@ namespace Chess
         /// <param name="node"></param>
         /// <param name="maximizingPlayer"></param>
         /// <returns></returns>
-        private int NoChildrenEval(Game gameCopy, Move node, int recursion) {
-            if (gameCopy.CurrentPlayer.IsChecked) {
+        private int NoChildrenEval(Game gameCopy, Move node, int recursion)
+        {
+            if (gameCopy.CurrentPlayer.IsChecked)
+            {
                 node.ScoreInfo |= ScoreInfo.Mate;
                 node.ScoreAfterMove = 8000 - recursion; //maximizing variable is used to negate value by calling function.
                 gameCopy.Winner = gameCopy.OtherPlayer;
-            } else {
+            }
+            else
+            {
                 node.ScoreInfo |= ScoreInfo.StaleMate;
                 node.ScoreAfterMove = 0;
             }
@@ -322,7 +373,8 @@ namespace Chess
             return node.ScoreAfterMove.Value;
         }
 
-        private void Reset() {
+        private void Reset()
+        {
             Aborted = false;
             BetaCutOffCount = 0;
             AlphaCutOffCount = 0;
@@ -330,7 +382,7 @@ namespace Chess
             LeafVisits = 0;
             QuiteSearchNodes = 0;
             QuiteLeafVisits = 0;
-            PositionsDatabase.Instance.ResetMatches();            
+            PositionsDatabase.Instance.ResetMatches();
         }
 
         //from http://will.thimbleby.net/algorithms/doku.php?id=minimax_search_with_alpha-beta_pruning
@@ -375,7 +427,7 @@ namespace Chess
         //    }
 
     }
-        
+
     /// <summary>
     /// This is like a wrapper for the best move found by engine. It also has a few nice data about the engines move.
     /// </summary>
@@ -397,12 +449,13 @@ namespace Chess
         public int Depth { get; internal set; }
         public double Seconds { get; internal set; }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return $"{Move} ({Value})\r\nBest line: {BestLine}\r\n" +
                 $"Depth: {Depth} in {Seconds.ToString("F")} sec\r\n" +
                 $"Nodes: {Nodes.KiloNumber()}\r\n" +
                 $"Leafs: {LeafVisits.KiloNumber()}\r\nQuite nodes: {QuiteSearchNodes.KiloNumber()}\r\n" +
-                $"Quite leafs: {QuiteLeafVisits.KiloNumber()}\r\n" + 
+                $"Quite leafs: {QuiteLeafVisits.KiloNumber()}\r\n" +
                 $"BetaCuts: {BetaCutoff.KiloNumber()}\r\nAlphaCuts: {AlphaCutoff.KiloNumber()}\r\n\r\n" +
                 $"Position DB:\r\n{DatabaseStats}";
         }
@@ -412,7 +465,7 @@ namespace Chess
     {
         public static string KiloNumber(this int number)
         {
-            return number/1000 + "k";
+            return number / 1000 + "k";
         }
     }
 }

@@ -450,20 +450,8 @@ namespace Chess
         }
 
         public override int PositionValue(Game game) {
-            var r = Square.Rank;
-            var f = Square.File;
-            var score = 0;
-            if (r == 0 || r == Rank._8)
-                score -= 2; //knight on the rim
-            else if (r == Rank._2 || r == Rank._7)
-                score -= 1;
-
-            if (f == 0 || f == File.H)
-                score -= 2;
-            else if (f == File.G || f == File.B)
-                score -= 1;
-
-            return score;
+            return Square.KnightsPositionScore;
+            
         }
 
         public override bool Attacks(Square square, Board board) {

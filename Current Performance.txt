@@ -1,27 +1,32 @@
 TestBestMoveStart, Debug
 ========================
 
-e4 (-10)
-Best line: Nc6 d4 d5 Nc3 
-Nodes: 62452
-Leafs: 44292
-Quite search nodes: 14521
-BetaCuts: 1826
-AlphaCuts: 13171
+d4 (1)
+Best line: d5 Nc3 Nc6 e4 dxe4 Nxe4 
+Depth: 5 in 2,54 sec
+Nodes: 441k
+Leafs: 345k
+Quite nodes: 75k
+Quite leafs: 38k
+BetaCuts: 22k
+AlphaCuts: 33k
 
 Position DB:
-Entries: 217055
-Matches: 194885
-Collisions: 0
+Entries: 676k
+Matches: 1037k
 
 
-Debug Trace:
-Start Depth 1
-End depth 1 (0,03)
-Start Depth 2
-End depth 2 (0,11)
-Start Depth 3
-End depth 3 (0,29)
-Start Depth 4
-End depth 4 (2,43)
-Start Depth 5
+TestBestMoveBlackToPlay, Release, utan debugger
+cxd5 (301)
+Best line: d4 Nc6 Nf3 Nf6 Ne5 Nxe5 dxe5
+Depth: 6 in 8,19 sec
+Nodes: 2345k
+Leafs: 1483k
+Quite nodes: 754k
+Quite leafs: 398k
+BetaCuts: 381k
+AlphaCuts: 130k
+
+Position DB:
+Entries: 5474k
+Matches: 8967k

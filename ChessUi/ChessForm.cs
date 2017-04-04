@@ -177,7 +177,7 @@ namespace ChessUi
         private void StopAi() {
             checkBoxAI_white.Checked = false;
             checkBoxAIblack.Checked = false;
-            Engine.Abort();
+            Engine.Stop();
         }
 
         private bool ComputerIsOff() {

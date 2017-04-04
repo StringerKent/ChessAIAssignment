@@ -42,6 +42,7 @@ namespace Chess
         public int Index { get; }
 
         private byte PieceType { get; set; }
+        public int KnightsPositionScore { get; internal set; }
 
         public void SetPiece(Piece piece)
         {

@@ -105,6 +105,4 @@ namespace Chess
         StaleMate = 4,
         Mate = 8
     }
-
-    
 }

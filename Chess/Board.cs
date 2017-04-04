@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -52,7 +53,26 @@ namespace Chess
                 square.SouthWestPatterns = SetRayPatterns(square, -1, -1);
                 square.WestPatterns = SetRayPatterns(square, 0, -1);
                 square.NorthWestPatterns = SetRayPatterns(square, 1, -1);
+                square.KnightsPositionScore = SetKnightPositionScore(square);
             }
+        }
+
+        private int SetKnightPositionScore(Square square)
+        {
+            var r = square.Rank;
+            var f = square.File;
+            var score = 0;
+            if (r == 0 || r == Rank._8)
+                score -= 2; //knight on the rim
+            else if (r == Rank._2 || r == Rank._7)
+                score -= 1;
+
+            if (f == 0 || f == File.H)
+                score -= 2;
+            else if (f == File.G || f == File.B)
+                score -= 1;
+
+            return score;
         }
 
         private void SetKnightPatterns() {

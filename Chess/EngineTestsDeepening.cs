@@ -46,7 +46,7 @@ namespace Chess
             Assert.IsTrue(Game.TryPossibleMoveCommand(new MoveCommand(File.B, Rank._1, File.C, Rank._3)));
             Assert.IsTrue(Game.TryPossibleMoveCommand(new MoveCommand(File.C, Rank._7, File.C, Rank._6)));
             Assert.IsTrue(Game.TryPossibleMoveCommand(new MoveCommand(File.C, Rank._3, File.D, Rank._5)));
-            var evaluation = engine.BestMoveDeepeningSearch(Game, TimeSpan.FromSeconds(20));
+            var evaluation = engine.BestMoveDeepeningSearch(Game, TimeSpan.FromSeconds(11));
             Console.WriteLine(evaluation);
 
             Assert.AreEqual("cxd5", evaluation.Move.ToString());

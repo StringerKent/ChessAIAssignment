@@ -1,10 +1,7 @@
 Förklara TDD förkortning
 FEN, PNG - format
 
-Spara patterns på Square
-
 Evaluation
-	- Varför spelar svart ofta dam tidigt i spelet?
 	- 50 move rule. Re-setta vid bondedrag eller capture.
 	- Två löpare
 	- Bad bishops
@@ -26,7 +23,19 @@ Spela mot dator på chess.com.
 	Nivå 7: 0-1
 	
 Prestanda, testa.
-	- Try refactor Move
+	- lokal hash i move, kanske inte db ger så mycket efter optimering.
+	- sätta position score i move/undo, 
+		knight, 
+		pawn center och ju närmare prom desto bättre, inget pawn endgame
+		bishops nej,
+		rooks,
+		dubble pawns när pawn flyttas.
+		castling
+		king on opening och endgame,
+		motståndarens captured piece?
+		Gör detta även för quite search, så man får alpha beta cuts
+
+
 	http://www.chessbin.com/post/Some-Performance-Optimization-Advice
 	- Bitboards
 	- Book

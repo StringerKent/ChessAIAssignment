@@ -56,9 +56,9 @@ namespace Chess
             return t.Result;
         }
 
-        public void Abort()
+        public void Stop()
         {
-            Aborted = true;
+            Stopped = true;
         }
 
         internal Evaluation BestMoveDeepeningSearch(Game game, TimeSpan time)
@@ -85,13 +85,8 @@ namespace Chess
 
                 if (evaluation == null) //canceled
                 {
-                    if (Aborted)
-                    {
-                        ThinkingFor = null;
-                        return null;
-                    }
-                    //Keep the last best moves found
-                    break;
+                    ThinkingFor = null;
+                    return bestEvaluation;
                 }
                 bestEvaluation = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
                 bestEvaluation.Depth = depth;
@@ -116,7 +111,7 @@ namespace Chess
         private int QuiteSearchNodes { get; set; }
         private int QuiteLeafVisits { get; set; }
         private int AlphaCutOffCount { get; set; }
-        private bool Aborted { get; set; }
+        private bool Stopped { get; set; }
         private Stopwatch Stopwatch { get; set; } = new Stopwatch();
         private Evaluation BestCommandAtDepth(Game game, Evaluation[] evaluations, int depth)
         {
@@ -126,7 +121,7 @@ namespace Chess
             var maximizing = playerColor == Color.Black;
             var alpha = -8000;
             var beta = 8000;
-            var canceled = false;
+            Stopped = false;
             var mateFound = false;
             var localEvals = evaluations.Select(x => new Evaluation { CmdsString = x.CmdsString, Value = x.Value, Move = x.Move }).ToArray();
             var commands = evaluations.Select(e => e.CmdsString);
@@ -142,9 +137,8 @@ namespace Chess
                         var copyMoves = gameCopy.GetLegalNextMoves(playerColor);
                         var copyMove = copyMoves.Single(cm => cm.ToCommandString() == command);
                         gameCopy.PerformLegalMove(copyMove);
-                        var v = AlphaBeta(gameCopy, copyMove, alpha, beta, !maximizing, depth, ref canceled, 1); //Switched Player!
+                        var v = AlphaBeta(gameCopy, copyMove, alpha, beta, !maximizing, depth, 1); //Switched Player!
                         gameCopy.UndoLastMove();
-
 
                         var eval = localEvals.Single(x => x.Move.ToCommandString() == command);
                         eval.Value = v;
@@ -157,9 +151,9 @@ namespace Chess
                 });
 
 
-            if (canceled)
+            if (Stopped)
             {
-                Debug.WriteLine($"\r\nDepth: {depth}\r\n Canceled");
+                Debug.WriteLine($"\r\nDepth: {depth}\r\n Stopped");
                 return null;
             }
 
@@ -192,11 +186,11 @@ namespace Chess
             return bestEvaluatedMove;// childMoves.Single(x => x.ToCommandString() == bestEvaluatedMove.CmdsString);
         }
 
-        private int AlphaBeta(Game gameCopy, Move node, int alpha, int beta, bool maximizingPlayer, int depth, ref bool canceled, int recursion)
+        private int AlphaBeta(Game gameCopy, Move node, int alpha, int beta, bool maximizingPlayer, int depth, int recursion)
         {
-            if ((SearchFor > TimeSpan.Zero && Stopwatch.Elapsed > SearchFor) || Aborted)
+            if ((SearchFor > TimeSpan.Zero && Stopwatch.Elapsed > SearchFor) || Stopped)
             {
-                canceled = true;
+                Stopped = true;
                 return 0;
             }
 
@@ -205,7 +199,7 @@ namespace Chess
             if (depth <= 0 || gameCopy.Ended)
             {
                 if (node.Capture != null)
-                    bestVal = AlphaBetaQuite(gameCopy, node, alpha, beta, maximizingPlayer, 1, ref canceled, recursion + 1);
+                    bestVal = AlphaBetaQuite(gameCopy, node, alpha, beta, maximizingPlayer, 1, recursion + 1);
                 else
                 { //No capture. No worries for horizon effect.
                     bestVal = node.ScoreAfterMove.Value + (maximizingPlayer ? 1 : -1);
@@ -226,7 +220,7 @@ namespace Chess
                     {
                         var move = childern[i];
                         gameCopy.PerformLegalMove(move);
-                        var childValue = AlphaBeta(gameCopy, move, bestVal, beta, false, depth - 1, ref canceled, recursion + 1);
+                        var childValue = AlphaBeta(gameCopy, move, bestVal, beta, false, depth - 1, recursion + 1);
                         gameCopy.UndoLastMove();
                         if (childValue > bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
@@ -251,7 +245,7 @@ namespace Chess
                     {
                         var move = childern[i];
                         gameCopy.PerformLegalMove(move);
-                        var childValue = AlphaBeta(gameCopy, move, alpha, bestVal, true, depth - 1, ref canceled, recursion + 1);
+                        var childValue = AlphaBeta(gameCopy, move, alpha, bestVal, true, depth - 1, recursion + 1);
                         gameCopy.UndoLastMove();
                         if (childValue < bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
@@ -266,11 +260,11 @@ namespace Chess
             return bestVal;
         }
 
-        private int AlphaBetaQuite(Game gameCopy, Move node, int alpha, int beta, bool maximizingPlayer, int depth, ref bool canceled, int recursion)
+        private int AlphaBetaQuite(Game gameCopy, Move node, int alpha, int beta, bool maximizingPlayer, int depth, int recursion)
         {
-            if ((SearchFor > TimeSpan.Zero && Stopwatch.Elapsed > SearchFor) || Aborted)
+            if ((SearchFor > TimeSpan.Zero && Stopwatch.Elapsed > SearchFor) || Stopped)
             {
-                canceled = true;
+                Stopped = true;
                 return 0;
             }
             QuiteSearchNodes++;
@@ -293,7 +287,7 @@ namespace Chess
                     {
                         var move = childern[i];
                         gameCopy.PerformLegalMove(move);
-                        var childValue = AlphaBetaQuite(gameCopy, move, bestVal, beta, false, depth - 1, ref canceled, recursion + 1);
+                        var childValue = AlphaBetaQuite(gameCopy, move, bestVal, beta, false, depth - 1, recursion + 1);
                         gameCopy.UndoLastMove();
                         if (childValue > bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
@@ -318,7 +312,7 @@ namespace Chess
                     {
                         var move = childern[i];
                         gameCopy.PerformLegalMove(move);
-                        var childValue = AlphaBetaQuite(gameCopy, move, alpha, bestVal, true, depth - 1, ref canceled, recursion + 1);
+                        var childValue = AlphaBetaQuite(gameCopy, move, alpha, bestVal, true, depth - 1, recursion + 1);
                         gameCopy.UndoLastMove();
                         if (childValue < bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
@@ -375,7 +369,7 @@ namespace Chess
 
         private void Reset()
         {
-            Aborted = false;
+            Stopped = false;
             BetaCutOffCount = 0;
             AlphaCutOffCount = 0;
             NodeVisit = 0;

@@ -51,35 +51,35 @@ namespace Chess
             game.Hash ^= Side[(int)game.CurrentPlayer.Color];
         }
 
-        internal void UpdateHash(Game game, Move move) {
+        internal void UpdateHash(Move move) {
             var fs = move.FromSquare;
             var ts = move.ToSquare;
+            ulong hash = 0;
 
-            var piece = (int)move.Piece.Type;
+            var pieceType = (int)move.Piece.Type;
 
-            if (!move.IsPromotion) {
-                game.Hash ^= ZobristArray[piece, fs.Index]; //piece off
-                game.Hash ^= ZobristArray[piece, ts.Index]; //piece on new square
+            if (!move.IsPromotion) { 
+                hash = ZobristArray[pieceType, ts.Index]; //piece on new square
+                hash ^= ZobristArray[pieceType, fs.Index]; //piece off
+            } else {
+                var pawnType = move.PromotedPawn.Type;
+                hash = ZobristArray[pawnType, fs.Index]; //pawn off                 
+                var type = move.Piece.Color == Color.Black ? PieceType.BlackQueen : PieceType.WhiteQueen;
+                hash ^= ZobristArray[(int)type, ts.Index]; //queen on new square 
             }
 
             if (move.Capture != null) {
-                game.Hash ^= ZobristArray[move.Capture.Type, move.CapturedFrom.Index];
+                hash ^= ZobristArray[move.Capture.Type, move.CapturedFrom.Index];
                 //captured piece off, includes en passant
             }
 
             if (move.IsCastling) {
-                game.Hash ^= ZobristArray[move.CastleRook.Type, move.CastleRook.Square.Index];
+                hash ^= ZobristArray[move.CastleRook.Type, move.CastleRook.Square.Index];
                 //Todo Castling options
             }
 
-            if (move.IsPromotion) {
-                var pawnType = move.PromotedPawn.Type;
-                game.Hash ^= ZobristArray[pawnType, fs.Index]; //pawn off                 
-                var type = move.Piece.Color == Color.Black ? PieceType.BlackQueen : PieceType.WhiteQueen;
-                game.Hash ^= ZobristArray[(int)type, ts.Index]; //queen on new square                
-            }
-
-            game.Hash ^= Side[(int)move.Piece.Color];
+            hash ^= Side[(int)move.Piece.Color];
+            move.Hash = hash;
         }
 
         internal void GetValue(Game game, Move move) {

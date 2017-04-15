@@ -23,7 +23,6 @@ Spela mot dator på chess.com.
 	Nivå 7: 0-1
 	
 Prestanda, testa.
-	- lokal hash i move, kanske inte db ger så mycket efter optimering.
 	- sätta position score i move/undo, 
 		knight, 
 		pawn center och ju närmare prom desto bättre, inget pawn endgame

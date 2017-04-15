@@ -85,6 +85,7 @@ namespace Chess
         public bool? IsLegal { get; set; }
         public ulong PreviousHash { get; set; }
         internal File? PreviousEnPassant { get; set; }
+        public ulong Hash { get; set; }
 
         public string ToCommandString() {
             return FromSquare + "-" + ToSquare;

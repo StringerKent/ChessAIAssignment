@@ -30,3 +30,5 @@ AlphaCuts: 130k
 Position DB:
 Entries: 5474k
 Matches: 8967k
+
+Perft 5, 6.8s

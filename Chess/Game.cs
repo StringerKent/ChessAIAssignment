@@ -241,7 +241,8 @@ namespace Chess
             CurrentPlayer.IsChecked = false;
             SwitchPlayer();
             move.PreviousHash = Hash;
-            PositionsDatabase.Instance.UpdateHash(this, move);
+            PositionsDatabase.Instance.UpdateHash(move);
+            Hash ^= move.Hash;
         }
 
         public Move[] GetLegalNextMoves(Color color) {
@@ -623,7 +624,8 @@ namespace Chess
         }
 
         private void Undo(Move move) {
-            PositionsDatabase.Instance.UpdateHash(this, move); //Xor-ing back to previous hash 
+            Hash ^= move.Hash;
+            //PositionsDatabase.Instance.UpdateHash(this, move); //Xor-ing back to previous hash 
             Debug.Assert(move.PreviousHash == Hash, "Previous hash differs from hash after undo");
             SwitchPlayer();
             move.Piece.MoveCount--;

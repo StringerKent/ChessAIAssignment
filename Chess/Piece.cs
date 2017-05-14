@@ -147,16 +147,14 @@ namespace Chess
 
         public override void AddPseudoLegalMoves(Game game, List<Move> moves)
         {
-            var possibilities = Square.KingPatterns;
-            foreach (var toSqr in possibilities) {
+            foreach (var toSqr in Square.KingPatterns) {
                 if (toSqr.Piece == null || toSqr.Piece.Color != Color)
                     moves.Add(new Move(this, toSqr));
             }
         }
 
         public override void AddCaptures(Game game, List<Move> moves) {
-            var possibilities = Square.KingPatterns;
-            foreach (var toSqr in possibilities) {
+            foreach (var toSqr in Square.KingPatterns) {
                 if (toSqr.Piece != null && toSqr.Piece.Color != Color)
                     moves.Add(new Move(this, toSqr));
             }
@@ -434,16 +432,14 @@ namespace Chess
         }
 
         public override void AddPseudoLegalMoves(Game game, List<Move> moves) {
-            var squares = Square.KnightPatterns;
-            foreach (var toSquare in squares) {
+            foreach (var toSquare in Square.KnightPatterns) {
                 if (toSquare.Piece == null || toSquare.Piece.Color != Color)
                     moves.Add(new Move(this, toSquare));
             }
         }
 
         public override void AddCaptures(Game game, List<Move> moves) {
-            var possibilities = Square.KnightPatterns;
-            foreach (var toSqr in possibilities) {
+            foreach (var toSqr in Square.KnightPatterns) {
                 if (toSqr.Piece != null && toSqr.Piece.Color != Color)
                     moves.Add(new Move(this, toSqr));
             }

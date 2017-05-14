@@ -16,8 +16,8 @@ namespace ChessConsole
     {
         static void Main(string[] args)
         {
-            //TestPerformance();
-            TestEnginePerformance();
+            TestPerformance();
+            //TestEnginePerformance();
             Console.ReadLine();
         }
 

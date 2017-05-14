@@ -177,22 +177,18 @@ namespace Chess
         }
 
         public void UndoLastMove() {
-            var move = OtherPlayer.Moves.FirstOrDefault();
-            if (move == null)
+            var mv = OtherPlayer.Moves.FirstOrDefault();
+            if (mv == null)
                 return;
-            WhitePlayer.Mated = false;
-            BlackPlayer.Mated = false;
-            Ended = false;
-            IsStaleMate = false;
-            Winner = null;
-            Undo(move);
+            Undo(mv);
         }
 
         public void PerformLegalMove(Move move) {
+            var fromSquare = move.FromSquare;
             MoveCount++;
             var piece = move.Piece;
             piece.MoveCount++;
-            move.FromSquare.Piece = null; //use from square to remove piece
+            fromSquare.Piece = null; //use from square to remove piece
             var playColor = piece.Color;
 
             var capture = move.Capture;
@@ -230,13 +226,12 @@ namespace Chess
             move.PreviousEnPassant = EnPassantFile;
             EnPassantFile = null;
             if (piece is Pawn && piece.MoveCount == 1) {
-                var dist = move.ToSquare.Rank - move.FromSquare.Rank;
+                var dist = move.ToSquare.Rank - fromSquare.Rank;
                 if (Math.Abs(dist) == 2)
-                    EnPassantFile = move.FromSquare.File;
+                    EnPassantFile = fromSquare.File;
             }
 
-            if (move.IsCheck.HasValue)
-                OtherPlayer.IsChecked = move.IsCheck.Value;
+            OtherPlayer.IsChecked = move.IsCheck;
 
             CurrentPlayer.IsChecked = false;
             SwitchPlayer();
@@ -534,7 +529,7 @@ namespace Chess
         private void TryPerform(Move move, bool quiteSearch = false) {
             Debug.Assert(!move.IsLegal.HasValue);
 
-            //Actually performs a possible move.
+            //Actually performs a psuedo legal move.
             PerformLegalMove(move);
 
             //Check in db if position is legal.
@@ -546,12 +541,12 @@ namespace Chess
                 {
                     move.IsLegal = false;
                     PositionsDatabase.Instance.Store(this, move); //Store it, so we don't have to check again.
-                    UndoLastMove();
+                    Undo(move);
                     return;
                 }
                 move.IsCheck = KingChecked(CurrentPlayer);
             } else if (!move.IsLegal.Value) { //Position is already know not to be legal.
-                UndoLastMove();
+                Undo(move);
                 return;
             }
             move.IsLegal = true;
@@ -559,7 +554,7 @@ namespace Chess
             if (HashHistory.Count(x => x == Hash) >= 2) {
                 move.ScoreInfo |= ScoreInfo.DrawByRepetion;
                 move.ScoreAfterMove = 0;
-                UndoLastMove();
+                Undo(move);
                 return;
             }
 
@@ -571,7 +566,7 @@ namespace Chess
                     PositionsDatabase.Instance.Store(this, move);
                 }
             }
-            UndoLastMove();
+            Undo(move);
         }
 
         private bool InsufficientMaterial() {
@@ -623,9 +618,14 @@ namespace Chess
             king.HasCastled = true;
         }
 
-        private void Undo(Move move) {
+        internal void Undo(Move move) {
             Hash ^= move.Hash;
-            //PositionsDatabase.Instance.UpdateHash(this, move); //Xor-ing back to previous hash 
+            WhitePlayer.Mated = false;
+            BlackPlayer.Mated = false;
+            Ended = false;
+            IsStaleMate = false;
+            Winner = null;
+
             Debug.Assert(move.PreviousHash == Hash, "Previous hash differs from hash after undo");
             SwitchPlayer();
             move.Piece.MoveCount--;

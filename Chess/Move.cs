@@ -66,8 +66,7 @@ namespace Chess
                 return "½-½"; //todo, text should be added after the move
 
             var cap = Capture != null ? "x" : "";
-            var chk = IsCheck.HasValue && IsCheck.Value;
-            var checkormate = ScoreInfo.HasFlag(ScoreInfo.Mate) ? "#" : chk ? "+" : "";
+            var checkormate = ScoreInfo.HasFlag(ScoreInfo.Mate) ? "#" : IsCheck ? "+" : "";
             var piece = !(Piece is Pawn) ? Piece.Char.ToString() : "";
             if (Piece is Pawn && Capture != null)
                 piece = FromSquare.File.ToString().ToLower();
@@ -77,7 +76,7 @@ namespace Chess
 
         public ScoreInfo ScoreInfo { get; set; }
 
-        public bool? IsCheck { get; set; }
+        public bool IsCheck { get; set; }
         public Pawn PromotedPawn { get; set; }
         public bool BlackWasChecked { get; set; }
         public bool WhiteWasChecked { get; set; }

@@ -138,7 +138,7 @@ namespace Chess
                         var copyMove = copyMoves.Single(cm => cm.ToCommandString() == command);
                         gameCopy.PerformLegalMove(copyMove);
                         var v = AlphaBeta(gameCopy, copyMove, alpha, beta, !maximizing, depth, 1); //Switched Player!
-                        gameCopy.UndoLastMove();
+                        gameCopy.Undo(copyMove);
 
                         var eval = localEvals.Single(x => x.Move.ToCommandString() == command);
                         eval.Value = v;
@@ -199,7 +199,7 @@ namespace Chess
             if (depth <= 0 || gameCopy.Ended)
             {
                 if (node.Capture != null)
-                    bestVal = AlphaBetaQuite(gameCopy, node, alpha, beta, maximizingPlayer, 1, recursion + 1);
+                    bestVal = AlphaBetaQuite(gameCopy, node, alpha, beta, maximizingPlayer, 2, recursion + 1);
                 else
                 { //No capture. No worries for horizon effect.
                     bestVal = node.ScoreAfterMove.Value + (maximizingPlayer ? 1 : -1);
@@ -221,7 +221,7 @@ namespace Chess
                         var move = childern[i];
                         gameCopy.PerformLegalMove(move);
                         var childValue = AlphaBeta(gameCopy, move, bestVal, beta, false, depth - 1, recursion + 1);
-                        gameCopy.UndoLastMove();
+                        gameCopy.Undo(move);
                         if (childValue > bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
                         bestVal = Math.Max(bestVal, childValue);
@@ -246,7 +246,7 @@ namespace Chess
                         var move = childern[i];
                         gameCopy.PerformLegalMove(move);
                         var childValue = AlphaBeta(gameCopy, move, alpha, bestVal, true, depth - 1, recursion + 1);
-                        gameCopy.UndoLastMove();
+                        gameCopy.Undo(move);
                         if (childValue < bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
                         bestVal = Math.Min(bestVal, childValue);
@@ -288,7 +288,7 @@ namespace Chess
                         var move = childern[i];
                         gameCopy.PerformLegalMove(move);
                         var childValue = AlphaBetaQuite(gameCopy, move, bestVal, beta, false, depth - 1, recursion + 1);
-                        gameCopy.UndoLastMove();
+                        gameCopy.Undo(move);
                         if (childValue > bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
                         bestVal = Math.Max(bestVal, childValue);
@@ -313,7 +313,7 @@ namespace Chess
                         var move = childern[i];
                         gameCopy.PerformLegalMove(move);
                         var childValue = AlphaBetaQuite(gameCopy, move, alpha, bestVal, true, depth - 1, recursion + 1);
-                        gameCopy.UndoLastMove();
+                        gameCopy.Undo(move);
                         if (childValue < bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
                         bestVal = Math.Min(bestVal, childValue);
@@ -337,7 +337,7 @@ namespace Chess
             {
                 game.PerformLegalMove(move);
                 nodes += Perft(game, depth - 1);
-                game.UndoLastMove();
+                game.Undo(move);
             }
             return nodes;
         }
@@ -376,7 +376,7 @@ namespace Chess
             LeafVisits = 0;
             QuiteSearchNodes = 0;
             QuiteLeafVisits = 0;
-            PositionsDatabase.Instance.ResetMatches();
+            PositionsDatabase.Instance.ResetCounters();
         }
 
         //from http://will.thimbleby.net/algorithms/doku.php?id=minimax_search_with_alpha-beta_pruning

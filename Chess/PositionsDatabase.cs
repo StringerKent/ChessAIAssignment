@@ -21,6 +21,8 @@ namespace Chess
         private Dictionary<ulong, int> Dictionary { get; set; } = new Dictionary<ulong, int>();
         private ulong[,] ZobristArray { get; } = new ulong[13, 64];
         private ulong[] Side { get; } = new ulong[2];
+        private ulong[] Castling { get; } = new ulong[64];
+
 
         private void InitZobrist() {
             var rnd = new Random(777);
@@ -37,6 +39,12 @@ namespace Chess
             Side[0] = BitConverter.ToUInt64(buffer, 0);
             rnd.NextBytes(buffer);
             Side[1] = BitConverter.ToUInt64(buffer, 0);
+
+            for (int i = 0; i < 64; i++)
+            {
+                rnd.NextBytes(buffer);
+                Castling[i] = BitConverter.ToUInt64(buffer, 0);
+            }
         }
 
         internal void SetStartHash(Game game) {
@@ -74,7 +82,9 @@ namespace Chess
             }
 
             if (move.IsCastling) {
+                var rookSquareIndex = move.CastleRook.Square.Index;
                 hash ^= ZobristArray[move.CastleRook.Type, move.CastleRook.Square.Index];
+                hash ^= Castling[rookSquareIndex];
                 //Todo Castling options
             }
 
@@ -109,25 +119,23 @@ namespace Chess
         internal void Store(Game game, Move move) {
             Debug.Assert(move.IsLegal.HasValue);
             var score = move.ScoreAfterMove ?? 0;
-            var chk = move.IsCheck ?? false;
-            var eval = Pack(game.CommandCount, move.IsLegal.Value, chk, score, move.ScoreInfo);
+            var eval = Pack(game.CommandCount, move.IsLegal.Value, move.IsCheck, score, move.ScoreInfo);
             //eval.PositionString = game.GetPosition();
 
             lock (_lockObject) {
                 if (Dictionary.ContainsKey(game.Hash)) {
-                    //var dbEval = Dictionary[game.Hash];
-                    //byte commandCount;
-                    //bool legal;
-                    //bool check;
-                    //ScoreInfo scoreInfo;
-                    //int score;
-                    //byte dbRecurs;
-                    //Unpack(dbEval, out commandCount, out legal, out check, out scoreInfo, out score, out dbRecurs);
-
-                    //if (dbEval.PositionString != eval.PositionString) {
-                    //    Collisions++;
-                    //}
-                    Dictionary[game.Hash] = eval;
+                    if (eval != Dictionary[game.Hash])
+                    {
+                        //var dbEval = Dictionary[game.Hash];
+                        //byte oCommandNo;
+                        //bool legal;
+                        //bool check;
+                        //ScoreInfo scoreInfo;
+                        //int oScore;
+                        //Unpack(dbEval, out oCommandNo, out legal, out check, out scoreInfo, out oScore);
+                        Collisions++;
+                        Dictionary.Remove(game.Hash);
+                    }
                 } else {
                     Dictionary.Add(game.Hash, eval);
                 }
@@ -135,7 +143,7 @@ namespace Chess
         }
 
         public override string ToString() {
-            return $"Entries: {Dictionary.Count.KiloNumber()}\r\nMatches: {Matches.KiloNumber()}";
+            return $"Entries: {Dictionary.Count.KiloNumber()}\r\nMatches: {Matches.KiloNumber()}\r\nCollisions: {Collisions}";
         }
 
         internal static PositionsDatabase Instance { get; private set; } = new PositionsDatabase();
@@ -147,8 +155,9 @@ namespace Chess
             OldestCommands = 0;
         }
 
-        internal void ResetMatches() {
+        internal void ResetCounters() {
             Matches = 0;
+            Collisions = 0;
         }
 
         internal static void Unpack(int build, out byte oCommandNo, out bool oLegal, out bool check,

@@ -102,7 +102,8 @@ namespace Chess
                 bool check;
                 ScoreInfo scoreInfo;
                 int score;
-                Unpack(eval, out commandCount, out legal, out check, out scoreInfo, out score);
+                int depth;
+                Unpack(eval, out commandCount, out legal, out check, out scoreInfo, out score, out depth);
                 if (!legal) {
                     move.IsLegal = false;
                     return;
@@ -116,25 +117,29 @@ namespace Chess
         }
 
         private readonly object _lockObject = new object();
-        internal void Store(Game game, Move move) {
+        internal void Store(Game game, Move move, int depth) {
             Debug.Assert(move.IsLegal.HasValue);
             var score = move.ScoreAfterMove ?? 0;
-            var eval = Pack(game.CommandCount, move.IsLegal.Value, move.IsCheck, score, move.ScoreInfo);
-            //eval.PositionString = game.GetPosition();
+            var eval = Pack(game.CommandCount, move.IsLegal.Value, move.IsCheck, score, move.ScoreInfo, depth);
 
             lock (_lockObject) {
                 if (Dictionary.ContainsKey(game.Hash)) {
                     if (eval != Dictionary[game.Hash])
                     {
-                        //var dbEval = Dictionary[game.Hash];
-                        //byte oCommandNo;
-                        //bool legal;
-                        //bool check;
-                        //ScoreInfo scoreInfo;
-                        //int oScore;
-                        //Unpack(dbEval, out oCommandNo, out legal, out check, out scoreInfo, out oScore);
-                        Collisions++;
-                        Dictionary.Remove(game.Hash);
+                        var dbEval = Dictionary[game.Hash];
+                        byte oCommandNo;
+                        bool legal;
+                        bool check;
+                        ScoreInfo scoreInfo;
+                        int oScore;
+                        int oDepth;
+                        Unpack(dbEval, out oCommandNo, out legal, out check, out scoreInfo, out oScore, out oDepth);
+                        if (depth > oDepth)
+                        {
+                            Dictionary[game.Hash] = eval;
+                        }
+                        //Collisions++;
+                        //Dictionary.Remove(game.Hash);
                     }
                 } else {
                     Dictionary.Add(game.Hash, eval);
@@ -161,14 +166,14 @@ namespace Chess
         }
 
         internal static void Unpack(int build, out byte oCommandNo, out bool oLegal, out bool check,
-            out ScoreInfo oScoreInfo, out int oScore) {
+            out ScoreInfo oScoreInfo, out int oScore, out int oDepth) {
             oCommandNo = (byte)((build >> 25) & 0x7F); //7 bits
             oLegal = ((build >> 24) & 1) == 1;
             check = ((build >> 23) & 1) == 1;
             var negScore = ((build >> 22) & 1) == 1;
             oScore = (build >> 9) & 0x1FFF; //13bits
             oScore = negScore ? oScore * -1 : oScore;
-            var freeBytes = (byte)((build >> 4) & 0x1F); //5bits
+            oDepth = (byte)((build >> 4) & 0x1F); //5bits
             oScoreInfo = (ScoreInfo)(build & 0xF); //4 bits
         }
 
@@ -181,8 +186,7 @@ namespace Chess
         /// <param name="score">1 bit for negative, 13 bits max 8191</param>
         /// <param name="scorInfo">4 bit</param>
         /// <returns></returns>
-        internal static int Pack(byte commandNo, bool legal, bool check, int score, ScoreInfo scorInfo) {
-            var freeBits = 5;
+        internal static int Pack(byte commandNo, bool legal, bool check, int score, ScoreInfo scorInfo, int depth) {
             var build = (int)commandNo;
             build <<= 1;
             build |= (legal ? 1 : 0);
@@ -197,7 +201,7 @@ namespace Chess
             build |= Math.Abs(score);
 
             build <<= 5;
-            build |= freeBits;
+            build |= depth;
 
             build <<= 4;
             build |= (byte)scorInfo;

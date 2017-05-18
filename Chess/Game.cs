@@ -450,7 +450,6 @@ namespace Chess
 
             return false;
         }
-
         private void SetScore(Move move) {
             //It is only interesting to check for insufficient material if the material has decreased.
             if (move.Capture != null && InsufficientMaterial())
@@ -540,7 +539,7 @@ namespace Chess
                 if (KingChecked(OtherPlayer)) //Players are switched, so this is actually own king in check.
                 {
                     move.IsLegal = false;
-                    PositionsDatabase.Instance.Store(this, move); //Store it, so we don't have to check again.
+                    PositionsDatabase.Instance.Store(this, move,100); //Store it, so we don't have to check again.
                     Undo(move);
                     return;
                 }
@@ -563,7 +562,7 @@ namespace Chess
                     move.ScoreAfterMove = Material;
                 else {
                     SetScore(move);
-                    PositionsDatabase.Instance.Store(this, move);
+                    PositionsDatabase.Instance.Store(this, move, 0);
                 }
             }
             Undo(move);

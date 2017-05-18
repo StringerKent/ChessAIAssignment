@@ -137,12 +137,12 @@ namespace Chess
                         var copyMoves = gameCopy.GetLegalNextMoves(playerColor);
                         var copyMove = copyMoves.Single(cm => cm.ToCommandString() == command);
                         gameCopy.PerformLegalMove(copyMove);
-                        var v = AlphaBeta(gameCopy, copyMove, alpha, beta, !maximizing, depth, 1); //Switched Player!
+                        var bestValue = AlphaBeta(gameCopy, copyMove, alpha, beta, !maximizing, depth, 1); //Switched Player!
                         gameCopy.Undo(copyMove);
 
                         var eval = localEvals.Single(x => x.Move.ToCommandString() == command);
-                        eval.Value = v;
-                        mateFound = (maximizing && v > 7900) || (!maximizing && v < -7900);
+                        eval.Value = bestValue;
+                        mateFound = (maximizing && bestValue > 7900) || (!maximizing && bestValue < -7900);
                         eval.BestLine = copyMove.BestLine();
                         eval.Move.ScoreInfo = copyMove.ScoreInfo;
                         eval.Move.IsCheck = copyMove.IsCheck;
@@ -257,6 +257,7 @@ namespace Chess
                         }
                     }
             }
+            PositionsDatabase.Instance.Store(gameCopy, node, depth);
             return bestVal;
         }
 
@@ -363,7 +364,7 @@ namespace Chess
                 node.ScoreAfterMove = 0;
             }
             gameCopy.Ended = true;
-            PositionsDatabase.Instance.Store(gameCopy, node);
+            PositionsDatabase.Instance.Store(gameCopy, node, 0);
             return node.ScoreAfterMove.Value;
         }
 

@@ -31,6 +31,7 @@ namespace ChessUi
                 DarkBrush = new SolidBrush(Hsv.HsvToColor(_colorTheme, 1, 0.6));
                 LightBrush = new SolidBrush(Hsv.HsvToColor(_colorTheme, 0.3, 1));
                 BorderBrush = new SolidBrush(Hsv.HsvToColor(_colorTheme, 1, 0.35));
+                LastMoveBrush = new SolidBrush(Color.FromArgb(100, Color.Yellow));
             }
         }
 
@@ -38,6 +39,7 @@ namespace ChessUi
         private Brush LightBrush { get; set; }
 
         private Brush BorderBrush { get; set; }
+        private Brush LastMoveBrush { get; set; }
 
         public Dictionary<Square, RectangleF> Squares { get; set; } = new Dictionary<Square, RectangleF>();
 
@@ -141,13 +143,20 @@ namespace ChessUi
                     var chessSquare = Game.Board.Square(f, r);
                     var brush = chessSquare.Color == Chess.Color.Black ? DarkBrush : LightBrush;
 
-                    if (MouseDownSquare == chessSquare)
-                        brush = new SolidBrush(ControlPaint.LightLight(((SolidBrush)brush).Color));
-
                     var rect = new RectangleF(x, y, SquareSide, SquareSide);
                     g.FillRectangle(brush, rect);
+                    var circleRect = rect;
+                    circleRect.Inflate(-SquareSide * 0.75f, -SquareSide * 0.75f);
                     if (HiLights.Contains(chessSquare))
-                        g.FillRectangle(_hiLightBrush, rect);
+                        g.FillEllipse(_hiLightBrush, circleRect);
+
+                    var lastMove = Game.OtherPlayer.Moves.FirstOrDefault();
+                    if (lastMove != null)
+                    {
+                        if (lastMove.FromSquare == chessSquare || lastMove.ToSquare == chessSquare)
+                            g.FillRectangle(LastMoveBrush, rect);
+                        
+                    }
 
                     Squares.Add(chessSquare, rect);
                     if (chessSquare.Piece != null && MouseDownSquare != chessSquare)

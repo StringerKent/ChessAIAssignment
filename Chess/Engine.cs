@@ -65,26 +65,25 @@ namespace Chess
         {
             Reset();
             //PositionsDatabase.Instance.Reset();
-            var maxDepth = 50; //We will break long before due to timeout.
             Stopwatch = Stopwatch.StartNew();
             SearchFor = time;
             var playerColor = game.CurrentPlayer.Color;
             ThinkingFor = playerColor;
-            var rooMoves = game.GetLegalNextMoves(playerColor).ToArray();
-            var evaluatedMoves = rooMoves.Select(x => new Evaluation { CmdsString = x.ToCommandString(), Move = x }).ToArray();
+            var roots = game.GetLegalNextMoves(playerColor).ToArray();
+            var rootEvaluations = roots.Select(x => new Evaluation { CmdsString = x.ToCommandString(), Move = x }).ToArray();
             var maximizing = playerColor == Color.Black;
             var bestEvaluation = maximizing ? 
-                evaluatedMoves.OrderBy(x => x.Value).Last() : 
-                evaluatedMoves.OrderBy(x => x.Value).First();
+                rootEvaluations.OrderBy(x => x.Value).Last() : 
+                rootEvaluations.OrderBy(x => x.Value).First();
 
             //Itererative deepening
-            for (var depth = 1; depth < maxDepth; depth++)
+            for (var depth = 1; depth < 50; depth++)
             {
                 Debug.WriteLine($"\r\n==========\r\nStart Depth {depth}");
-                var best = BestAtDepth(game, evaluatedMoves, depth);
-                evaluatedMoves = playerColor == Color.White ?
-                    evaluatedMoves.OrderBy(x => x.Value).ToArray() :
-                    evaluatedMoves.OrderByDescending(x => x.Value).ToArray();
+                var best = BestAtDepth(game, rootEvaluations, depth);
+                rootEvaluations = playerColor == Color.White ?
+                    rootEvaluations.OrderBy(x => x.Value).ToArray() :
+                    rootEvaluations.OrderByDescending(x => x.Value).ToArray();
 
                 if (best == null) //canceled
                 {

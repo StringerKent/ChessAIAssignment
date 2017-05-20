@@ -20,7 +20,7 @@ namespace Chess
         [TestMethod]
         public void TestBestMoveStart() {
             var engine = new Engine();
-            var move = engine.BestAlphaBetaMove(Game, 4);
+            var move = engine.BestMoveAtDepth(Game, 4);
             Console.WriteLine(move);
         }
 
@@ -31,7 +31,7 @@ namespace Chess
             Assert.IsTrue(Game.TryPossibleMoveCommand(new MoveCommand(File.E, Rank._7, File.E, Rank._6)));
             Assert.IsTrue(Game.TryPossibleMoveCommand(new MoveCommand(File.B, Rank._1, File.C, Rank._3)));
             Assert.IsTrue(Game.TryPossibleMoveCommand(new MoveCommand(File.D, Rank._8, File.G, Rank._5)));
-            var move = engine.BestAlphaBetaMove(Game, 2);
+            var move = engine.BestMoveAtDepth(Game, 2);
             Console.WriteLine(move);
             Assert.AreEqual("Bxg5", move.Move.ToString());
         }
@@ -42,7 +42,7 @@ namespace Chess
             Assert.IsTrue(Game.TryPossibleMoveCommand(new MoveCommand(File.B, Rank._1, File.C, Rank._3)));
             Assert.IsTrue(Game.TryPossibleMoveCommand(new MoveCommand(File.C, Rank._7, File.C, Rank._6)));
             Assert.IsTrue(Game.TryPossibleMoveCommand(new MoveCommand(File.C, Rank._3, File.D, Rank._5)));
-            var move = engine.BestAlphaBetaMove(Game, 3);
+            var move = engine.BestMoveAtDepth(Game, 3);
             Console.WriteLine(move);
             Assert.AreEqual("cxd5", move.Move.ToString());
         }
@@ -55,7 +55,7 @@ namespace Chess
             Assert.IsTrue(Game.TryPossibleMoveCommand(new MoveCommand(File.E, Rank._4, File.D, Rank._5)));
             Assert.IsTrue(Game.TryPossibleMoveCommand(new MoveCommand(File.D, Rank._8, File.D, Rank._5)));
             Assert.IsTrue(Game.TryPossibleMoveCommand(new MoveCommand(File.B, Rank._1, File.C, Rank._3)));
-            var evaluation = engine.BestAlphaBetaMove(Game, 2);
+            var evaluation = engine.BestMoveAtDepth(Game, 2);
             Console.WriteLine(evaluation);
             //not expecting a queen sacrifice
             Assert.AreNotEqual("Qxg2", evaluation.Move.ToString());
@@ -75,7 +75,7 @@ namespace Chess
             Game.BlackPlayer.HasCastledKingSide = true;
             Game.SetInitials();
             var ngine = new Engine();
-            var evaluation = ngine.BestAlphaBetaMove(Game, 3);
+            var evaluation = ngine.BestMoveAtDepth(Game, 3);
             Console.WriteLine(evaluation);
             Assert.AreEqual("Nxb3", evaluation.Move.ToString());
         }
@@ -93,7 +93,7 @@ namespace Chess
             Game.BlackPlayer.HasCastledKingSide = true;
             Game.SetInitials();
             var ngine = new Engine();
-            var evaluation = ngine.BestAlphaBetaMove(Game, 4);
+            var evaluation = ngine.BestMoveAtDepth(Game, 4);
             Console.WriteLine(evaluation);
             Assert.AreEqual("Nxb6", evaluation.Move.ToString());
         }
@@ -102,7 +102,7 @@ namespace Chess
         public void TestBlackToPlay_WhiteMatesInOne() {
             LoadFile("TestGames\\mated.txt");
             var engine = new Engine();
-            var evaluation = engine.BestAlphaBetaMove(Game, 3);
+            var evaluation = engine.BestMoveAtDepth(Game, 3);
             Console.WriteLine(evaluation);
             Assert.IsNotNull(evaluation);
         }
@@ -112,7 +112,7 @@ namespace Chess
             LoadFile("TestGames\\white_mated.txt");
 
             var engine = new Engine();
-            var bestMove = engine.BestAlphaBetaMove(Game, 2);
+            var bestMove = engine.BestMoveAtDepth(Game, 2);
             Assert.IsNotNull(bestMove);
             Assert.AreEqual("Qh4#", bestMove.Move.ToString());
         }
@@ -144,7 +144,7 @@ namespace Chess
             game.CurrentPlayer = game.WhitePlayer;
             game.SetInitials();
             var engine = new Engine();
-            var evaluation = engine.BestAlphaBetaMove(game, 3);
+            var evaluation = engine.BestMoveAtDepth(game, 3);
             Console.WriteLine(evaluation);
 
             Assert.AreEqual("Qxg6+", evaluation.Move.ToString());
@@ -172,7 +172,7 @@ namespace Chess
             game.SetInitials();
             var engine = new Engine();
             var timer = Stopwatch.StartNew();
-            var evaluation = engine.BestAlphaBetaMove(game, 3);
+            var evaluation = engine.BestMoveAtDepth(game, 3);
             timer.Stop();
 #if DEBUG
             var timeLimit = 12000;
@@ -202,7 +202,7 @@ namespace Chess
             game.BlackPlayer.HasCastledQueenSide = true;
             game.SetInitials();
             var engine = new Engine();
-            var move = engine.BestAlphaBetaMove(game, 5);
+            var move = engine.BestMoveAtDepth(game, 5);
             Console.WriteLine(move);
             var expects = new[] { "Rb8+", "Ra8+" };
             Assert.IsTrue(expects.Contains(move.Move.ToString()));
@@ -228,7 +228,7 @@ namespace Chess
             game.CurrentPlayer = game.BlackPlayer;
             game.SetInitials();
             var engine = new Engine();
-            var move = engine.BestAlphaBetaMove(game, 5);
+            var move = engine.BestMoveAtDepth(game, 5);
             Console.WriteLine(move.ToString());
             Assert.AreEqual("Nh5+", move.Move.ToString());
         }
@@ -259,7 +259,7 @@ namespace Chess
             Game.BlackPlayer.HasCastledKingSide = true;
             Game.WhitePlayer.HasCastledKingSide = true;
             var engine = new Engine();
-            var move = engine.BestAlphaBetaMove(Game, 3);
+            var move = engine.BestMoveAtDepth(Game, 3);
             Console.WriteLine(move.ToString());
             Assert.AreEqual("Rg3+", move.Move.ToString());
         }

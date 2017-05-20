@@ -70,25 +70,29 @@ namespace Chess
             SearchFor = time;
             var playerColor = game.CurrentPlayer.Color;
             ThinkingFor = playerColor;
-            var childMoves = game.GetLegalNextMoves(playerColor).ToArray();
-            var evaluatedMoves = childMoves.Select(x => new Evaluation { CmdsString = x.ToCommandString(), Move = x }).ToArray();
+            var rooMoves = game.GetLegalNextMoves(playerColor).ToArray();
+            var evaluatedMoves = rooMoves.Select(x => new Evaluation { CmdsString = x.ToCommandString(), Move = x }).ToArray();
             var maximizing = playerColor == Color.Black;
-            var bestEvaluation = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
+            var bestEvaluation = maximizing ? 
+                evaluatedMoves.OrderBy(x => x.Value).Last() : 
+                evaluatedMoves.OrderBy(x => x.Value).First();
 
+            //Itererative deepening
             for (var depth = 1; depth < maxDepth; depth++)
             {
                 Debug.WriteLine($"\r\n==========\r\nStart Depth {depth}");
-                var evaluation = BestCommandAtDepth(game, evaluatedMoves, depth);
-                evaluatedMoves = playerColor == Color.White
-                    ? evaluatedMoves.OrderBy(x => x.Value).ToArray()
-                    : evaluatedMoves.OrderByDescending(x => x.Value).ToArray();
+                var best = BestAtDepth(game, evaluatedMoves, depth);
+                evaluatedMoves = playerColor == Color.White ?
+                    evaluatedMoves.OrderBy(x => x.Value).ToArray() :
+                    evaluatedMoves.OrderByDescending(x => x.Value).ToArray();
 
-                if (evaluation == null) //canceled
+                if (best == null) //canceled
                 {
                     ThinkingFor = null;
                     return bestEvaluation;
                 }
-                bestEvaluation = maximizing ? evaluatedMoves.OrderBy(x => x.Value).Last() : evaluatedMoves.OrderBy(x => x.Value).First();
+                bestEvaluation = best;
+
                 bestEvaluation.Depth = depth;
                 bestEvaluation.Seconds = Stopwatch.Elapsed.TotalSeconds;
 
@@ -113,7 +117,7 @@ namespace Chess
         private int AlphaCutOffCount { get; set; }
         private bool Stopped { get; set; }
         private Stopwatch Stopwatch { get; set; } = new Stopwatch();
-        private Evaluation BestCommandAtDepth(Game game, Evaluation[] evaluations, int depth)
+        private Evaluation BestAtDepth(Game game, Evaluation[] evaluations, int depth)
         {
             var playerColor = game.CurrentPlayer.Color;
             var parallelism = CoreCount;
@@ -174,14 +178,14 @@ namespace Chess
             return evaluations.Single(x => x.CmdsString == bestEvaluation.CmdsString);
         }
 
-        internal Evaluation BestAlphaBetaMove(Game game, int depth)
+        internal Evaluation BestMoveAtDepth(Game game, int depth)
         {
             Reset();
             var playerColor = game.CurrentPlayer.Color;
             ThinkingFor = playerColor;
             var childMoves = game.GetLegalNextMoves(playerColor).ToArray();
             var evaluations = childMoves.Select(x => new Evaluation { CmdsString = x.ToCommandString(), Move = x }).ToArray();
-            var bestEvaluatedMove = BestCommandAtDepth(game, evaluations, depth);
+            var bestEvaluatedMove = BestAtDepth(game, evaluations, depth);
             ThinkingFor = null;
             return bestEvaluatedMove;// childMoves.Single(x => x.ToCommandString() == bestEvaluatedMove.CmdsString);
         }
@@ -199,7 +203,7 @@ namespace Chess
             if (depth <= 0 || gameCopy.Ended)
             {
                 if (node.Capture != null)
-                    bestVal = AlphaBetaQuite(gameCopy, node, alpha, beta, maximizingPlayer, 2, recursion + 1);
+                    bestVal = AlphaBetaQuite(gameCopy, node, alpha, beta, maximizingPlayer, 3, recursion + 1);
                 else
                 { //No capture. No worries for horizon effect.
                     bestVal = node.ScoreAfterMove.Value + (maximizingPlayer ? 1 : -1);
@@ -225,7 +229,7 @@ namespace Chess
                         if (childValue > bestVal || node.OpponentsBestAiMove == null)
                             node.OpponentsBestAiMove = move;
                         bestVal = Math.Max(bestVal, childValue);
-                        if (beta <= bestVal)
+                        if (bestVal >= beta)
                         {
                             BetaCutOffCount++;
                             break;
@@ -447,7 +451,7 @@ namespace Chess
         public override string ToString()
         {
             return $"{Move} ({Value})\r\nBest line: {BestLine}\r\n" +
-                $"Depth: {Depth} in {Seconds.ToString("F")} sec\r\n" +
+                $"Depth: {Depth + 1} in {Seconds.ToString("F")} sec\r\n" +
                 $"Nodes: {Nodes.KiloNumber()}\r\n" +
                 $"Leafs: {LeafVisits.KiloNumber()}\r\nQuite nodes: {QuiteSearchNodes.KiloNumber()}\r\n" +
                 $"Quite leafs: {QuiteLeafVisits.KiloNumber()}\r\n" +

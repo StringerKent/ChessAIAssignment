@@ -85,6 +85,7 @@ namespace Chess
         public ulong PreviousHash { get; set; }
         internal File? PreviousEnPassant { get; set; }
         public ulong Hash { get; set; }
+        public int PreviousMovesSinceLastCaptureOrPawnMove { get; internal set; }
 
         public string ToCommandString() {
             return FromSquare + "-" + ToSquare;

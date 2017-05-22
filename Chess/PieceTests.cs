@@ -145,5 +145,7 @@ namespace Chess
             game.AddPiece("d4bP");
             Assert.IsFalse(king.Attacks(board.Square(File.D, Rank._4), board));
         }
+
+
     }
 }

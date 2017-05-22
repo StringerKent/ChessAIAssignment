@@ -22,8 +22,6 @@ namespace Chess
         private ulong[,] ZobristArray { get; } = new ulong[13, 64];
         private ulong[] Side { get; } = new ulong[2];
         private ulong[] Castling { get; } = new ulong[64];
-
-
         private void InitZobrist() {
             var rnd = new Random(777);
             var buffer = new byte[8];
@@ -45,6 +43,7 @@ namespace Chess
                 rnd.NextBytes(buffer);
                 Castling[i] = BitConverter.ToUInt64(buffer, 0);
             }
+
         }
 
         internal void SetStartHash(Game game) {
@@ -85,9 +84,8 @@ namespace Chess
                 var rookSquareIndex = move.CastleRook.Square.Index;
                 hash ^= ZobristArray[move.CastleRook.Type, move.CastleRook.Square.Index];
                 hash ^= Castling[rookSquareIndex];
-                //Todo Castling options
             }
-
+                        
             hash ^= Side[(int)move.Piece.Color];
             move.Hash = hash;
         }
@@ -97,13 +95,7 @@ namespace Chess
             if (Dictionary.TryGetValue(game.Hash, out eval)) {
                 //It is nice not to have to evaluate illegal moves all the time.
                 //But we have to handle occasional hash collisions, though they are very rare. Not even one during a game it seems.
-                byte commandCount;
-                bool legal;
-                bool check;
-                ScoreInfo scoreInfo;
-                int score;
-                int depth;
-                Unpack(eval, out commandCount, out legal, out check, out scoreInfo, out score, out depth);
+                Unpack(eval, out byte commandCount, out bool legal, out bool check, out ScoreInfo scoreInfo, out int score, out int depth);
                 if (!legal) {
                     move.IsLegal = false;
                     return;
@@ -127,13 +119,7 @@ namespace Chess
                     if (eval != Dictionary[game.Hash])
                     {
                         var dbEval = Dictionary[game.Hash];
-                        byte oCommandNo;
-                        bool legal;
-                        bool check;
-                        ScoreInfo scoreInfo;
-                        int oScore;
-                        int oDepth;
-                        Unpack(dbEval, out oCommandNo, out legal, out check, out scoreInfo, out oScore, out oDepth);
+                        Unpack(dbEval, out byte oCommandNo, out bool legal, out bool check, out ScoreInfo scoreInfo, out int oScore, out int oDepth);
                         if (depth > oDepth)
                         {
                             Dictionary[game.Hash] = eval;
@@ -224,6 +210,11 @@ namespace Chess
                 }
             }
             Debug.WriteLine("After clean: " + Dictionary.Count);
+        }
+
+        internal void SetOldestCommand(byte commands)
+        {
+            OldestCommands = commands;
         }
     }
 }

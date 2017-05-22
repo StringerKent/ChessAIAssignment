@@ -29,7 +29,7 @@ namespace Chess
             Assert.IsTrue(game.Board.Square(File.E, Rank._1).Piece is King);
 
             for (int i = 0; i < 8; i++)
-                Assert.IsTrue(game.Board.Squares[i + 1*8].Piece is Pawn);
+                Assert.IsTrue(game.Board.Squares[i + 1 * 8].Piece is Pawn);
 
             Assert.IsTrue(game.Board.Square(File.A, Rank._8).Piece is Rook);
             Assert.AreEqual(Color.Black, game.Board.Square(File.A, Rank._8).Piece.Color);
@@ -274,14 +274,14 @@ namespace Chess
             Assert.IsTrue(kingMoves.Contains("0-0"));
             Assert.IsTrue(kingMoves.Contains("0-0-0"));
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.E, Rank._1, File.G, Rank._1)));
-            Assert.IsTrue(game.WhitePlayer.HasCastledKingSide);
+            Assert.IsFalse(game.WhitePlayer.CanCastleKingSide);
             game.UndoLastMove();
-            Assert.IsFalse(game.WhitePlayer.HasCastledKingSide);
+            Assert.IsTrue(game.WhitePlayer.CanCastleKingSide);
 
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.E, Rank._1, File.C, Rank._1)));
-            Assert.IsTrue(game.WhitePlayer.HasCastledQueenSide);
+            Assert.IsFalse(game.WhitePlayer.CanCastleQueenSide);
             game.UndoLastMove();
-            Assert.IsFalse(game.WhitePlayer.HasCastledQueenSide);
+            Assert.IsTrue(game.WhitePlayer.CanCastleQueenSide);
 
         }
 
@@ -297,7 +297,7 @@ namespace Chess
             game.AddPiece(File.H, Rank._1, new Rook(Color.White));
             game.AddPiece(File.G, Rank._4, new Bishop(Color.White));
             game.AddPiece(File.A, Rank._3, new Rook(Color.Black));
-            
+
             game.CurrentPlayer = game.BlackPlayer;
             game.SetInitials();
 
@@ -312,10 +312,10 @@ namespace Chess
                 moves.Where(x => x.Piece is King && x.Piece.Color == Color.White).Select(x => x.ToString()).ToArray();
             Assert.IsTrue(kingMoves.Contains("0-0"));
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.E, Rank._1, File.G, Rank._1)));
-            Assert.IsTrue(game.WhitePlayer.HasCastledKingSide);
+            Assert.IsFalse(game.WhitePlayer.CanCastleKingSide);
             game.UndoLastMove();
-            Assert.IsFalse(game.WhitePlayer.HasCastledKingSide);
-            
+            Assert.IsTrue(game.WhitePlayer.CanCastleKingSide);
+
         }
 
         [TestMethod]
@@ -556,7 +556,7 @@ namespace Chess
 
             var moves = game.GetPseudoLegalMoves();
             Assert.IsFalse(moves.Any(x => x.IsEnpassant));
-            
+
         }
 
         [TestMethod]
@@ -594,7 +594,7 @@ namespace Chess
             game.New();
             game.Reset();
 
-            
+
             game.AddPiece(File.E, Rank._1, new King(Color.White));
             game.AddPiece(File.E, Rank._8, new King(Color.Black));
             game.AddPiece(File.F, Rank._2, new Rook(Color.White));
@@ -602,13 +602,13 @@ namespace Chess
 
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.F, Rank._2, File.E, Rank._2)));//white
             Assert.IsTrue(game.BlackPlayer.IsChecked);
-            
+
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.E, Rank._8, File.F, Rank._8)));//black
             Assert.IsFalse(game.BlackPlayer.IsChecked);
 
             game.UndoLastMove();
             Assert.IsTrue(game.BlackPlayer.IsChecked);
-            
+
             game.UndoLastMove();
             Assert.IsFalse(game.BlackPlayer.IsChecked);
         }
@@ -618,7 +618,7 @@ namespace Chess
         {
             var game = new Game();
             game.New();
-            
+
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.F, Rank._2, File.F, Rank._3)));
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.E, Rank._7, File.E, Rank._6)));
             Assert.IsTrue(game.TryPossibleMoveCommand(new MoveCommand(File.G, Rank._2, File.G, Rank._4)));
@@ -694,7 +694,7 @@ namespace Chess
 
             game.UndoLastMove();
             Assert.AreEqual(-100, game.Material);
-            
+
             var square = game.Board.Square(File.B, Rank._7);
             var pawn = (Pawn)square.Piece;
             Assert.AreSame(pawn.Square, game.Board.Square(File.B, Rank._7));
@@ -703,7 +703,7 @@ namespace Chess
             game.UndoLastMove();
             game.UndoLastMove(); //undone all moves
             pawn = game.WhitePlayer.Pieces.OfType<Pawn>().Single();
-            Assert.AreSame(pawn.Square.Piece, pawn );
+            Assert.AreSame(pawn.Square.Piece, pawn);
         }
 
         [TestMethod]
@@ -715,7 +715,7 @@ namespace Chess
 
             game.AddPiece(File.E, Rank._8, new King(Color.Black));
             game.AddPiece(File.E, Rank._1, new King(Color.White));
-           
+
             game.AddPiece(File.D, Rank._4, new Queen(Color.Black));
             game.AddPiece(File.C, Rank._5, new Bishop(Color.White));
             game.SetInitials();
@@ -776,6 +776,49 @@ namespace Chess
 
         }
 
+        [TestMethod]
+        public void TestGetFEN()
+        {
+            var game = new Game();
+            game.New();
+            Assert.AreEqual("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", game.GetFEN());
+            Assert.IsTrue(game.TryStringMove("e2-e4"));
+            Assert.AreEqual("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", game.GetFEN());
+            Assert.IsTrue(game.TryStringMove("c7-c5"));
+            Assert.AreEqual("rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2", game.GetFEN());
+            Assert.IsTrue(game.TryStringMove("g1-f3"));
+            Assert.AreEqual("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2", game.GetFEN());
+        }
 
+        [TestMethod]
+        public void TestParseFEN()
+        {
+            var game = new Game();
+            game.New();
+            var fen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2";
+            game.LoadFEN(fen);
+            Assert.AreEqual(fen, game.GetFEN());
+
+            game = new Game();
+            game.New();
+            fen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2";
+            game.LoadFEN(fen);
+            Assert.AreEqual(fen, game.GetFEN());
+        }
+
+        [TestMethod]
+        public void TestDrawby50moverule()
+        {
+            var game = new Game();
+            game.New();
+            var gameFile = GameFile.Load("TestGames\\drawby50moverule.txt");
+            game.Load(gameFile);
+            Assert.IsTrue(game.Ended);
+            game.UndoLastMove();
+            Assert.IsFalse(game.Ended);
+            Assert.IsTrue(game.TryStringMove("h8-g8"));
+            Assert.IsTrue(game.Ended);
+            
+        }
     }
 }

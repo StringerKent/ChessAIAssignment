@@ -1,8 +1,7 @@
 Förklara TDD förkortning
-FEN, PNG - format
+PNG - format
 
 Evaluation
-	- 50 move rule. Re-setta vid bondedrag eller capture.
 	- Två löpare
 	- Bad bishops
 	- Kung på kanten i börja	

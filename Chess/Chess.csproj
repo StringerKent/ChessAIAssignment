@@ -90,6 +90,9 @@
     <Content Include="codeproject\chessui.png" />
     <Content Include="codeproject\codeproject_article.htm" />
     <Content Include="codeproject\Tests.png" />
+    <Content Include="TestGames\drawby50moverule.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestGames\mated.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

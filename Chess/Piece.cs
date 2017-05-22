@@ -16,6 +16,7 @@ namespace Chess
         public abstract int Value { get; }
         public byte Type { get; protected set; }
         public int MoveCount { get; set; }
+        public abstract char FenChar { get; }
 
         public abstract void AddPseudoLegalMoves(Game game, List<Move> moves);
         public abstract void AddCaptures(Game game, List<Move> moves);
@@ -187,6 +188,8 @@ namespace Chess
 
         public bool HasCastled { get; set; }
 
+        public override char FenChar => Color == Color.White ? 'K' : 'k';
+
         internal static int[] GetPattern(int squareIndex) {
             var list = new List<int>();
             AddSquareIndex(squareIndex, -1, -1, list);
@@ -214,6 +217,8 @@ namespace Chess
         public override char ImageChar => Color == Color.White ? '♕' : '♛';
         public override char Char => 'Q';
         public override int Value => 900;
+        public override char FenChar => Color == Color.White ? 'Q' : 'q';
+
 
         public override void AddPseudoLegalMoves(Game game, List<Move> moves)
         {
@@ -329,6 +334,9 @@ namespace Chess
             return CopySquare(squares, p);
 
         }
+
+        public override char FenChar => Color == Color.White ? 'R' : 'r';
+
     }
 
     public class Bishop : Piece
@@ -402,6 +410,9 @@ namespace Chess
             };
             return CopySquare(squares, p);
         }
+
+        public override char FenChar => Color == Color.White ? 'B' : 'b';
+
     }
 
     public class Knight : Piece
@@ -472,6 +483,8 @@ namespace Chess
 
             return CopySquare(squares, p);
         }
+        public override char FenChar => Color == Color.White ? 'N' : 'n';
+
     }
 
     public class Pawn : Piece
@@ -561,6 +574,9 @@ namespace Chess
             };
             return CopySquare(squares, p);
         }
+
+        public override char FenChar => Color == Color.White ? 'P' : 'p';
+
 
         private void SetPromotions(IEnumerable<Move> moves) {
             var rank = Rank._7;

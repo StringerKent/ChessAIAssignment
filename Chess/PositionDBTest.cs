@@ -45,14 +45,7 @@ namespace Chess
             var depth = 12;
             var build = PositionsDatabase.Pack(commandNo, legal, check, score, scorInfo, depth);
 
-            byte oCommandNo;
-            bool oLegal;
-            bool oCheck;
-            ScoreInfo oScoreInfo;
-            int oScore;
-            int oDepth;
-
-            PositionsDatabase.Unpack(build, out oCommandNo, out oLegal, out oCheck, out oScoreInfo, out oScore,out oDepth);
+            PositionsDatabase.Unpack(build, out byte oCommandNo, out bool oLegal, out bool oCheck, out ScoreInfo oScoreInfo, out int oScore,out int oDepth);
 
             Assert.AreEqual(oCommandNo, commandNo);
             Assert.AreEqual(oLegal, legal);
@@ -72,15 +65,8 @@ namespace Chess
             var scoreInfo = (ScoreInfo)0;//ScoreInfo.DrawByRepetion | ScoreInfo.StaleMate;
             var depth = 0;
             var build = PositionsDatabase.Pack(commandNo, legal, check ,score, scoreInfo, depth);
-
-            byte oCommandNo;
-            bool oLegal;
-            bool oCheck;
-            ScoreInfo oScoreInfo;
-            int oScore;
-            int oDepth;
-
-            PositionsDatabase.Unpack(build, out oCommandNo, out oLegal, out oCheck, out oScoreInfo, out oScore, out oDepth);
+            
+            PositionsDatabase.Unpack(build, out byte oCommandNo, out bool oLegal, out bool oCheck, out ScoreInfo oScoreInfo, out int oScore, out int oDepth);
 
             Assert.AreEqual(commandNo, oCommandNo);
             Assert.AreEqual(legal, oLegal);
@@ -88,7 +74,6 @@ namespace Chess
             Assert.AreEqual(score, oScore);
             Assert.AreEqual(scoreInfo, oScoreInfo);
             Assert.AreEqual(depth, oDepth);
-
         }
 
         [TestMethod]
@@ -101,14 +86,7 @@ namespace Chess
             var depth = 1;
             var build = PositionsDatabase.Pack(commandNo, legal, check, score, scoreInfo, depth);
 
-            byte oCommandNo;
-            bool oLegal;
-            bool oCheck;
-            ScoreInfo oScoreInfo;
-            int oScore;
-            int oDepth;
-
-            PositionsDatabase.Unpack(build, out oCommandNo, out oLegal, out oCheck, out oScoreInfo, out oScore,out oDepth);
+            PositionsDatabase.Unpack(build, out byte oCommandNo, out bool oLegal, out bool oCheck, out ScoreInfo oScoreInfo, out int oScore, out int oDepth);
 
             Assert.AreEqual(commandNo, oCommandNo);
             Assert.AreEqual(legal, oLegal);
@@ -130,14 +108,7 @@ namespace Chess
             var depth = 31;
             var build = PositionsDatabase.Pack(commandNo, legal, check, score, scoreInfo, depth);
 
-            byte oCommandNo;
-            bool oLegal;
-            bool oCheck;
-            ScoreInfo oScoreInfo;
-            int oScore;
-            int oDepth;
-
-            PositionsDatabase.Unpack(build, out oCommandNo, out oLegal, out oCheck ,out oScoreInfo, out oScore, out oDepth);
+            PositionsDatabase.Unpack(build, out byte oCommandNo, out bool oLegal, out bool oCheck, out ScoreInfo oScoreInfo, out int oScore, out int oDepth);
 
             Assert.AreEqual(commandNo, oCommandNo);
             Assert.AreEqual(legal, oLegal);

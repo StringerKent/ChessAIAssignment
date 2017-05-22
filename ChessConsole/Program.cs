@@ -16,8 +16,8 @@ namespace ChessConsole
     {
         static void Main(string[] args)
         {
-            TestPerformance();
-            //TestEnginePerformance();
+            //TestPerformance();
+            TestEnginePerformance();
             Console.ReadLine();
         }
 
@@ -27,8 +27,8 @@ namespace ChessConsole
             try {
                 testClass.Setup();
                 var watch = Stopwatch.StartNew();
-                //testClass.TestGamePerformance();
-                testClass.Perft();
+                testClass.TestGamePerformance();
+                //testClass.Perft();
                 Console.WriteLine(watch.ElapsedMilliseconds);
             } catch (Exception ex) {
                 Console.WriteLine(ex);

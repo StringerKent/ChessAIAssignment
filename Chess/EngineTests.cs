@@ -71,8 +71,8 @@ namespace Chess
             Game.AddPiece(File.A, Rank._1, new Knight(Color.White));
             Game.AddPiece(File.B, Rank._3, new Pawn(Color.Black));
             Game.AddPiece(File.D, Rank._5, new Pawn(Color.Black));
-            Game.WhitePlayer.HasCastledKingSide = true;
-            Game.BlackPlayer.HasCastledKingSide = true;
+            Game.WhitePlayer.CanCastleKingSide = false;
+            Game.BlackPlayer.CanCastleKingSide = false;
             Game.SetInitials();
             var ngine = new Engine();
             var evaluation = ngine.BestMoveAtDepth(Game, 3);
@@ -89,8 +89,8 @@ namespace Chess
             Game.AddPiece(File.B, Rank._6, new Pawn(Color.White));
             Game.AddPiece(File.D, Rank._3, new Pawn(Color.White));
             Game.CurrentPlayer = Game.BlackPlayer;
-            Game.WhitePlayer.HasCastledKingSide = true;
-            Game.BlackPlayer.HasCastledKingSide = true;
+            Game.WhitePlayer.CanCastleKingSide = false;
+            Game.BlackPlayer.CanCastleKingSide = false;
             Game.SetInitials();
             var ngine = new Engine();
             var evaluation = ngine.BestMoveAtDepth(Game, 4);
@@ -139,8 +139,8 @@ namespace Chess
             .AddPiece("d3wB").AddPiece("e3wP").AddPiece("g3wB")
             .AddPiece("a2wP").AddPiece("b2wP").AddPiece("c2wP").AddPiece("f2wP").AddPiece("g2wP").AddPiece("h2wP")
             .AddPiece("a1wR").AddPiece("b1wN").AddPiece("e1wK").AddPiece("g1wN").AddPiece("h1wR");
-            game.WhitePlayer.HasCastledKingSide = true;
-            game.BlackPlayer.HasCastledKingSide = true;
+            game.WhitePlayer.CanCastleKingSide = false;
+            game.BlackPlayer.CanCastleKingSide = false;
             game.CurrentPlayer = game.WhitePlayer;
             game.SetInitials();
             var engine = new Engine();
@@ -167,8 +167,8 @@ namespace Chess
             .AddPiece("b2wP").AddPiece("c2wP").AddPiece("e2wN").AddPiece("f2wP").AddPiece("g2bR")
             .AddPiece("a1wR").AddPiece("e1wR").AddPiece("f1wK");
             game.CurrentPlayer = game.BlackPlayer;
-            game.WhitePlayer.HasCastledKingSide = true;
-            game.BlackPlayer.HasCastledKingSide = true;
+            DisableCastling(game);
+            
             game.SetInitials();
             var engine = new Engine();
             var timer = Stopwatch.StartNew();
@@ -186,6 +186,14 @@ namespace Chess
             Assert.IsTrue(timer.ElapsedMilliseconds < timeLimit, "timer.ElapsedMilliseconds < timeLimit");
         }
 
+        internal static void DisableCastling(Game game)
+        {
+            game.WhitePlayer.CanCastleKingSide = false;
+            game.BlackPlayer.CanCastleKingSide = false;
+            game.WhitePlayer.CanCastleQueenSide = false;
+            game.BlackPlayer.CanCastleQueenSide = false;
+        }
+
         [TestMethod]
         public void MateInThreeWhiteToPlay() {
             var game = new Game();
@@ -197,9 +205,7 @@ namespace Chess
                 .AddPiece("f6wK").AddPiece("g6wN")
                 .AddPiece("f5wP")
                 .AddPiece("b2bP").AddPiece("c3bR").AddPiece("e3bR").AddPiece("f3bN");
-
-            game.WhitePlayer.HasCastledKingSide = true;
-            game.BlackPlayer.HasCastledQueenSide = true;
+            DisableCastling(game);
             game.SetInitials();
             var engine = new Engine();
             var move = engine.BestMoveAtDepth(game, 5);
@@ -223,8 +229,8 @@ namespace Chess
                 .AddPiece("a2wP").AddPiece("e2bR")
                 .AddPiece("g1wR").AddPiece("h1wR");
 
-            game.WhitePlayer.HasCastledKingSide = true;
-            game.BlackPlayer.HasCastledQueenSide = true;
+            game.WhitePlayer.CanCastleKingSide = false;
+            game.BlackPlayer.CanCastleQueenSide = false;
             game.CurrentPlayer = game.BlackPlayer;
             game.SetInitials();
             var engine = new Engine();
@@ -256,8 +262,8 @@ namespace Chess
             Game.AddPiece("e5bK").AddPiece("c3bR").AddPiece("g5wK");
             Game.CurrentPlayer = Game.BlackPlayer;
             Game.SetInitials();
-            Game.BlackPlayer.HasCastledKingSide = true;
-            Game.WhitePlayer.HasCastledKingSide = true;
+            Game.BlackPlayer.CanCastleKingSide = true;
+            Game.WhitePlayer.CanCastleKingSide = true;
             var engine = new Engine();
             var move = engine.BestMoveAtDepth(Game, 3);
             Console.WriteLine(move.ToString());

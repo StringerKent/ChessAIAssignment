@@ -181,8 +181,7 @@ namespace Chess
             .AddPiece("b2wP").AddPiece("c2wP").AddPiece("e2wN").AddPiece("f2wP").AddPiece("g2bR")
             .AddPiece("a1wR").AddPiece("e1wR").AddPiece("f1wK");
             game.CurrentPlayer = game.BlackPlayer;
-            game.WhitePlayer.HasCastledKingSide = true;
-            game.BlackPlayer.HasCastledKingSide = true;
+            EngineTests.DisableCastling(game);
             game.SetInitials();
             var engine = new Engine();
             var evaluation = engine.BestMoveDeepeningSearch(game, TimeSpan.FromSeconds(10));
@@ -202,9 +201,7 @@ namespace Chess
                 .AddPiece("f6wK").AddPiece("g6wN")
                 .AddPiece("f5wP")
                 .AddPiece("b2bP").AddPiece("c3bR").AddPiece("e3bR").AddPiece("f3bN");
-            
-            game.WhitePlayer.HasCastledKingSide = true;
-            game.BlackPlayer.HasCastledQueenSide = true;
+            EngineTests.DisableCastling(game);
             game.SetInitials();
 
             var engine = new Engine();

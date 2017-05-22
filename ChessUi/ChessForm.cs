@@ -80,7 +80,7 @@ namespace ChessUi
             if (list.Any())
                 list.Last().BackColor = VisibleBoard.SelectedColor;
         }
-
+        
         private List<MoveListSubItem> GetMoveListItems() {
             var list = new List<MoveListSubItem>();
             foreach (var item in listView1.Items) {
@@ -521,10 +521,10 @@ namespace ChessUi
             StopAi();
             checkBoxAI_white.Enabled = false;
             checkBoxAIblack.Enabled = false;
-            checkBoxWCK.Checked = !ChessGame.WhitePlayer.HasCastledKingSide;
-            checkBoxWCQ.Checked = !ChessGame.WhitePlayer.HasCastledQueenSide;
-            checkBoxBCK.Checked = !ChessGame.BlackPlayer.HasCastledKingSide;
-            checkBoxBCQ.Checked = !ChessGame.BlackPlayer.HasCastledQueenSide;
+            checkBoxWCK.Checked = ChessGame.WhitePlayer.CanCastleKingSide;
+            checkBoxWCQ.Checked = ChessGame.WhitePlayer.CanCastleQueenSide;
+            checkBoxBCK.Checked = ChessGame.BlackPlayer.CanCastleKingSide;
+            checkBoxBCQ.Checked = ChessGame.BlackPlayer.CanCastleQueenSide;
             if (ChessGame.CurrentPlayer.Color == Color.White)
                 radioButtonWhiteMoves.Checked = true;
             else
@@ -695,9 +695,9 @@ namespace ChessUi
             var rookOk = ChessGame.WhitePlayer.Pieces.OfType<Rook>().Any(rook => rook.Square.ToString() == "h1");
 
             if (kingOk && rookOk) {
-                ChessGame.WhitePlayer.HasCastledKingSide = !checkBoxWCK.Checked;
+                ChessGame.WhitePlayer.CanCastleKingSide = checkBoxWCK.Checked;
             } else {
-                ChessGame.WhitePlayer.HasCastledKingSide = true;
+                ChessGame.WhitePlayer.CanCastleKingSide = false;
                 if (checkBoxWCK.Checked)
                 {
                     checkBoxWCK.Checked = false;
@@ -711,9 +711,9 @@ namespace ChessUi
             var rookOk = ChessGame.WhitePlayer.Pieces.OfType<Rook>().Any(rook => rook.Square.ToString() == "a1");
 
             if (kingOk && rookOk) {
-                ChessGame.WhitePlayer.HasCastledQueenSide = !checkBoxWCQ.Checked;
+                ChessGame.WhitePlayer.CanCastleQueenSide = checkBoxWCQ.Checked;
             } else {
-                ChessGame.WhitePlayer.HasCastledQueenSide = true;
+                ChessGame.WhitePlayer.CanCastleQueenSide = false;
                 if (checkBoxWCQ.Checked)
                 {
                     checkBoxWCQ.Checked = false;
@@ -727,9 +727,9 @@ namespace ChessUi
             var rookOk = ChessGame.BlackPlayer.Pieces.OfType<Rook>().Any(rook => rook.Square.ToString() == "h8");
 
             if (kingOk && rookOk) {
-                ChessGame.BlackPlayer.HasCastledKingSide = !checkBoxBCK.Checked;
+                ChessGame.BlackPlayer.CanCastleKingSide = checkBoxBCK.Checked;
             } else {
-                ChessGame.BlackPlayer.HasCastledKingSide = true;
+                ChessGame.BlackPlayer.CanCastleKingSide = false;
                 if (checkBoxBCK.Checked)
                 {
                     checkBoxBCK.Checked = false;
@@ -743,9 +743,9 @@ namespace ChessUi
             var rookOk = ChessGame.BlackPlayer.Pieces.OfType<Rook>().Any(rook => rook.Square.ToString() == "a8");
 
             if (kingOk && rookOk) {
-                ChessGame.BlackPlayer.HasCastledQueenSide = !checkBoxBCQ.Checked;
+                ChessGame.BlackPlayer.CanCastleQueenSide = checkBoxBCQ.Checked;
             } else {
-                ChessGame.BlackPlayer.HasCastledQueenSide = true;
+                ChessGame.BlackPlayer.CanCastleQueenSide = false;
                 if (checkBoxBCQ.Checked)
                 {
                     checkBoxBCQ.Checked = false;
@@ -764,6 +764,17 @@ namespace ChessUi
         private void colorsToolStripMenuItem_Click(object sender, EventArgs e) {
             var colorForm = new ColorForm(this);
             colorForm.Show(this);
+        }
+
+        private void fENToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var fenForm = new FenForm();
+            fenForm.FEN = ChessGame.GetFEN();
+            if (fenForm.ShowDialog(this) == DialogResult.OK)
+            {
+                ChessGame.LoadFEN(fenForm.FEN);
+                panel1.Invalidate();
+            }
         }
     }
     public class ChessPiecePictureBox : PictureBox

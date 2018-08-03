@@ -17,6 +17,7 @@ namespace Chess
 {
     public class Game
     {
+        public bool Is960 { get; set; } = false;
         public Board Board { get; private set; }
         public Player WhitePlayer { get; private set; }
         public Player BlackPlayer { get; private set; }
@@ -39,29 +40,61 @@ namespace Chess
             WhitePlayer = new Player(Color.White);
             BlackPlayer = new Player(Color.Black);
 
-            AddPiece(File.A, Rank._1, new Rook(Color.White));
-            AddPiece(File.B, Rank._1, new Knight(Color.White));
-            AddPiece(File.C, Rank._1, new Bishop(Color.White));
-            AddPiece(File.D, Rank._1, new Queen(Color.White));
-            AddPiece(File.E, Rank._1, new King(Color.White));
-            AddPiece(File.F, Rank._1, new Bishop(Color.White));
-            AddPiece(File.G, Rank._1, new Knight(Color.White));
-            AddPiece(File.H, Rank._1, new Rook(Color.White));
+            List<Piece> allPeices = new List<Piece>
+            {
+                new Rook(Color.White),
+                new Knight(Color.White),
+                new Bishop(Color.White),
+                new Queen(Color.White),
+                new King(Color.White),
+                new Bishop(Color.White),
+                new Knight(Color.White),
+                new Rook(Color.White),
+            };
+            if (Is960)
+            {
+                allPeices = Create960Board(allPeices);
+            }
 
-            for (File i = 0; i <= File.H; i++)
+            for (int i = 0; i < allPeices.Count(); i++)
+            {
+                AddPiece((File)i, Rank._1, allPeices[i]);
+            }
+
+            for (File i = 0; i <= File.H; i++) 
                 AddPiece(i, Rank._2, new Pawn(Color.White));
 
-            AddPiece(File.A, Rank._8, new Rook(Color.Black));
-            AddPiece(File.B, Rank._8, new Knight(Color.Black));
-            AddPiece(File.C, Rank._8, new Bishop(Color.Black));
-            AddPiece(File.D, Rank._8, new Queen(Color.Black));
-            AddPiece(File.E, Rank._8, new King(Color.Black));
-            AddPiece(File.F, Rank._8, new Bishop(Color.Black));
-            AddPiece(File.G, Rank._8, new Knight(Color.Black));
-            AddPiece(File.H, Rank._8, new Rook(Color.Black));
+            if (Is960)
+            {
+                allPeices = CloneList(allPeices);
+            }
+            else
+            {
+                allPeices = new List<Piece>
+            {
+                new Rook(Color.Black),
+                new Knight(Color.Black),
+                new Bishop(Color.Black),
+                new Queen(Color.Black),
+                new King(Color.Black),
+                new Bishop(Color.Black),
+                new Knight(Color.Black),
+                new Rook(Color.Black),
+            };
 
+            }
+            
+
+            
+
+            for (int i = 0; i < allPeices.Count(); i++)
+            {
+                AddPiece((File)i, Rank._8, allPeices[i]);
+            }
+            
             for (File i = 0; i <= File.H; i++)
                 AddPiece(i, Rank._7, new Pawn(Color.Black));
+
             WhitePlayer.CanCastleKingSide = true;
             WhitePlayer.CanCastleQueenSide = true;
             BlackPlayer.CanCastleKingSide = true;
@@ -78,6 +111,102 @@ namespace Chess
             HashHistory.Clear();
             PositionsDatabase.Instance.SetStartHash(this);
             HashHistory.Push(Hash);
+        }
+
+        public List<Piece> Create960Board(List<Piece> list)
+        {
+            bool isValidBoard = false;
+            while (!isValidBoard)
+            {
+                if (Is960)
+                {
+                    Random randy = new Random();
+                    list = list.OrderBy(x => randy.Next()).ToList();
+                }
+                isValidBoard = CheckRookPlacement(list);
+                if (isValidBoard)
+                {
+                    isValidBoard = CheckBishopPlacement(list);
+                }
+            }
+            return list;
+        }
+
+        public List<Piece> CloneList(List<Piece> list)
+        {
+            List<Piece> newList = new List<Piece>();
+            foreach (Piece p in list)
+            {
+                switch (p.Char)
+                {
+                    case 'R':
+                        newList.Add(new Rook(Color.Black));
+                        break;
+                    case 'B':
+                        newList.Add(new Bishop(Color.Black));
+                        break;
+                    case 'N':
+                        newList.Add(new Knight(Color.Black));
+                        break;
+                    case 'Q':
+                        newList.Add(new Queen(Color.Black));
+                        break;
+                    case 'K':
+                        newList.Add(new King(Color.Black));
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return newList;
+        }
+
+        public bool CheckRookPlacement(List<Piece> list)
+        {
+            int rook1Index = -1;
+            int rook2Index = -1;
+            int kingIndex = -1;
+            for (int i = 0; i < list.Count(); i++)
+            {
+                if(list[i].Char == 'R')
+                {
+                    if (rook1Index == -1)
+                    {
+                        rook1Index = i;
+                    }
+                    else
+                    {
+                        rook2Index = i;
+                    }
+                }else if(list[i].Char == 'K')
+                {
+                    kingIndex = i;
+                }
+
+            }
+            return kingIndex > rook1Index && kingIndex < rook2Index;
+        }
+
+        public bool CheckBishopPlacement(List<Piece> list)
+        {
+            int bishop1Index = -1;
+            int bishop2Index = -1;
+            for (int i = 0; i < list.Count(); i++)
+            {
+                if (list[i].Char == 'B')
+                {
+                    if (bishop1Index == -1)
+                    {
+                        bishop1Index = i;
+                    }
+                    else
+                    {
+                        bishop2Index = i;
+                    }
+                }
+
+            }
+            return bishop1Index % 2 != bishop2Index % 2;
         }
 
         public void Load(GameFile gameFile)

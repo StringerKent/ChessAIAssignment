@@ -6,10 +6,13 @@ namespace Chess
     [TestClass]
     public class GameTests
     {
-        [TestMethod]
+        [TestMethod]//test for standard board setup
         public void TestPositionOfPiecesWhenGameStarts()
         {
-            var game = new Game();
+            var game = new Game()
+            {
+                Is960 = false
+            };
             game.New();
             Assert.IsNotNull(game.Board);
 
@@ -49,6 +52,106 @@ namespace Chess
             for (int i = 0; i < 8; i++)
                 Assert.IsTrue(game.Board.Squares[i + 6 * 8].Piece is Pawn);
 
+        }
+
+        [TestMethod] //new test 1
+        public void TestKingisBetweenRooks()
+        {
+            var game = new Game
+            {
+                Is960 = true
+            };
+            game.New();
+
+            int rook1Index = -1;
+            int rook2Index = -1;
+            int kingIndex = -1;
+
+            for (int i = 0; i < 8; i++)
+            {
+                if(game.Board.Square((File)i, Rank._1).Piece.Char == 'R')
+                {
+                    if (rook1Index == -1)
+                    {
+                        rook1Index = i;
+                    }
+                    else
+                    {
+                        rook2Index = i;
+                    }
+                }else if(game.Board.Square((File)i, Rank._1).Piece.Char == 'K')
+                {
+                    kingIndex = i;
+                }
+            }
+            Assert.IsTrue(kingIndex > rook1Index && kingIndex < rook2Index);
+        }
+        [TestMethod]//new test 2
+        public void TestBothSidesMatch()
+        {
+            var game = new Game
+            {
+                Is960 = true
+            };
+            game.New();
+            bool doesMatch = true;
+            for (int i = 0; i < 8; i++)
+            {
+                doesMatch = game.Board.Square((File)i, Rank._1).Piece.Char == game.Board.Square((File)i, Rank._8).Piece.Char;
+            }
+            Assert.IsTrue(doesMatch);
+        }
+
+        [TestMethod] //new test 3
+        public void TestBishopsAreSeperateColor()
+        {
+            var game = new Game
+            {
+                Is960 = true
+            };
+            game.New();
+
+            int bishop1Index = -1;
+            int bishop2Index = -1;
+
+            for (int i = 0; i < 8; i++)
+            {
+                if (game.Board.Square((File)i, Rank._1).Piece.Char == 'B')
+                {
+                    if (bishop1Index == -1)
+                    {
+                        bishop1Index = i;
+                    }
+                    else
+                    {
+                        bishop2Index = i;
+                    }
+                }
+            }
+            Assert.IsTrue(bishop1Index % 2 != bishop2Index % 2);
+        }
+        [TestMethod]//new test 4
+        public void Test960GameBoardChanges()
+        {
+            var game = new Game
+            {
+                Is960 = true
+            };
+            game.New();
+
+            var game2 = new Game
+            {
+                Is960 = true
+            };
+            game2.New();
+
+            bool isSame = true;
+
+            for (int i = 0; i < 8 && isSame; i++)
+            {
+                isSame = game.Board.Square((File)i, Rank._1).Piece.Char == game2.Board.Square((File)i, Rank._1).Piece.Char;
+            }
+            Assert.IsTrue(!isSame);
         }
 
         [TestMethod]
